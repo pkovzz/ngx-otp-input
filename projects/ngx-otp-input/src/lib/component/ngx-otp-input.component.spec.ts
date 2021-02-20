@@ -8,9 +8,8 @@ describe('NgxOtpInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NgxOtpInputComponent ]
-    })
-    .compileComponents();
+      declarations: [NgxOtpInputComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

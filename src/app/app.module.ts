@@ -5,14 +5,9 @@ import { AppComponent } from './app.component';
 import { NgxOtpInputModule } from 'ngx-otp-input';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    NgxOtpInputModule
-  ],
+  declarations: [AppComponent],
+  imports: [BrowserModule, NgxOtpInputModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
