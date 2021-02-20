@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NgxOtpInputComponent } from './component/ngx-otp-input.component';
+import { NgxOtpInputComponent } from './ngx-otp-input.component';
 
 describe('NgxOtpInputComponent', () => {
   let component: NgxOtpInputComponent;
