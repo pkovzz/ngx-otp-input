@@ -30,7 +30,7 @@
         ]
       }
     ],
-    "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
+    "no-console": [true, "error", "log", "debug", "info", "time", "timeEnd", "trace"],
     "no-empty": false,
     "no-inferrable-types": [true, "ignore-params"],
     "no-non-null-assertion": true,

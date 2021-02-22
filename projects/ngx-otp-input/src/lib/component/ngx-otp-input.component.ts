@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { NgxOtpInputConfig } from './ngx-otp-input.model';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./ngx-otp-input.component.scss'],
 })
 export class NgxOtpInputComponent implements OnInit {
+  @Input() config: NgxOtpInputConfig;
+
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // console.log(this.config);
+  }
 }
