@@ -12,6 +12,7 @@ export class NgxOtpInputComponent implements OnInit {
   @Input() config: NgxOtpInputConfig;
 
   ariaLabels = [];
+  pattern: RegExp;
 
   get ngxOtpArrayControls(): FormControl[] {
     return this.ngxOtpArray.controls as FormControl[];
@@ -29,5 +30,7 @@ export class NgxOtpInputComponent implements OnInit {
     for (let i = 0; i < this.config.otpLength; i++) {
       this.ngxOtpArray.push(new FormControl(null, [Validators.required]));
     }
+
+    this.pattern = this.config.pattern || /^\d+$/;
   }
 }
