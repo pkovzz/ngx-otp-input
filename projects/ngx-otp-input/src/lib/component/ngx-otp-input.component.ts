@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgxOtpInputConfig } from './ngx-otp-input.model';
+import { FormArray, FormControl, Validators } from '@angular/forms';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -10,9 +11,23 @@ import { NgxOtpInputConfig } from './ngx-otp-input.model';
 export class NgxOtpInputComponent implements OnInit {
   @Input() config: NgxOtpInputConfig;
 
+  ariaLabels = [];
+
+  get ngxOtpArrayControls(): FormControl[] {
+    return this.ngxOtpArray.controls as FormControl[];
+  }
+
+  private ngxOtpArray = new FormArray([]);
+
   constructor() {}
 
   ngOnInit(): void {
-    // console.log(this.config);
+    this.initOtpForm();
+  }
+
+  private initOtpForm(): void {
+    for (let i = 0; i < this.config.otpLength; i++) {
+      this.ngxOtpArray.push(new FormControl(null, [Validators.required]));
+    }
   }
 }

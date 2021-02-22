@@ -1,0 +1,28 @@
+
+$borderColor: #212121;
+
+.ngx-otp-input-container {
+  display: flex;
+}
+
+.ngx-otp-input-box {
+  margin: 0 5px;
+}
+
+.ngx-otp-input-box:first-child {
+  margin-left: 0
+}
+
+.ngx-otp-input-box:last-child {
+  margin-right: 0
+}
+
+input {
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  font-size: 1.25rem;
+  border: 1px solid $borderColor;
+  border-radius: 4px;
+  outline: 0;
+}

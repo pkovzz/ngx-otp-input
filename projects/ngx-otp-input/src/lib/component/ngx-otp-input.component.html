@@ -1,3 +1,19 @@
-<p>ngx-otp-input works!</p>
-
-<h1>hello, husky</h1>
+<form [ngClass]="config.classList?.container" class="ngx-otp-input-container">
+  <div
+    *ngFor="let control of ngxOtpArrayControls; let i = index"
+    [ngClass]="config.classList?.inputBox"
+    class="ngx-otp-input-box"
+  >
+    <label [attr.aria-label]="'hello, hello'">
+      <input
+        [id]="'ngx-otp-input-' + i"
+        [formControl]="control"
+        [type]="config.isPasswordInput ? 'password' : 'text'"
+        maxlength="1"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+      />
+    </label>
+  </div>
+</form>

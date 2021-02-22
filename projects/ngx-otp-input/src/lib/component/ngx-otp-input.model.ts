@@ -1,5 +1,5 @@
 export interface NgxOtpInputConfig {
-  length: number;
+  otpLength: number;
   pattern?: RegExp;
   autofocus?: boolean;
   isPasswordInput?: boolean;

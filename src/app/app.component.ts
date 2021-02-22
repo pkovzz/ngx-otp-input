@@ -8,6 +8,6 @@ import { NgxOtpInputConfig } from 'ngx-otp-input';
 })
 export class AppComponent {
   otpInputConfig: NgxOtpInputConfig = {
-    length: 6,
+    otpLength: 6,
   };
 }
