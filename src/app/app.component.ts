@@ -9,6 +9,5 @@ import { NgxOtpInputConfig } from 'ngx-otp-input';
 export class AppComponent {
   otpInputConfig: NgxOtpInputConfig = {
     otpLength: 6,
-    pattern: /^[a-zA-Z]+$/,
   };
 }

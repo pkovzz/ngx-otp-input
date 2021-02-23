@@ -4,7 +4,7 @@
     [ngClass]="config.classList?.inputBox"
     class="ngx-otp-input-box"
   >
-    <label [attr.aria-label]="'hello, hello'">
+    <label [attr.aria-label]="getAriaLabelByIndex(i)">
       <input
         [formControl]="control"
         [id]="'ngx-otp-input-' + i"
