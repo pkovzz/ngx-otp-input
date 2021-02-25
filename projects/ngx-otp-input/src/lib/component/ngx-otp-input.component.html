@@ -6,10 +6,11 @@
   >
     <label [attr.aria-label]="getAriaLabelByIndex(i)">
       <input
-        [formControl]="control"
+        #otpInputElement
         [id]="'ngx-otp-input-' + i"
-        [type]="config.isPasswordInput ? 'password' : 'text'"
+        [formControl]="control"
         [ngxOtpPattern]="pattern"
+        [type]="config.isPasswordInput ? 'password' : 'text'"
         maxlength="1"
         autocomplete="off"
         autocapitalize="off"

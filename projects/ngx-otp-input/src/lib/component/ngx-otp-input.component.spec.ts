@@ -16,6 +16,7 @@ function getConfig(step): NgxOtpInputConfig {
 
   return {
     otpLength: 6,
+    autofocus: true,
     ...additionalConfig,
   };
 }

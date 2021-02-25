@@ -1,4 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { NgxOtpInputConfig } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
 
@@ -8,7 +16,9 @@ import { FormArray, FormControl, Validators } from '@angular/forms';
   templateUrl: './ngx-otp-input.component.html',
   styleUrls: ['./ngx-otp-input.component.scss'],
 })
-export class NgxOtpInputComponent implements OnInit {
+export class NgxOtpInputComponent implements OnInit, AfterViewInit {
+  @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
+
   @Input() config: NgxOtpInputConfig;
 
   ariaLabels = [];
@@ -26,6 +36,12 @@ export class NgxOtpInputComponent implements OnInit {
   ngOnInit(): void {
     this.setUpOtpForm();
     this.setUpAriaLabels();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.config.autofocus) {
+      this.setFocus(0);
+    }
   }
 
   getAriaLabelByIndex(currentIndex: number): string {
@@ -50,5 +66,17 @@ export class NgxOtpInputComponent implements OnInit {
             this.config.ariaLabels
           ));
     }
+  }
+
+  private setFocus(index: number): void {
+    this.getInputElementByIndex(index).focus();
+  }
+
+  private removeFocus(index: number): void {
+    this.getInputElementByIndex(index).blur();
+  }
+
+  private getInputElementByIndex(index: number): HTMLElement {
+    return this.otpInputElements.toArray()[index].nativeElement;
   }
 }
