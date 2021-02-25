@@ -10,5 +10,8 @@ export class AppComponent {
   otpInputConfig: NgxOtpInputConfig = {
     otpLength: 6,
     autofocus: true,
+    classList: {
+      input: ['my-special-style', 'yeyeye'],
+    },
   };
 }

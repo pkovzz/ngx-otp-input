@@ -11,6 +11,7 @@
         [formControl]="control"
         [ngxOtpPattern]="pattern"
         [type]="config.isPasswordInput ? 'password' : 'text'"
+        [ngClass]="classList[i]"
         maxlength="1"
         autocomplete="off"
         autocapitalize="off"

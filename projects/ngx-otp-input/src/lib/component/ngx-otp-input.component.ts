@@ -22,6 +22,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   @Input() config: NgxOtpInputConfig;
 
   ariaLabels = [];
+  classList = [];
   pattern: RegExp;
 
   get ngxOtpArrayControls(): FormControl[] {
@@ -36,6 +37,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.setUpOtpForm();
     this.setUpAriaLabels();
+    this.setInitialInputClasses();
   }
 
   ngAfterViewInit(): void {
@@ -66,6 +68,12 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
             this.config.ariaLabels
           ));
     }
+  }
+
+  private setInitialInputClasses(): void {
+    this.classList = new Array(this.config.otpLength).fill(
+      this.config.classList?.input
+    );
   }
 
   private setFocus(index: number): void {

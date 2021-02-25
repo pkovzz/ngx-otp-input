@@ -5,10 +5,10 @@ export interface NgxOtpInputConfig {
   isPasswordInput?: boolean;
   ariaLabels?: string | string[];
   classList?: {
-    container?: string;
-    inputBox?: string;
-    input?: string;
-    inputFilled?: string;
-    inputDisabled?: string;
+    container?: string | string[];
+    inputBox?: string | string[];
+    input?: string | string[];
+    inputFilled?: string | string[];
+    inputDisabled?: string | string[];
   };
 }
