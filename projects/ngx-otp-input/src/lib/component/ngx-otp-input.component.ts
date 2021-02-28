@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   Input,
   OnInit,
   QueryList,
@@ -17,9 +18,10 @@ import { FormArray, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./ngx-otp-input.component.scss'],
 })
 export class NgxOtpInputComponent implements OnInit, AfterViewInit {
-  @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
-
-  @Input() config: NgxOtpInputConfig;
+  private ngxOtpArray = new FormArray([]);
+  private focusedInputHasValue = false;
+  private lastFocus = 0;
+  private defaultAriaLabel = 'One time password input';
 
   ariaLabels = [];
   classList = [];
@@ -29,9 +31,14 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
     return this.ngxOtpArray.controls as FormControl[];
   }
 
-  private ngxOtpArray = new FormArray([]);
-  private focusedInputHasValue = false;
-  private defaultAriaLabel = 'One time password input';
+  @Input() config: NgxOtpInputConfig;
+
+  @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
+
+  @HostListener('paste', ['$event']) onPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+    this.setValue(event.clipboardData.getData('text'));
+  }
 
   constructor() {}
 
@@ -54,6 +61,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   }
 
   handleFocus(index: number): void {
+    this.lastFocus = index;
     this.getInputElementByIndex(index).select();
   }
 
@@ -105,6 +113,26 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
     this.classList = new Array(this.config.otpLength).fill(
       this.config.classList?.input
     );
+  }
+
+  private setValue(value: string): void {
+    if (this.pattern.test(value)) {
+      let lastIndex = 0;
+      value
+        .split('')
+        .slice(0, this.config.otpLength)
+        .map((character: string, index: number) => {
+          this.setFilledStyles(index);
+          this.getFormControlByIndex(index).setValue(character);
+          lastIndex = index;
+        });
+
+      if (lastIndex < this.config.otpLength - 1) {
+        this.setFocus(lastIndex + 1);
+      } else {
+        this.removeFocus(this.lastFocus);
+      }
+    }
   }
 
   private stepForward(index: number): void {
