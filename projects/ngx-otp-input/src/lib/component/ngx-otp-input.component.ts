@@ -69,6 +69,18 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
     this.focusedInputHasValue = !!this.getFormControlByIndex(index).value;
   }
 
+  handleLeftArrow(index: number): void {
+    if (index > 0) {
+      this.setFocus(index - 1);
+    }
+  }
+
+  handleRightArrow(index: number): void {
+    if (index < this.config.otpLength - 1) {
+      this.setFocus(index + 1);
+    }
+  }
+
   private setUpOtpForm(): void {
     for (let i = 0; i < this.config.otpLength; i++) {
       this.ngxOtpArray.push(new FormControl(null, [Validators.required]));

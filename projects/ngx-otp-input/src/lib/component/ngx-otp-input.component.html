@@ -14,6 +14,8 @@
         [ngClass]="classList[i]"
         (focus)="handleFocus(i)"
         (keyup)="handleKeyup($event.key, i)"
+        (keyup.arrowLeft)="handleLeftArrow(i)"
+        (keyup.arrowRight)="handleRightArrow(i)"
         (keydown.backspace)="handleKeydown(i)"
         maxlength="1"
         autocomplete="off"
