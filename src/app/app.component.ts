@@ -11,7 +11,8 @@ export class AppComponent {
     otpLength: 6,
     autofocus: true,
     classList: {
-      input: ['my-special-style', 'yeyeye'],
+      input: ['my-special-style'],
+      inputFilled: ['special-filled-css'],
     },
   };
 }

@@ -59,8 +59,10 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
 
   handleKeyup(value: string, index: number): void {
     if (this.pattern.test(value)) {
+      this.setFilledStyles(index);
       this.stepForward(index);
     } else if (value === 'Backspace') {
+      this.removeFilledStyles(index);
       this.stepBackward(index);
     }
   }
@@ -125,6 +127,18 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
 
   private removeFocus(index: number): void {
     this.getInputElementByIndex(index).blur();
+  }
+
+  private setFilledStyles(index: number): void {
+    this.classList[index] = this.classList[index].concat(
+      this.config.classList?.inputFilled
+    );
+  }
+
+  private removeFilledStyles(index: number): void {
+    this.classList[index] = this.classList[index].filter((className) => {
+      return !this.config.classList?.inputFilled.includes(className);
+    });
   }
 
   private getInputElementByIndex(index: number): any {
