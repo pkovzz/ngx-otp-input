@@ -17,7 +17,7 @@ $borderColor: #212121;
   margin-right: 0
 }
 
-input {
+.ngx-otp-input {
   width: 35px;
   height: 35px;
   text-align: center;
@@ -25,4 +25,8 @@ input {
   border: 1px solid $borderColor;
   border-radius: 4px;
   outline: 0;
+}
+
+.ngx-otp-input-disabled {
+  opacity: .3;
 }

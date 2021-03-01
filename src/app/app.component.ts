@@ -11,8 +11,11 @@ export class AppComponent {
     otpLength: 6,
     autofocus: true,
     classList: {
-      input: ['my-special-style'],
-      inputFilled: ['special-filled-css'],
+      input: 'my-super-class',
+      inputFilled: 'my-super-filled-class',
+      inputDisabled: 'my-super-disable-class',
     },
   };
+
+  ngxOtpDisable = false;
 }

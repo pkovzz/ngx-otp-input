@@ -1,11 +1,14 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
   Input,
+  OnChanges,
   OnInit,
   QueryList,
+  SimpleChanges,
   ViewChildren,
 } from '@angular/core';
 import { NgxOtpInputConfig } from './ngx-otp-input.model';
@@ -16,8 +19,9 @@ import { FormArray, FormControl, Validators } from '@angular/forms';
   selector: 'ngx-otp-input',
   templateUrl: './ngx-otp-input.component.html',
   styleUrls: ['./ngx-otp-input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgxOtpInputComponent implements OnInit, AfterViewInit {
+export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnChanges {
   private ngxOtpArray = new FormArray([]);
   private focusedInputHasValue = false;
   private lastFocus = 0;
@@ -32,6 +36,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   }
 
   @Input() config: NgxOtpInputConfig;
+  @Input() disable: boolean;
 
   @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
 
@@ -45,13 +50,17 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.setUpOtpForm();
     this.setUpAriaLabels();
-    this.setInitialInputClasses();
+    this.setInputClasses();
   }
 
   ngAfterViewInit(): void {
     if (this.config.autofocus) {
       this.setFocus(0);
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.handleDisable(changes.disable.currentValue);
   }
 
   getAriaLabelByIndex(index: number): string {
@@ -67,12 +76,12 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
 
   handleKeyup(value: string, index: number): void {
     if (this.pattern.test(value)) {
-      this.setFilledStyles(index);
       this.stepForward(index);
     } else if (value === 'Backspace') {
-      this.removeFilledStyles(index);
       this.stepBackward(index);
     }
+
+    this.setInputClasses();
   }
 
   handleKeydown(index: number): void {
@@ -109,10 +118,21 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private setInitialInputClasses(): void {
-    this.classList = new Array(this.config.otpLength).fill(
-      this.config.classList?.input
-    );
+  private setInputClasses(): void {
+    const a = [];
+    const c = this.config.classList;
+
+    for (let i = 0; i < this.config.otpLength; i++) {
+      const isFilled = this.isInputFilled(i)
+        ? this.config.classList?.inputFilled
+        : '';
+      const isDisabled = this.disable
+        ? this.config.classList?.inputDisabled || 'ngx-otp-input-disabled'
+        : '';
+      a[i] = [c?.input, isFilled, isDisabled];
+    }
+
+    this.classList = a;
   }
 
   private setValue(value: string): void {
@@ -122,7 +142,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
         .split('')
         .slice(0, this.config.otpLength)
         .map((character: string, index: number) => {
-          this.setFilledStyles(index);
+          this.setInputClasses();
           this.getFormControlByIndex(index).setValue(character);
           lastIndex = index;
         });
@@ -133,6 +153,11 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
         this.removeFocus(this.lastFocus);
       }
     }
+  }
+
+  private handleDisable(disable: boolean): void {
+    disable ? this.ngxOtpArray?.disable() : this.ngxOtpArray?.enable();
+    this.setInputClasses();
   }
 
   private stepForward(index: number): void {
@@ -157,16 +182,8 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
     this.getInputElementByIndex(index).blur();
   }
 
-  private setFilledStyles(index: number): void {
-    this.classList[index] = this.classList[index].concat(
-      this.config.classList?.inputFilled
-    );
-  }
-
-  private removeFilledStyles(index: number): void {
-    this.classList[index] = this.classList[index].filter((className) => {
-      return !this.config.classList?.inputFilled.includes(className);
-    });
+  private isInputFilled(index: number): boolean {
+    return this.getFormControlByIndex(index)?.valid;
   }
 
   private getInputElementByIndex(index: number): any {
