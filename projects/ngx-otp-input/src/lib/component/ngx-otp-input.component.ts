@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -24,8 +24,8 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
-  private valueSubject = new BehaviorSubject<string>(null);
   private ngxOtpArray = new FormArray([]);
+  private ngxOtpArray$: Subscription;
   private focusedInputHasValue = false;
   private lastFocus = 0;
   private defaultAriaLabel = 'One time password input';
@@ -41,12 +41,6 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @Input() config: NgxOtpInputConfig;
-
-  @Input() set value(value: any) {
-    if (value) {
-      this.valueSubject.next(value.toString());
-    }
-  }
 
   @Input() set status(status: NgxOtpStatus) {
     this.ngxOtpStatus = status;
@@ -74,21 +68,17 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setUpOtpForm();
     this.setUpAriaLabels();
     this.setInputClasses();
-  }
-
-  ngAfterViewInit(): void {
-    const v = this.valueSubject.getValue();
-    if (this.config.autofocus && v === null) {
-      this.setFocus(0);
-    } else if (v !== null) {
-      this.setFocusAfterValueSet(v.length - 1);
-    }
-
     this.otpFormChangeListener();
   }
 
+  ngAfterViewInit(): void {
+    if (this.config.autofocus) {
+      this.setFocus(0);
+    }
+  }
+
   ngOnDestroy(): void {
-    this.valueSubject.unsubscribe();
+    this.ngxOtpArray$.unsubscribe();
   }
 
   getAriaLabelByIndex(index: number): string {
@@ -134,7 +124,6 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.pattern = this.config.pattern || /^\d+$/;
-    this.valueSubject.subscribe((v) => this.setValue(v, true));
   }
 
   private setUpAriaLabels(): void {
@@ -174,7 +163,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     this.classList = a;
   }
 
-  private setValue(value: string, isDefaultValue = false): void {
+  private setValue(value: string): void {
     if (this.pattern.test(value)) {
       let lastIndex = 0;
       value
@@ -186,9 +175,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
           lastIndex = index;
         });
 
-      if (!isDefaultValue) {
-        this.setFocusAfterValueSet(lastIndex);
-      }
+      this.setFocusAfterValueSet(lastIndex);
     }
   }
 
@@ -240,7 +227,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private otpFormChangeListener(): void {
-    this.ngxOtpArray.valueChanges.subscribe((values) => {
+    this.ngxOtpArray$ = this.ngxOtpArray.valueChanges.subscribe((values) => {
       this.otpChange.emit(values);
 
       if (this.ngxOtpArray.valid) {
