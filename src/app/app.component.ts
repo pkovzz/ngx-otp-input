@@ -21,4 +21,7 @@ export class AppComponent {
 
   ngxOtpDisable = false;
   status = null;
+
+  otpChangeResult = [];
+  fillResult = '';
 }

@@ -7,4 +7,9 @@
   [disable]="ngxOtpDisable"
   [status]="status"
   [value]="'123'"
+  (otpChange)="otpChangeResult = $event"
+  (fill)="fillResult = $event"
 ></ngx-otp-input>
+
+<div>{{ otpChangeResult | json }}</div>
+<div>{{ fillResult }}</div>

@@ -3,16 +3,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   QueryList,
   ViewChildren,
 } from '@angular/core';
 import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -56,6 +58,9 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     this.handleDisable(isDisabled);
   }
 
+  @Output() otpChange: EventEmitter<string[]> = new EventEmitter<string[]>();
+  @Output() fill: EventEmitter<string> = new EventEmitter<string>();
+
   @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
 
   @HostListener('paste', ['$event']) onPaste(event: ClipboardEvent): void {
@@ -78,6 +83,8 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if (v !== null) {
       this.setFocusAfterValueSet(v.length - 1);
     }
+
+    this.otpFormChangeListener();
   }
 
   ngOnDestroy(): void {
@@ -127,7 +134,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.pattern = this.config.pattern || /^\d+$/;
-    this.setValue(this.valueSubject.getValue(), true);
+    this.valueSubject.subscribe((v) => this.setValue(v, true));
   }
 
   private setUpAriaLabels(): void {
@@ -230,5 +237,15 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getFormControlByIndex(index: number): FormControl {
     return this.ngxOtpArray.controls[index] as FormControl;
+  }
+
+  private otpFormChangeListener(): void {
+    this.ngxOtpArray.valueChanges.subscribe((values) => {
+      this.otpChange.emit(values);
+
+      if (this.ngxOtpArray.valid) {
+        this.fill.emit(values.join(''));
+      }
+    });
   }
 }
