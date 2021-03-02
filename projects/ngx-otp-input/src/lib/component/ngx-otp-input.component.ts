@@ -11,7 +11,7 @@ import {
   SimpleChanges,
   ViewChildren,
 } from '@angular/core';
-import { NgxOtpInputConfig } from './ngx-otp-input.model';
+import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -37,6 +37,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() config: NgxOtpInputConfig;
   @Input() disable: boolean;
+  @Input() status: NgxOtpStatus;
 
   @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
 

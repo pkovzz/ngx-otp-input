@@ -1,3 +1,5 @@
+export type NgxOtpStatus = 'success' | 'error' | null;
+
 export interface NgxOtpInputConfig {
   otpLength: number;
   pattern?: RegExp;
