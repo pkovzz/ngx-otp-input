@@ -5,12 +5,14 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChildren,
 } from '@angular/core';
 import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -19,7 +21,8 @@ import { FormArray, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./ngx-otp-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgxOtpInputComponent implements OnInit, AfterViewInit {
+export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
+  private valueSubject = new BehaviorSubject<string>(null);
   private ngxOtpArray = new FormArray([]);
   private focusedInputHasValue = false;
   private lastFocus = 0;
@@ -36,6 +39,12 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   }
 
   @Input() config: NgxOtpInputConfig;
+
+  @Input() set value(value: any) {
+    if (value) {
+      this.valueSubject.next(value.toString());
+    }
+  }
 
   @Input() set status(status: NgxOtpStatus) {
     this.ngxOtpStatus = status;
@@ -63,9 +72,16 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (this.config.autofocus) {
+    const v = this.valueSubject.getValue();
+    if (this.config.autofocus && v === null) {
       this.setFocus(0);
+    } else if (v !== null) {
+      this.setFocusAfterValueSet(v.length - 1);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.valueSubject.unsubscribe();
   }
 
   getAriaLabelByIndex(index: number): string {
@@ -111,6 +127,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
     }
 
     this.pattern = this.config.pattern || /^\d+$/;
+    this.setValue(this.valueSubject.getValue(), true);
   }
 
   private setUpAriaLabels(): void {
@@ -150,7 +167,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
     this.classList = a;
   }
 
-  private setValue(value: string): void {
+  private setValue(value: string, isDefaultValue = false): void {
     if (this.pattern.test(value)) {
       let lastIndex = 0;
       value
@@ -162,10 +179,8 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
           lastIndex = index;
         });
 
-      if (lastIndex < this.config.otpLength - 1) {
-        this.setFocus(lastIndex + 1);
-      } else {
-        this.removeFocus(this.lastFocus);
+      if (!isDefaultValue) {
+        this.setFocusAfterValueSet(lastIndex);
       }
     }
   }
@@ -186,6 +201,14 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   private stepBackward(index: number): void {
     if (!this.focusedInputHasValue && index > 0) {
       this.setFocus(index - 1);
+    }
+  }
+
+  private setFocusAfterValueSet(lastIndex: number): void {
+    if (lastIndex < this.config.otpLength - 1) {
+      this.setFocus(lastIndex + 1);
+    } else {
+      this.removeFocus(this.lastFocus);
     }
   }
 
