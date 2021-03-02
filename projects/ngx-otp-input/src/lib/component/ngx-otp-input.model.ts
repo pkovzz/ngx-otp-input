@@ -12,5 +12,7 @@ export interface NgxOtpInputConfig {
     input?: string | string[];
     inputFilled?: string | string[];
     inputDisabled?: string | string[];
+    inputSuccess?: string | string[];
+    inputError?: string | string[];
   };
 }

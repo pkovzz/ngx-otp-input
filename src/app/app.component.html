@@ -1,6 +1,9 @@
 <button (click)="ngxOtpDisable = !ngxOtpDisable">toggle disable status</button>
+<button (click)="status = 'success'">success</button>
+<button (click)="status = 'error'">error</button>
+<button (click)="status = null">default</button>
 <ngx-otp-input
   [config]="otpInputConfig"
   [disable]="ngxOtpDisable"
-  [status]="null"
+  [status]="status"
 ></ngx-otp-input>

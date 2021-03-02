@@ -14,8 +14,11 @@ export class AppComponent {
       input: 'my-super-class',
       inputFilled: 'my-super-filled-class',
       inputDisabled: 'my-super-disable-class',
+      inputSuccess: 'my-super-success-class',
+      inputError: 'my-super-error-class',
     },
   };
 
   ngxOtpDisable = false;
+  status = null;
 }

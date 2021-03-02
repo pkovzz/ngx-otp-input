@@ -5,10 +5,8 @@ import {
   ElementRef,
   HostListener,
   Input,
-  OnChanges,
   OnInit,
   QueryList,
-  SimpleChanges,
   ViewChildren,
 } from '@angular/core';
 import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
@@ -21,11 +19,13 @@ import { FormArray, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./ngx-otp-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnChanges {
+export class NgxOtpInputComponent implements OnInit, AfterViewInit {
   private ngxOtpArray = new FormArray([]);
   private focusedInputHasValue = false;
   private lastFocus = 0;
   private defaultAriaLabel = 'One time password input';
+  private isDisabled: boolean;
+  private ngxOtpStatus: NgxOtpStatus;
 
   ariaLabels = [];
   classList = [];
@@ -36,8 +36,16 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   @Input() config: NgxOtpInputConfig;
-  @Input() disable: boolean;
-  @Input() status: NgxOtpStatus;
+
+  @Input() set status(status: NgxOtpStatus) {
+    this.ngxOtpStatus = status;
+    this.setInputClasses();
+  }
+
+  @Input() set disable(isDisabled: boolean) {
+    this.isDisabled = isDisabled;
+    this.handleDisable(isDisabled);
+  }
 
   @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
 
@@ -58,10 +66,6 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.config.autofocus) {
       this.setFocus(0);
     }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.handleDisable(changes.disable.currentValue);
   }
 
   getAriaLabelByIndex(index: number): string {
@@ -127,10 +131,20 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnChanges {
       const isFilled = this.isInputFilled(i)
         ? this.config.classList?.inputFilled
         : '';
-      const isDisabled = this.disable
+
+      const isDisabled = this.isDisabled
         ? this.config.classList?.inputDisabled || 'ngx-otp-input-disabled'
         : '';
-      a[i] = [c?.input, isFilled, isDisabled];
+
+      let status: string | string[] = '';
+
+      if (this.ngxOtpStatus === 'success') {
+        status = this.config.classList.inputSuccess;
+      } else if (this.ngxOtpStatus === 'error') {
+        status = this.config.classList.inputError;
+      }
+
+      a[i] = [c?.input, isFilled, isDisabled, status];
     }
 
     this.classList = a;
