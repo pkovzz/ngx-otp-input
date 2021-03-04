@@ -93,7 +93,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleKeyup(value: string, index: number): void {
-    if (this.pattern.test(value)) {
+    if (this.pattern.test(value) && value !== 'Backspace') {
       this.stepForward(index);
     } else if (value === 'Backspace') {
       this.stepBackward(index);
