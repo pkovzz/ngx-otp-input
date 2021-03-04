@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+ngx-otp-input {
+  .my-super-filled-class {
+    background: rgba(wheat, .75);
+  }
+
+  .my-super-success-class {
+    background: #d5ffb8;
+  }
+
+  .my-super-error-class {
+    background: #ffb2b2;
+  }
+}
