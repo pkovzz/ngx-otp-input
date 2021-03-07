@@ -26,7 +26,7 @@ npm i ngx-otp-input --save
 
 ## Usage
 
-You need to import NgxOtpInputModule to your module:
+Import NgxOtpInputModule to your module:
 
 ```javascript
 import { NgxOtpInputModule } from 'ngx-otp-input';
@@ -37,7 +37,7 @@ import { NgxOtpInputModule } from 'ngx-otp-input';
 export class MySuperModule {}
 ```
 
-Set up the configuration object in your component file like so:
+Set up the configuration object in your component file:
 
 ```javascript
 otpInputConfig: NgxOtpInputConfig = {
@@ -55,15 +55,15 @@ Then use the `<ngx-otp-input>` tag with your config in your template file:
 
 ## Options
 
-- [[config]](#[config])
-- [[status]](#[status])
-- [[disable]](#[disable])
-- [(otpChange)](<#(otpChange)>)
-- [(fill)](<#(fill)>)
+- [[config]](#config)
+- [[status]](#status)
+- [[disable]](#disable)
+- [(otpChange)](#otpchange)
+- [(fill)](#fill)
 
 ### [config]
 
-The configuration object sets the library's initial state.
+The configuration object set the library's initial state.
 
 | Property | Type              | Required |
 | -------- | ----------------- | -------- |
@@ -73,7 +73,7 @@ The configuration object sets the library's initial state.
 
 **otpLength**
 
-Sets the number of inputs.
+Set the number of inputs.
 
 | Property  | Type   | Required |
 | --------- | ------ | -------- |
@@ -81,7 +81,7 @@ Sets the number of inputs.
 
 **pattern**
 
-Determines which characters be allowed according to a RegExp pattern.
+Determines which characters are allowed according to a RegExp pattern.
 
 | Property | Type   | Required | Default value            |
 | -------- | ------ | -------- | ------------------------ |
@@ -217,7 +217,7 @@ ngx-otp-input {
 
 ### How to override existing styles
 
-Same as applying new styles, but you have to address it is more precisely. You can find the default classes above.
+Same as applying new styles, but you have to address it more precisely. You can find the default classes above.
 
 ```scss
 ngx-otp-input {

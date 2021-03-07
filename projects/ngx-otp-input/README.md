@@ -8,21 +8,25 @@ link
 
 ### StackBlitz example
 
-link
+https://stackblitz.com/edit/angular-ngx-otp-input
 
 ## Overview
 
 - [Install](#install)
 - [Usage](#usage)
 - [Options](#options)
-- [Styling](#Styling)
-- [License](#License)
+- [Styling](#styling)
+- [License](#license)
 
 ## Install
 
+```
+npm i ngx-otp-input --save
+```
+
 ## Usage
 
-You need to import NgxOtpInputModule to your module:
+Import NgxOtpInputModule to your module:
 
 ```javascript
 import { NgxOtpInputModule } from 'ngx-otp-input';
@@ -33,7 +37,7 @@ import { NgxOtpInputModule } from 'ngx-otp-input';
 export class MySuperModule {}
 ```
 
-Set up the configuration object in your component file like so:
+Set up the configuration object in your component file:
 
 ```javascript
 otpInputConfig: NgxOtpInputConfig = {
@@ -54,22 +58,22 @@ Then use the `<ngx-otp-input>` tag with your config in your template file:
 - [[config]](#config)
 - [[status]](#status)
 - [[disable]](#disable)
-- [(otpChange)](#otpChange)
+- [(otpChange)](#otpchange)
 - [(fill)](#fill)
 
-**[config]**
+### [config]
 
-The configuration object sets the library's initial state.
+The configuration object set the library's initial state.
 
 | Property | Type              | Required |
 | -------- | ----------------- | -------- |
 | [config] | NgxOtpInputConfig | true     |
 
-NgxOtpInputConfig has the following properties:
+`NgxOtpInputConfig` has the following properties:
 
 **otpLength**
 
-Sets the number of inputs.
+Set the number of inputs.
 
 | Property  | Type   | Required |
 | --------- | ------ | -------- |
@@ -77,7 +81,7 @@ Sets the number of inputs.
 
 **pattern**
 
-Determines which characters be allowed according to a RegExp pattern.
+Determines which characters are allowed according to a RegExp pattern.
 
 | Property | Type   | Required | Default value            |
 | -------- | ------ | -------- | ------------------------ |
@@ -107,26 +111,52 @@ Set the aria label attribute to the `label` tag around the input.
 | ---------- | ------------------ | -------- | ------------------------- |
 | ariaLabels | string or string[] | false    | "One time password input" |
 
-If you set only a sngle string, it will be applied to every label. However, you can set
-different aria label text for each input if you provide them as a string array.
-Please note, that if the given array's length is less than the number of inputs,
-the leftover will get the default value.
+If you set a single string, it will be applied to every label. However, you can set different aria label text for
+each input if you provide them as a string array. Please note, that if the given array's length is less than the number
+of inputs, the leftover will get the default value.
 
 **classList**
 
-`classList` is an object, which contains …
+`classList` is an object, which contains further properties, each with the type of string or string[].  
+These properties are addressing certain elements of the component.
 
 | Property  | Type   | Required | Default value |
 | --------- | ------ | -------- | ------------- |
 | classList | object | false    | -             |
 
-For more, please read the Styling section.
+For more information, please read the [Styling](#styling) section.
+
+### [disable]
+
+Disable inputs.
+
+| Property  | Type    | Required | Default value |
+| --------- | ------- | -------- | ------------- |
+| [disable] | boolean | false    | false         |
+
+### [status]
+
+Set a visible status to the component. This status will apply `inputSuccess` or `inputError` styles.
+
+| Property | Value                | Required | Default value |
+| -------- | -------------------- | -------- | ------------- |
+| [status] | "success" or "error" | false    | -             |
+
+For more information, please read the [Styling](#styling) section.
+
+### (otpChange)
+
+Emit a string array value on every input change.
+
+### (fill)
+
+Emit the final value as a string when every input is filled.
 
 ## Styling
 
-To apply css classes to certain parts of the library, you have to define them in
-the configuration object's `classList` property as mentioned above. Each property has the type `string` or `string[]`.
-These classes will be applied as [[ngClass]](#https://angular.io/api/common/NgClass).
+To apply css classes to certain parts of the library, you have to define them in the configuration object's `classList`
+property as mentioned above. Each property has the type `string` or `string[]`. These classes will be applied
+as [[ngClass]](#https://angular.io/api/common/NgClass).
 
 You can use these properties:
 
@@ -175,8 +205,7 @@ otpInputConfig: NgxOtpInputConfig = {
 
 ### How to apply new styles
 
-For now, the recommended way to customize the component is to use the `styles.scss` file in your
-app's root like this:
+For now, the recommended way to customize the component is to use the `styles.scss` file in your app's root like this:
 
 ```scss
 ngx-otp-input {
@@ -188,8 +217,7 @@ ngx-otp-input {
 
 ### How to override existing styles
 
-Same as applying new styles, but you have to address it is more precisely. You can find the default
-classes above.
+Same as applying new styles, but you have to address it more precisely. You can find the default classes above.
 
 ```scss
 ngx-otp-input {
