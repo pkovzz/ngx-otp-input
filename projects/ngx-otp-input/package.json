@@ -1,11 +1,23 @@
 {
   "name": "ngx-otp-input",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "peerDependencies": {
     "@angular/common": "^11.0.9",
     "@angular/core": "^11.0.9"
   },
   "dependencies": {
     "tslib": "^2.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pkovzz/ngx-otp-input"
+  },
+  "bugs": {
+    "url": "https://github.com/pkovzz/ngx-otp-input/issues"
+  },
+  "homepage": "https://github.com/pkovzz/ngx-otp-input",
+  "description": "One time password input library for Angular",
+  "keywords": ["one time password", "otp", "anular"],
+  "author": "Kovács Péter",
+  "license": "MIT"
 }

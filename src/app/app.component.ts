@@ -13,6 +13,7 @@ export class AppComponent {
     otpLength: 6,
     autofocus: true,
     classList: {
+      inputBox: 'my-super-box-class',
       input: 'my-super-class',
       inputFilled: 'my-super-filled-class',
       inputDisabled: 'my-super-disable-class',
