@@ -29,6 +29,6 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: ng lint
+      - run:
       - run: ng test --watch=false --browsers=ChromeHeadless
 

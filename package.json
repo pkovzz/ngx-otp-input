@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "test-lib": "ng test ngx-otp-input",
     "lint": "ng lint",
+    "lib-lint": "ng lint ngx-otp-input",
     "e2e": "ng e2e",
     "build-lib": "ng build ngx-otp-input",
     "watch-lib": "ng build ngx-otp-input --watch"
