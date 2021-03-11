@@ -137,8 +137,8 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setInputClasses(): void {
-    const a = [];
-    const c = this.config.classList;
+    const inputEntry = [];
+    const classList = this.config.classList;
 
     for (let i = 0; i < this.config.otpLength; i++) {
       const isFilled = this.isInputFilled(i)
@@ -157,10 +157,10 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
         status = this.config.classList.inputError;
       }
 
-      a[i] = [c?.input, isFilled, isDisabled, status];
+      inputEntry[i] = [classList?.input || '', isFilled, isDisabled, status];
     }
 
-    this.classList = a;
+    this.classList = inputEntry;
   }
 
   private setValue(value: string): void {

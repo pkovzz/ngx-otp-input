@@ -5,8 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng test",
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "test-lib": "ng test ngx-otp-input --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
+    "lint-lib": "ng lint ngx-otp-input",
     "e2e": "ng e2e",
     "build-lib": "ng build ngx-otp-input",
     "watch-lib": "ng build ngx-otp-input --watch"
@@ -23,7 +25,6 @@
     "@angular/platform-browser": "~11.0.5",
     "@angular/platform-browser-dynamic": "~11.0.5",
     "@angular/router": "~11.0.5",
-    "ngx-otp-input": "file:dist/ngx-otp-input",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

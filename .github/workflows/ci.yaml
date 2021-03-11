@@ -2,7 +2,7 @@
 
 name: CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -29,6 +29,6 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      # - run: ng test --watch=false --browsers=ChromeHeadless
-      # - run: ng build ngx-otp-input --prod
-      # - run: ng build ngx-otp-input-demo --prod
+      - run: npm run lint-lib
+      - run: npm run test-lib
+
