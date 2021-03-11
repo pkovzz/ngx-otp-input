@@ -24,8 +24,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2.1.5
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 12
       - run: npm ci
-      - run: ng test --watch=false --browsers=ChromeHeadless
-      - run: ng build ngx-otp-input --prod
-      - run: ng build ngx-otp-input-demo --prod
+      # - run: ng test --watch=false --browsers=ChromeHeadless
+      # - run: ng build ngx-otp-input --prod
+      # - run: ng build ngx-otp-input-demo --prod
