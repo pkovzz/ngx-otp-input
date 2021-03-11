@@ -28,6 +28,8 @@ jobs:
         uses: actions/setup-node@v2.1.5
         with:
           node-version: 12
+      - run: npm install -g @angular/cli
+      - run: ng build ngx-otp-input --prod
       - run: npm ci
       # - run: ng test --watch=false --browsers=ChromeHeadless
       # - run: ng build ngx-otp-input --prod
