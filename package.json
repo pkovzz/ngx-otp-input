@@ -8,7 +8,7 @@
     "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test-lib": "ng test ngx-otp-input --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",
-    "lib-lint": "ng lint ngx-otp-input",
+    "lint-lib": "ng lint ngx-otp-input",
     "e2e": "ng e2e",
     "build-lib": "ng build ngx-otp-input",
     "watch-lib": "ng build ngx-otp-input --watch"
