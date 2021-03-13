@@ -24,4 +24,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGEJSON_DIR: 'projects/ngx-otp-input'
         with:
-          tag-prefix: 'v'
+          tag-prefix: ''
