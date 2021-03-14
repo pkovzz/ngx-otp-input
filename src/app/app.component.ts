@@ -12,6 +12,14 @@ export class AppComponent {
   otpInputConfig: NgxOtpInputConfig = {
     otpLength: 6,
     autofocus: true,
+    classList: {
+      inputBox: 'my-super-box-class',
+      input: 'my-super-class',
+      inputFilled: 'my-super-filled-class',
+      inputDisabled: 'my-super-disable-class',
+      inputSuccess: 'my-super-success-class',
+      inputError: 'my-super-error-class',
+    },
   };
 
   regex: string;

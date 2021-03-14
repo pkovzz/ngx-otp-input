@@ -4,7 +4,7 @@ NgxOtpInput is a simple one time password input library for Angular.
 
 ### Demo page
 
-link
+http://ngx-otp-input.vercel.app
 
 ### StackBlitz example
 
@@ -85,7 +85,7 @@ Determines which characters are allowed according to a RegExp pattern.
 
 | Property | Type   | Required | Default value            |
 | -------- | ------ | -------- | ------------------------ |
-| pattern  | number | false    | `/^\d+$/` (numbers only) |
+| pattern  | RegExp | false    | `/^\d+$/` (numbers only) |
 
 **autofocus**
 
@@ -156,7 +156,7 @@ Emit the final value as a string when every input is filled.
 
 To apply css classes to certain parts of the library, you have to define them in the configuration object's `classList`
 property as mentioned above. Each property has the type `string` or `string[]`. These classes will be applied
-as [[ngClass]](#https://angular.io/api/common/NgClass).
+as [[ngClass]](https://angular.io/api/common/NgClass).
 
 You can use these properties:
 
