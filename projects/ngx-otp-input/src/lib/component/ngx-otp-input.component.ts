@@ -14,7 +14,8 @@ import {
 } from '@angular/core';
 import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { from, of, Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -26,6 +27,7 @@ import { Subscription } from 'rxjs';
 export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   private ngxOtpArray = new FormArray([]);
   private ngxOtpArray$: Subscription;
+  private focus$ = new Subject<number>();
   private focusedInputHasValue = false;
   private lastFocus = 0;
   private defaultAriaLabel = 'One time password input';
@@ -79,6 +81,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.ngxOtpArray$.unsubscribe();
+    this.focus$.unsubscribe();
   }
 
   getAriaLabelByIndex(index: number): string {
@@ -188,7 +191,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.ngxOtpArray.valid) {
       this.removeFocus(index);
     } else if (index < this.config.otpLength - 1) {
-      this.setFocus(index + 1);
+      this.focus$.next(index);
     }
   }
 
@@ -234,5 +237,9 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
         this.fill.emit(values.join(''));
       }
     });
+
+    this.focus$
+      .pipe(debounceTime(100))
+      .subscribe((index) => this.setFocus(index + 1));
   }
 }
