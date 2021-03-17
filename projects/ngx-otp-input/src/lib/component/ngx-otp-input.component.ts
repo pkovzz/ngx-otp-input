@@ -173,11 +173,11 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
         .split('')
         .slice(0, this.config.otpLength)
         .map((character: string, index: number) => {
-          this.setInputClasses();
           this.getFormControlByIndex(index).setValue(character);
           lastIndex = index;
         });
 
+      this.setInputClasses();
       this.setFocusAfterValueSet(lastIndex);
     }
   }

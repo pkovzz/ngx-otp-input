@@ -160,33 +160,40 @@ as [[ngClass]](https://angular.io/api/common/NgClass).
 
 You can use these properties:
 
-- container
-- inputBox
-- input
-- inputFilled
-- inputDisabled
-- inputSuccess
-- inputError
+- [container](#container)
+- [inputBox](#inputbox)
+- [input](#input)
+- [inputFilled](#inputfilled)
+- [inputDisabled](#inputdisabled)
+- [inputSuccess](#inputsuccess)
+- [inputError](#inputerror)
 
-**container**  
+### container
+
 The top level container. Default class is `ngx-otp-input-container`.
 
-**inputBox**  
+### inputBox
+
 The wrapper element of each input. Default class is `ngx-otp-input-box`
 
-**input**  
+### input
+
 The input element itself. Default class is `ngx-otp-input`.
 
-**inputFilled**  
+### inputFilled
+
 The set class will be only applied if the input has some value.
 
-**inputDisabled**  
+### inputDisabled
+
 The set class will be only applied, if the `[disabled]` option is `true`.
 
-**inputSuccess**  
+### inputSuccess
+
 The set class will be only applied, if the `[status]` option is `success`.
 
-**inputError**  
+### inputError
+
 The set class will be only applied, if the `[status]` option is `error`.
 
 Here is an example:

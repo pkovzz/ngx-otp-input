@@ -18,12 +18,14 @@
   "homepage": "https://github.com/pkovzz/ngx-otp-input",
   "description": "One time password input library for Angular",
   "keywords": [
-    "one time password input",
+    "one time password",
     "otp",
     "angular",
     "ng2",
     "ngx",
-    "ngx-otp-input"
+    "ngx-otp-input",
+    "sms code",
+    "sms"
   ],
   "author": "Kovács Péter",
   "license": "MIT"
