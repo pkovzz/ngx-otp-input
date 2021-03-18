@@ -234,6 +234,14 @@ ngx-otp-input {
 }
 ```
 
+## Contributing
+
+See more [here](CONTRIBUTING.md).
+
+## Changelog
+
+You can find the previous changes [here](CHANGELOG.md).
+
 ## License
 
 [MIT](LICENSE)
