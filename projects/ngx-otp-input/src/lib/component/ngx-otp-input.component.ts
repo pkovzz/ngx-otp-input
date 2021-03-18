@@ -145,7 +145,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
     for (let i = 0; i < this.config.otpLength; i++) {
       const isFilled = this.isInputFilled(i)
-        ? this.config.classList?.inputFilled
+        ? this.config.classList?.inputFilled || ''
         : '';
 
       const isDisabled = this.isDisabled
