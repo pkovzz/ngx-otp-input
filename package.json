@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-host": "ng serve --host 0.0.0.0",
     "build": "ng build",
     "build-lib": "ng build ngx-otp-input --prod",
     "test": "ng test --watch=false --browsers=ChromeHeadless",

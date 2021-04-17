@@ -72,6 +72,13 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    if (this.config.numericInputMode || !this.config.pattern) {
+      this.otpInputElements.map((element) => {
+        element.nativeElement.setAttribute('inputmode', 'numeric');
+        element.nativeElement.setAttribute('pattern', '[0-9]*');
+      });
+    }
+
     if (this.config.autofocus) {
       this.setFocus(0);
     }

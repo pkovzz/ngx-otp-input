@@ -126,6 +126,17 @@ These properties are addressing certain elements of the component.
 
 For more information, please read the [Styling](#styling) section.
 
+**numericInputMode**
+
+Set input mode to numeric. For the better UX on mobile devices,
+this will be enabled by default if the `pattern` property did not set.
+
+| Property         | Type    | Required | Default value |
+| ---------------- | ------- | -------- | ------------- |
+| numericInputMode | boolean | false    | -             |
+
+Note: Do not use with `pattern` which allows any other characters than numbers.
+
 ### [disable]
 
 Disable inputs.

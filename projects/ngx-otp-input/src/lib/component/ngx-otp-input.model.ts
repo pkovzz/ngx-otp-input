@@ -6,6 +6,7 @@ export interface NgxOtpInputConfig {
   autofocus?: boolean;
   isPasswordInput?: boolean;
   ariaLabels?: string | string[];
+  numericInputMode?: boolean;
   classList?: {
     container?: string | string[];
     inputBox?: string | string[];
