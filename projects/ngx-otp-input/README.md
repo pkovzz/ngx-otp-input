@@ -15,6 +15,7 @@ https://stackblitz.com/edit/angular-ngx-otp-input
 - [Install](#install)
 - [Usage](#usage)
 - [Options](#options)
+- [Clear](#clear)
 - [Styling](#styling)
 - [License](#license)
 
@@ -162,6 +163,28 @@ Emit a string array value on every input change.
 ### (fill)
 
 Emit the final value as a string when every input is filled.
+
+## Clear
+
+Sometimes you may want to clear the input's value. To do this, invoke the library's `clear` method.
+
+First, add a template reference variable as a string:
+
+```angular2html
+<ngx-otp-input #ngxotp></ngx-otp-input>
+```
+
+Now you access it in your parent component like this:
+
+```typescript
+export class AppComponent {
+  @ViewChild('ngxotp') ngxOtp: NgxOtpInputComponent;
+
+  mySuperEvent(): void {
+    this.ngxOtp.clear();
+  }
+}
+```
 
 ## Styling
 

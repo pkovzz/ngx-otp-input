@@ -126,6 +126,11 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  clear(): void {
+    this.ngxOtpArray.reset();
+    this.setInputClasses();
+  }
+
   private setUpOtpForm(): void {
     for (let i = 0; i < this.config.otpLength; i++) {
       this.ngxOtpArray.push(new FormControl(null, [Validators.required]));

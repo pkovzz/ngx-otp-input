@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NgxOtpInputConfig } from 'ngx-otp-input';
+import { Component, ViewChild } from '@angular/core';
+import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +7,8 @@ import { NgxOtpInputConfig } from 'ngx-otp-input';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  @ViewChild('ngxotp') ngxOtp: NgxOtpInputComponent;
+
   showNgxOtpInput = true;
 
   otpInputConfig: NgxOtpInputConfig = {
@@ -51,5 +53,9 @@ export class AppComponent {
         entry.replace(/\s/g, '')
       );
     }
+  }
+
+  clear(): void {
+    this.ngxOtp.clear();
   }
 }

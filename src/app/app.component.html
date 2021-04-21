@@ -75,6 +75,10 @@
       </div>
     </div>
 
+    <button (click)="clear()" mat-raised-button color="secondary">
+      Clear value
+    </button>
+
     <button (click)="reload()" mat-raised-button color="primary">
       Reload component
     </button>
@@ -87,6 +91,7 @@
       <div class="result">(fill): {{ fillResult }}</div>
     </div>
     <ngx-otp-input
+      #ngxotp
       *ngIf="showNgxOtpInput"
       [config]="otpInputConfig"
       [disable]="ngxOtpDisable"
