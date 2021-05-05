@@ -4,6 +4,7 @@ export interface NgxOtpInputConfig {
   otpLength: number;
   pattern?: RegExp;
   autofocus?: boolean;
+  autoblur?: boolean;
   isPasswordInput?: boolean;
   ariaLabels?: string | string[];
   numericInputMode?: boolean;

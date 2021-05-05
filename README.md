@@ -96,6 +96,14 @@ Set focus on the first input on component's load.
 | --------- | ------- | -------- | ------------- |
 | autofocus | boolean | false    | false         |
 
+**autoblur**
+
+Remove focus when every input box is filled.
+
+| Property | Type    | Required | Default value |
+| -------- | ------- | -------- | ------------- |
+| autoblur | boolean | false    | true          |
+
 **isPasswordInput**
 
 Set the type of the inputs. It can be `text` or `password`.

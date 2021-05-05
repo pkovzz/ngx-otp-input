@@ -69,6 +69,10 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setUpAriaLabels();
     this.setInputClasses();
     this.otpFormChangeListener();
+
+    if (this.config.autoblur === undefined) {
+      this.config.autoblur = true;
+    }
   }
 
   ngAfterViewInit(): void {
@@ -198,7 +202,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private stepForward(index: number): void {
-    if (this.ngxOtpArray.valid) {
+    if (this.ngxOtpArray.valid && this.config.autoblur) {
       this.removeFocus(index);
     } else if (index < this.config.otpLength - 1) {
       this.setFocus(index + 1);
