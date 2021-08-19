@@ -11,6 +11,8 @@ import {
   Output,
   QueryList,
   ViewChildren,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
@@ -23,13 +25,13 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./ngx-otp-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NgxOtpInputComponent
+  implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   private ngxOtpArray = new FormArray([]);
   private ngxOtpArray$: Subscription;
   private focusedInputHasValue = false;
   private lastFocus = 0;
   private defaultAriaLabel = 'One time password input';
-  private isDisabled: boolean;
   private ngxOtpStatus: NgxOtpStatus;
 
   ariaLabels = [];
@@ -41,15 +43,11 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   @Input() config: NgxOtpInputConfig;
+  @Input() disable = false;
 
   @Input() set status(status: NgxOtpStatus) {
     this.ngxOtpStatus = status;
     this.setInputClasses();
-  }
-
-  @Input() set disable(isDisabled: boolean) {
-    this.isDisabled = isDisabled;
-    this.handleDisable(isDisabled);
   }
 
   @Output() otpChange: EventEmitter<string[]> = new EventEmitter<string[]>();
@@ -62,13 +60,12 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setValue(event.clipboardData.getData('text'));
   }
 
-  constructor() {}
-
   ngOnInit(): void {
     this.setUpOtpForm();
     this.setUpAriaLabels();
     this.setInputClasses();
     this.otpFormChangeListener();
+    this.handleDisable(this.disable);
 
     if (this.config.autoblur === undefined) {
       this.config.autoblur = true;
@@ -85,6 +82,12 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.config.autofocus) {
       this.setFocus(0);
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty('disable')) {
+      this.handleDisable(this.disable);
     }
   }
 
@@ -162,7 +165,7 @@ export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
         ? this.config.classList?.inputFilled || ''
         : '';
 
-      const isDisabled = this.isDisabled
+      const isDisabled = this.disable
         ? this.config.classList?.inputDisabled || 'ngx-otp-input-disabled'
         : '';
 
