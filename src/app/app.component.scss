@@ -1,36 +1,82 @@
-.welcome {
-  width: 650px;
-  margin: 36px auto;
+section {
+  max-width: 768px;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
 .demo-container {
   display: flex;
-  justify-content: space-between;
-  width: 650px;
-  margin: 0 auto;
-  padding-top: 24px;
+  flex-direction: column;
+
+  h3 {
+    align-self: flex-start;
+  }
 }
 
-.settings,
-.demo {
-  flex: 1;
-}
-
-.control,
-.result {
-  margin-bottom: 8px;
-}
-
-.checks,
-.radios {
-  margin: 16px 0;
-}
-
-.outputs {
-  margin-bottom: 24px;
-}
-
-button {
+ngx-otp-input {
   display: block;
-  margin-bottom: 16px;
+  margin: 40px 0;
+}
+
+.settings {
+  display: flex;
+}
+
+.inputs {
+  flex: 1;
+
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
+
+.options {
+  flex: 1;
+  padding-left: 32px;
+
+  mat-checkbox,
+  mat-radio-button {
+    display: block;
+    margin-bottom: 16px;
+  }
+}
+
+.actions {
+  align-self: flex-start;
+  button {
+    display: block;
+    margin-top: 24px;
+  }
+}
+
+.hint {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.result {
+  margin: 4px 0;
+}
+
+@media screen and (max-width: 768px) {
+  section {
+    padding: 20px;
+  }
+
+  .settings {
+    flex-direction: column;
+  }
+
+  .options {
+    margin-top: 16px;
+    padding: 0;
+  }
+
+  .actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 }

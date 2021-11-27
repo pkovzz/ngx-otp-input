@@ -7,7 +7,6 @@ import { PatternDirective } from './pattern.directive';
 @NgModule({
   declarations: [NgxOtpInputComponent, PatternDirective],
   imports: [ReactiveFormsModule, FormsModule, CommonModule],
-  exports: [NgxOtpInputComponent]
+  exports: [NgxOtpInputComponent],
 })
-export class NgxOtpInputModule {
-}
+export class NgxOtpInputModule {}

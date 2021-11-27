@@ -23,7 +23,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCheckboxModule,
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent],
