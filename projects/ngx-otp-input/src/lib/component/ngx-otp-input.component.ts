@@ -19,7 +19,7 @@ import { FormArray, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'ngx-otp-input',
   templateUrl: './ngx-otp-input.component.html',
   styleUrls: ['./ngx-otp-input.component.scss'],
