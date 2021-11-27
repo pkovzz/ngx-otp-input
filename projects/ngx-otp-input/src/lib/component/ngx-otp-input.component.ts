@@ -19,7 +19,6 @@ import { FormArray, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'ngx-otp-input',
   templateUrl: './ngx-otp-input.component.html',
   styleUrls: ['./ngx-otp-input.component.scss'],
@@ -238,7 +237,7 @@ export class NgxOtpInputComponent
     return this.getFormControlByIndex(index)?.valid;
   }
 
-  private getInputElementByIndex(index: number): any {
+  private getInputElementByIndex(index: number): HTMLInputElement {
     return this.otpInputElements.toArray()[index].nativeElement;
   }
 

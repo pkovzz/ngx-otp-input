@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
 
 @Component({
-  selector: 'app-root',
+  selector: 'ngx-app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
