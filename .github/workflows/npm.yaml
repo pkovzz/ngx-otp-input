@@ -1,8 +1,8 @@
-name: "NPM Publish"
+name: 'NPM Publish'
 
 on:
   release:
-    types: [ created ]
+    types: [created]
 
 jobs:
   publish-npm:
@@ -15,7 +15,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run build-lib
-      - name: "🚀 Publish"
+      - name: '🚀 Publish'
         run: npm publish dist/ngx-otp-input --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

@@ -1,4 +1,3 @@
-
 $borderColor: #212121;
 
 .ngx-otp-input-container {
@@ -10,11 +9,11 @@ $borderColor: #212121;
 }
 
 .ngx-otp-input-box:first-child {
-  margin-left: 0
+  margin-left: 0;
 }
 
 .ngx-otp-input-box:last-child {
-  margin-right: 0
+  margin-right: 0;
 }
 
 .ngx-otp-input {
@@ -28,5 +27,5 @@ $borderColor: #212121;
 }
 
 .ngx-otp-input-disabled {
-  opacity: .3;
+  opacity: 0.3;
 }
