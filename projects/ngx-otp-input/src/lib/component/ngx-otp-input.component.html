@@ -1,25 +1,27 @@
-<form [ngClass]="config.classList?.container" class="ngx-otp-input-container">
+<form
+  [ngClass]="otpConfig.classList?.container"
+  class="ngx-otp-input-container"
+>
   <div
-    *ngFor="let control of ngxOtpArrayControls; let i = index"
-    [ngClass]="config.classList?.inputBox"
+    *ngFor="let control of ngxOtpArray.controls; let i = index"
+    [ngClass]="otpConfig.classList?.inputBox"
     class="ngx-otp-input-box"
   >
-    <label [attr.aria-label]="getAriaLabelByIndex(i)">
+    <label [attr.aria-label]="ariaLabels[i]">
       <input
         #otpInputElement
         [id]="'ngx-otp-input-' + i"
         [formControl]="control"
-        [ngxOtpPattern]="pattern"
-        [type]="config.isPasswordInput ? 'password' : 'text'"
-        [ngClass]="classList[i]"
+        [ngxOtpPattern]="otpConfig.pattern"
+        [type]="otpConfig.isPasswordInput ? 'password' : 'text'"
+        [ngClass]="styles[i]"
+        (keyup)="handleKeyUp(i, $event.key)"
+        (keyup.backspace)="handleDelete(i)"
+        (keyup.arrowLeft)="stepBackward(i)"
+        (keyup.arrowRight)="stepForward(i)"
         (focus)="handleFocus(i)"
-        (keyup)="handleKeyup($event.key, i)"
-        (keyup.arrowLeft)="handleLeftArrow(i)"
-        (keyup.arrowRight)="handleRightArrow(i)"
-        (keydown.backspace)="handleKeydown(i)"
         class="ngx-otp-input"
         maxlength="1"
-        autocomplete="off"
         autocapitalize="off"
         spellcheck="false"
       />

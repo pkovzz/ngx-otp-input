@@ -1,60 +1,84 @@
 <section>
-  <div class='welcome'>
+  <div class="welcome">
     <h1>ngx-otp-input demo</h1>
     <p>
-      This little demo just a quick overview what is the lib capable of. For more
-      details, please visit the
-      <a href='https://github.com/pkovzz/ngx-otp-input' target='_blank'>documentation.</a>
+      This little demo just a quick overview what is the lib capable of. For
+      more details, please visit the
+      <a href="https://github.com/pkovzz/ngx-otp-input" target="_blank">
+        documentation.
+      </a>
     </p>
   </div>
-  <div class='demo-container'>
+  <div class="demo-container">
     <ngx-otp-input
       #ngxotp
-      *ngIf='showNgxOtpInput'
-      [config]='otpInputConfig'
-      [disable]='ngxOtpDisable'
-      [status]='status'
-      (otpChange)='otpChangeResult = $event'
-      (fill)='fillResult = $event'></ngx-otp-input>
+      *ngIf="showNgxOtpInput"
+      [status]="status"
+      [config]="otpInputConfig"
+      [disable]="ngxOtpDisable"
+      (otpChange)="handleOtpChange($event)"
+      (fill)="handleFill($event)"
+    ></ngx-otp-input>
     <h3>Outputs</h3>
-    <div class="result"><i>(otpChange):</i> {{ otpChangeResult | json }}</div>
+    <div class="result"><i>(otpChange):</i> &nbsp; [{{ otpChangeResult }}]</div>
     <div class="result"><i>(fill):</i> {{ fillResult }}</div>
     <h3>Configurations</h3>
-    <div class='settings'>
-      <div class='inputs'>
-        <mat-form-field appearance='outline'>
+    <div class="settings">
+      <div class="inputs">
+        <mat-form-field appearance="outline">
           <mat-label>Number of inputs</mat-label>
           <input
             matInput
-            [(ngModel)]='otpInputConfig.otpLength'
-            type='number'
-            [min]='1' />
+            [(ngModel)]="otpInputConfig.otpLength"
+            type="number"
+            [min]="1"
+          />
         </mat-form-field>
 
-        <mat-form-field appearance='outline'>
+        <mat-form-field appearance="outline">
           <mat-label>RegExp pattern</mat-label>
-          <input [(ngModel)]='regex' (blur)='setRegex()' matInput />
+          <input [(ngModel)]="regex" (blur)="setRegex()" matInput />
           <mat-hint>Default is "numbers only".</mat-hint>
         </mat-form-field>
 
-        <mat-form-field appearance='outline'>
+        <mat-form-field appearance="outline">
           <mat-label>Aria labels</mat-label>
-          <input [(ngModel)]='ariaLabels' (blur)='setAriaLabels()' matInput />
+          <input [(ngModel)]="ariaLabels" (blur)="setAriaLabels()" matInput />
           <mat-hint>Separate items with comma</mat-hint>
         </mat-form-field>
       </div>
-      <div class='options'>
-        <mat-checkbox [(ngModel)]='otpInputConfig.autofocus'>Autofocus</mat-checkbox>
-        <mat-checkbox [(ngModel)]='otpInputConfig.autoblur'>Autoblur</mat-checkbox>
-        <mat-checkbox [(ngModel)]='otpInputConfig.isPasswordInput'>Password type</mat-checkbox>
-        <mat-checkbox [(ngModel)]='ngxOtpDisable'>Disable</mat-checkbox>
-        <mat-radio-button (change)='status = null'>Mark as default</mat-radio-button>
-        <mat-radio-button (change)="status = 'success'">Mark as succeed</mat-radio-button>
-        <mat-radio-button (change)="status = 'error'">Mark as failed</mat-radio-button>
+      <div class="options">
+        <mat-checkbox [(ngModel)]="otpInputConfig.autofocus">
+          Autofocus
+        </mat-checkbox>
+
+        <mat-checkbox [(ngModel)]="otpInputConfig.autoblur">
+          Autoblur
+        </mat-checkbox>
+
+        <mat-checkbox [(ngModel)]="otpInputConfig.isPasswordInput">
+          Password type
+        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="ngxOtpDisable">Disable</mat-checkbox>
+
+        <mat-radio-group [(ngModel)]="status">
+          <mat-radio-button [value]="null"> Mark as default </mat-radio-button>
+          <mat-radio-button [value]="'success'">
+            Mark as succeed
+          </mat-radio-button>
+          <mat-radio-button [value]="'error'">
+            Mark as failed
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <mat-radio-group [(ngModel)]="otpInputConfig.behavior">
+          <mat-radio-button [value]="0"> Default behavior </mat-radio-button>
+          <mat-radio-button [value]="1"> Legacy behavior </mat-radio-button>
+        </mat-radio-group>
       </div>
     </div>
 
-    <div class='actions'>
+    <div class="actions">
       <button (click)="clear()" mat-raised-button color="secondary">
         Clear value OTP inputs
       </button>
@@ -62,7 +86,9 @@
       <button (click)="reload()" mat-raised-button color="primary">
         Reload component
       </button>
-      <span class='hint'>To apply new configuration changes, reload the component</span>
+      <span class="hint"
+        >To apply new configuration changes, reload the component</span
+      >
     </div>
   </div>
 </section>

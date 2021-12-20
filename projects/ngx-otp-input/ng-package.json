@@ -3,5 +3,9 @@
   "dest": "../../dist/ngx-otp-input",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "assets": [
+    "./_index.scss",
+    "./src/lib/theme/_theming.scss"
+  ]
 }

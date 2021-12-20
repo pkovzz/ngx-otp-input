@@ -1,11 +1,18 @@
 {
   "root": true,
-  "ignorePatterns": ["projects/**/*"],
+  "ignorePatterns": [
+    "projects/**/*"
+  ],
   "overrides": [
     {
-      "files": ["*.ts"],
+      "files": [
+        "*.ts"
+      ],
       "parserOptions": {
-        "project": ["tsconfig.json", "e2e/tsconfig.json"],
+        "project": [
+          "tsconfig.json",
+          "e2e/tsconfig.json"
+        ],
         "createDefaultProgram": true
       },
       "extends": [
@@ -28,12 +35,43 @@
             "style": "camelCase",
             "type": "attribute"
           }
-        ]
+        ],
+        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/member-ordering": [
+          "error",
+          {
+            "classes": [
+              "public-field",
+              "protected-field",
+              "private-field",
+              "public-decorated-field",
+              "protected-decorated-field",
+              "private-decorated-field",
+              "public-decorated-method",
+              "protected-decorated-method",
+              "private-decorated-method",
+              "public-decorated-set",
+              "protected-decorated-set",
+              "private-decorated-set",
+              "constructor",
+              "public-method",
+              "protected-method",
+              "private-method"
+            ]
+          }
+        ],
+        "no-console": "error",
+        "no-trailing-spaces": "error"
       }
     },
     {
-      "files": ["*.html"],
-      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended"
+      ],
       "rules": {}
     }
   ]

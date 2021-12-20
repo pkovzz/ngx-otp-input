@@ -60,6 +60,11 @@ ngx-otp-input {
   margin: 4px 0;
 }
 
+mat-radio-group {
+  display: block;
+  margin-top: 30px;
+}
+
 @media screen and (max-width: 768px) {
   section {
     padding: 20px;

@@ -1,7 +1,6 @@
 {
   "tabWidth": 2,
   "semi": true,
-  "bracketSpacing": true,
-  "bracketSameLine": true,
-  "singleQuote": true
+  "singleQuote": true,
+  "singleAttributePerLine": true
 }

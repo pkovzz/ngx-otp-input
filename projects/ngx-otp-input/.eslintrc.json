@@ -6,8 +6,8 @@
       "files": ["*.ts"],
       "parserOptions": {
         "project": [
-          "projects/ngx-otp-input/tsconfig.lib.json",
-          "projects/ngx-otp-input/tsconfig.spec.json"
+          "projects/ngx-otp-input/tsconfig.*.json",
+          "projects/ngx-otp-input/tsconfig.*.json"
         ],
         "createDefaultProgram": true
       },
@@ -28,19 +28,7 @@
             "prefix": "ngx",
             "style": "camelCase"
           }
-        ],
-        "@typescript-eslint/dot-notation": "off",
-        "@typescript-eslint/no-explicit-any": "error",
-        "arrow-parens": ["off", "always"],
-        "brace-style": ["off", "off"],
-        "linebreak-style": "off",
-        "new-parens": "off",
-        "newline-per-chained-call": "off",
-        "no-extra-semi": "off",
-        "no-irregular-whitespace": "off",
-        "no-trailing-spaces": "off",
-        "no-unused-vars": "error",
-        "space-in-parens": ["off", "never"]
+        ]
       }
     },
     {

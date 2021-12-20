@@ -1,12 +1,17 @@
 {
   "name": "ngx-otp-input",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "peerDependencies": {
     "@angular/common": "^11.0.9",
     "@angular/core": "^11.0.9"
   },
   "dependencies": {
     "tslib": "^2.0.0"
+  },
+  "exports": {
+    ".": {
+      "sass": "./_index.scss"
+    }
   },
   "repository": {
     "type": "git",
