@@ -1,22 +1,26 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
   Input,
-  OnDestroy,
   OnInit,
   Output,
+  Component,
+  OnDestroy,
   QueryList,
+  ElementRef,
   ViewChildren,
-  OnChanges,
-  SimpleChanges,
+  EventEmitter,
+  HostListener,
+  AfterViewInit,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { NgxOtpInputConfig, NgxOtpStatus } from './ngx-otp-input.model';
 import { FormArray, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { NgxOtpInputService } from '../ngx-otp-input.service';
+import {
+  NgxOtpStatus,
+  NgxOtpBehavior,
+  NgxOtpInputConfig,
+} from './ngx-otp-input.model';
 
 @Component({
   selector: 'ngx-otp-input',
@@ -24,225 +28,134 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./ngx-otp-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgxOtpInputComponent
-  implements OnInit, AfterViewInit, OnChanges, OnDestroy {
-  private ngxOtpArray = new FormArray([]);
-  private ngxOtpArray$: Subscription;
+export class NgxOtpInputComponent implements OnInit, AfterViewInit, OnDestroy {
+  ngxOtpArray = new FormArray([]);
+  ariaLabels: string[] = [];
+  pattern!: RegExp;
+  styles: string[][] = [];
+
+  otpConfig: NgxOtpInputConfig = {
+    otpLength: 6,
+    autofocus: true,
+    autoblur: true,
+    behavior: NgxOtpBehavior.DEFAULT,
+  };
+
+  private defaultPattern = /^\d+$/;
+  private DEFAULT_ARIA_LABEL = 'One time password input';
+  private LAST_INPUT_INDEX!: number;
+  private inputs!: HTMLInputElement[];
+  private isNgxOtpArrayDisabled = false;
+  private ngxOtpArray$!: Subscription;
   private focusedInputHasValue = false;
-  private lastFocus = 0;
-  private defaultAriaLabel = 'One time password input';
-  private ngxOtpStatus: NgxOtpStatus;
 
-  ariaLabels = [];
-  classList = [];
-  pattern: RegExp;
-
-  get ngxOtpArrayControls(): FormControl[] {
-    return this.ngxOtpArray.controls as FormControl[];
-  }
-
-  @Input() config: NgxOtpInputConfig;
-  @Input() disable = false;
-
-  @Input() set status(status: NgxOtpStatus) {
-    this.ngxOtpStatus = status;
-    this.setInputClasses();
-  }
+  @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
 
   @Output() otpChange: EventEmitter<string[]> = new EventEmitter<string[]>();
   @Output() fill: EventEmitter<string> = new EventEmitter<string>();
 
-  @ViewChildren('otpInputElement') otpInputElements: QueryList<ElementRef>;
-
   @HostListener('paste', ['$event']) onPaste(event: ClipboardEvent): void {
     event.preventDefault();
-    this.setValue(event.clipboardData.getData('text'));
+    this.handlePaste(event.clipboardData.getData('text'));
   }
+
+  @Input() set disable(isDisabled: boolean) {
+    this.handleDisable(isDisabled);
+    this.isNgxOtpArrayDisabled = isDisabled;
+  }
+
+  @Input() set config(c: NgxOtpInputConfig) {
+    this.otpConfig = { ...this.otpConfig, ...c };
+    if (this.otpConfig.classList?.input) {
+      this.setInitialStyles();
+    }
+    if (!c.pattern) {
+      this.otpConfig.pattern = this.defaultPattern;
+    }
+  }
+
+  @Input() set status(status: NgxOtpStatus) {
+    this.handleStatusChange(status);
+  }
+
+  constructor(
+    private readonly ngxOtpInputService: NgxOtpInputService,
+    private readonly ref: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.setUpOtpForm();
     this.setUpAriaLabels();
-    this.setInputClasses();
+    this.LAST_INPUT_INDEX = this.otpConfig.otpLength - 1;
     this.otpFormChangeListener();
-    this.handleDisable(this.disable);
-
-    if (this.config.autoblur === undefined) {
-      this.config.autoblur = true;
-    }
   }
 
   ngAfterViewInit(): void {
-    if (this.config.numericInputMode || !this.config.pattern) {
-      this.otpInputElements.map((element) => {
-        element.nativeElement.setAttribute('inputmode', 'numeric');
-        element.nativeElement.setAttribute('pattern', '[0-9]*');
-      });
-    }
-
-    if (this.config.autofocus) {
-      this.setFocus(0);
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty('disable')) {
-      this.handleDisable(this.disable);
-    }
+    this.setNativeHTMLElements();
+    this.setInitialFocus();
+    this.setNumericInputIfPossible();
+    this.handleDisable(this.isNgxOtpArrayDisabled);
   }
 
   ngOnDestroy(): void {
     this.ngxOtpArray$.unsubscribe();
   }
 
-  getAriaLabelByIndex(index: number): string {
-    return this.ariaLabels[index]
-      ? this.ariaLabels[index]
-      : this.defaultAriaLabel;
+  clear(): void {
+    this.removeStyleFromAll(this.otpConfig.classList?.inputFilled);
+    this.ngxOtpArray.reset();
+    this.ref.detectChanges();
+
+    if (this.otpConfig.autofocus) {
+      this.setFocus(0);
+    }
+  }
+
+  handleKeyUp(index: number, value: string): void {
+    if (this.otpConfig.pattern.test(value) && value !== 'Backspace') {
+      this.addStyle(index, this.otpConfig.classList?.inputFilled);
+      if (!this.ngxOtpArray.valid) {
+        this.getFormControlByIndex(index).setValue(value);
+        this.stepForward(index);
+      } else {
+        this.blur();
+      }
+    }
+  }
+
+  handleDelete(index: number): void {
+    this.removeStyle(index, this.otpConfig.classList?.inputFilled);
+    if (
+      (this.otpConfig.behavior === NgxOtpBehavior.LEGACY &&
+        !this.focusedInputHasValue) ||
+      this.otpConfig.behavior !== NgxOtpBehavior.LEGACY
+    ) {
+      this.stepBackward(index);
+    } else {
+      this.focusedInputHasValue = false;
+    }
   }
 
   handleFocus(index: number): void {
-    this.lastFocus = index;
-    this.getInputElementByIndex(index).select();
-  }
-
-  handleKeyup(value: string, index: number): void {
-    if (this.pattern.test(value) && value !== 'Backspace') {
-      this.getFormControlByIndex(index).setValue(value); // prevent fast type errors
-      this.stepForward(index);
-    } else if (value === 'Backspace') {
-      this.stepBackward(index);
+    this.focusedInputHasValue = !!this.ngxOtpArray.controls[index].value;
+    if (
+      this.otpConfig.behavior === NgxOtpBehavior.LEGACY &&
+      this.focusedInputHasValue
+    ) {
+      this.inputs[index].select();
     }
-
-    this.setInputClasses();
   }
 
-  handleKeydown(index: number): void {
-    this.focusedInputHasValue = !!this.getFormControlByIndex(index).value;
-  }
-
-  handleLeftArrow(index: number): void {
+  stepBackward(index: number): void {
     if (index > 0) {
       this.setFocus(index - 1);
     }
   }
 
-  handleRightArrow(index: number): void {
-    if (index < this.config.otpLength - 1) {
+  stepForward(index: number): void {
+    if (index < this.LAST_INPUT_INDEX) {
       this.setFocus(index + 1);
     }
-  }
-
-  clear(): void {
-    this.ngxOtpArray.reset();
-    this.setInputClasses();
-  }
-
-  private setUpOtpForm(): void {
-    for (let i = 0; i < this.config.otpLength; i++) {
-      this.ngxOtpArray.push(new FormControl(null, [Validators.required]));
-    }
-
-    this.pattern = this.config.pattern || /^\d+$/;
-  }
-
-  private setUpAriaLabels(): void {
-    if (this.config.ariaLabels) {
-      Array.isArray(this.config.ariaLabels)
-        ? (this.ariaLabels = this.config.ariaLabels)
-        : (this.ariaLabels = new Array(this.config.otpLength).fill(
-            this.config.ariaLabels
-          ));
-    }
-  }
-
-  private setInputClasses(): void {
-    const inputEntry = [];
-    const classList = this.config.classList;
-
-    for (let i = 0; i < this.config.otpLength; i++) {
-      const isFilled = this.isInputFilled(i)
-        ? this.config.classList?.inputFilled || ''
-        : '';
-
-      const isDisabled = this.disable
-        ? this.config.classList?.inputDisabled || 'ngx-otp-input-disabled'
-        : '';
-
-      let status: string | string[] = '';
-
-      if (this.ngxOtpStatus === 'success') {
-        status = this.config.classList.inputSuccess;
-      } else if (this.ngxOtpStatus === 'error') {
-        status = this.config.classList.inputError;
-      }
-
-      inputEntry[i] = [classList?.input || '', isFilled, isDisabled, status];
-    }
-
-    this.classList = inputEntry;
-  }
-
-  private setValue(value: string): void {
-    if (this.pattern.test(value)) {
-      let lastIndex = 0;
-      value
-        .split('')
-        .slice(0, this.config.otpLength)
-        .map((character: string, index: number) => {
-          this.getFormControlByIndex(index).setValue(character);
-          lastIndex = index;
-        });
-
-      this.setInputClasses();
-      this.setFocusAfterValueSet(lastIndex);
-    }
-  }
-
-  private handleDisable(disable: boolean): void {
-    disable ? this.ngxOtpArray?.disable() : this.ngxOtpArray?.enable();
-    this.setInputClasses();
-  }
-
-  private stepForward(index: number): void {
-    if (this.ngxOtpArray.valid && this.config.autoblur) {
-      this.removeFocus(index);
-    } else if (index < this.config.otpLength - 1) {
-      this.setFocus(index + 1);
-    }
-  }
-
-  private stepBackward(index: number): void {
-    if (!this.focusedInputHasValue && index > 0) {
-      this.setFocus(index - 1);
-    }
-  }
-
-  private setFocusAfterValueSet(lastIndex: number): void {
-    if (lastIndex < this.config.otpLength - 1) {
-      this.setFocus(lastIndex + 1);
-    } else {
-      this.removeFocus(this.lastFocus);
-    }
-  }
-
-  private setFocus(index: number): void {
-    this.getInputElementByIndex(index).focus();
-  }
-
-  private removeFocus(index: number): void {
-    this.getInputElementByIndex(index).blur();
-  }
-
-  private isInputFilled(index: number): boolean {
-    return this.getFormControlByIndex(index)?.valid;
-  }
-
-  private getInputElementByIndex(index: number): HTMLInputElement {
-    return this.otpInputElements.toArray()[index].nativeElement;
-  }
-
-  private getFormControlByIndex(index: number): FormControl {
-    return this.ngxOtpArray.controls[index] as FormControl;
   }
 
   private otpFormChangeListener(): void {
@@ -253,5 +166,137 @@ export class NgxOtpInputComponent
         this.fill.emit(values.join(''));
       }
     });
+  }
+
+  private setUpOtpForm(): void {
+    for (let i = 0; i < this.otpConfig.otpLength; i++) {
+      this.ngxOtpArray.push(new FormControl(null, [Validators.required]));
+    }
+  }
+
+  private setUpAriaLabels(): void {
+    const labels = this.otpConfig.ariaLabels;
+
+    this.ariaLabels = Array.isArray(labels)
+      ? labels
+      : new Array(this.otpConfig.otpLength).fill(
+          labels || this.DEFAULT_ARIA_LABEL
+        );
+  }
+
+  private setNativeHTMLElements(): void {
+    this.inputs = this.otpInputElements.map((element) => element.nativeElement);
+  }
+
+  private setInitialFocus(): void {
+    if (this.otpConfig.autofocus) {
+      this.setFocus(0);
+    }
+  }
+
+  private setInitialStyles(): void {
+    this.styles = this.ngxOtpInputService.init2DArray(this.otpConfig.otpLength);
+    this.addStyleToAll(this.otpConfig.classList.input);
+  }
+
+  private setFocus(index: number): void {
+    this.inputs[index].focus();
+  }
+
+  private setNumericInputIfPossible(): void {
+    if (this.otpConfig.numericInputMode) {
+      this.otpConfig.pattern = this.defaultPattern;
+      this.inputs.map((element) => {
+        element.setAttribute('inputmode', 'numeric');
+        element.setAttribute('pattern', '[0-9]*');
+      });
+    }
+  }
+
+  private blur(): void {
+    if (this.otpConfig.autoblur) {
+      this.inputs.map((input) => input.blur());
+    }
+  }
+
+  private handlePaste(value: string): void {
+    if (this.otpConfig.pattern.test(value)) {
+      let lastIndex = 0;
+      value
+        .split('')
+        .slice(0, this.otpConfig.otpLength)
+        .map((character: string, index: number) => {
+          this.addStyle(index, this.otpConfig.classList?.inputFilled);
+          this.getFormControlByIndex(index).setValue(character);
+          lastIndex = index;
+        });
+
+      if (this.ngxOtpArray.valid) {
+        this.blur();
+      } else {
+        this.setFocus(lastIndex + 1);
+      }
+    }
+  }
+
+  private handleDisable(isDisabled: boolean): void {
+    if (isDisabled) {
+      this.ngxOtpArray.disable();
+      this.addStyleToAll(this.otpConfig.classList?.inputDisabled);
+    } else {
+      this.ngxOtpArray.enable();
+      this.removeStyleFromAll(this.otpConfig.classList?.inputDisabled);
+    }
+  }
+
+  private handleStatusChange(status: NgxOtpStatus): void {
+    this.removeStyleFromAll([
+      ...this.ngxOtpInputService.toArray(
+        this.otpConfig.classList?.inputSuccess
+      ),
+      ...this.ngxOtpInputService.toArray(this.otpConfig.classList?.inputError),
+    ]);
+
+    if (status) {
+      if (status === 'success') {
+        this.addStyleToAll(this.otpConfig.classList?.inputSuccess);
+      } else if (status === 'error') {
+        this.addStyleToAll(this.otpConfig.classList?.inputError);
+      }
+    }
+  }
+
+  private getFormControlByIndex(index: number): FormControl {
+    return this.ngxOtpArray.controls[index] as FormControl;
+  }
+
+  private addStyle(index: number, styles: string | string[]): void {
+    this.styles = this.ngxOtpInputService.addItemAtIndex(
+      this.styles,
+      index,
+      this.ngxOtpInputService.toArray(styles)
+    );
+  }
+
+  private addStyleToAll(styles: string | string[]): void {
+    this.styles = this.ngxOtpInputService.addItemToAll(
+      this.styles,
+      this.ngxOtpInputService.toArray(styles)
+    );
+  }
+
+  private removeStyle(index: number, styles: string | string[]): void {
+    this.styles = this.ngxOtpInputService.removeItemAtIndex(
+      this.styles,
+      index,
+      this.ngxOtpInputService.toArray(styles)
+    );
+  }
+
+  private removeStyleFromAll(styles: string | string[]): void {
+    this.styles = this.ngxOtpInputService.removeItemFromAll(
+      this.styles,
+      this.ngxOtpInputService.toArray(styles)
+    );
   }
 }

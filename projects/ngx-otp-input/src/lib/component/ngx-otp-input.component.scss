@@ -1,5 +1,3 @@
-$borderColor: #212121;
-
 .ngx-otp-input-container {
   display: flex;
 }
@@ -21,7 +19,7 @@ $borderColor: #212121;
   height: 35px;
   text-align: center;
   font-size: 1.25rem;
-  border: 1px solid $borderColor;
+  border: 1px solid #212121;
   border-radius: 4px;
   outline: 0;
 }

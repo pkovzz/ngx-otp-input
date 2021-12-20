@@ -1,5 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
-import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import {
+  NgxOtpBehavior,
+  NgxOtpInputComponent,
+  NgxOtpInputConfig,
+} from 'ngx-otp-input';
 
 @Component({
   selector: 'ngx-app-root',
@@ -7,16 +11,19 @@ import { NgxOtpInputComponent, NgxOtpInputConfig } from 'ngx-otp-input';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  @ViewChild('ngxotp') ngxOtp: NgxOtpInputComponent;
-
   showNgxOtpInput = true;
 
   otpInputConfig: NgxOtpInputConfig = {
-    otpLength: 6,
+    otpLength: 4,
     autofocus: true,
+    autoblur: true,
+    isPasswordInput: false,
+    behavior: NgxOtpBehavior.DEFAULT,
+    ariaLabels: ['a', 'b', 'v', 'c'],
     classList: {
+      container: 'my-super-container',
       inputBox: 'my-super-box-class',
-      input: 'my-super-class',
+      input: ['my-super-input-class', 'my-super-input-class-array-test'],
       inputFilled: 'my-super-filled-class',
       inputDisabled: 'my-super-disable-class',
       inputSuccess: 'my-super-success-class',
@@ -30,7 +37,11 @@ export class AppComponent {
   status = null;
 
   otpChangeResult = [];
-  fillResult = '';
+  fillResult = null;
+
+  @ViewChild('ngxotp') ngxOtp: NgxOtpInputComponent;
+
+  constructor(private readonly cdr: ChangeDetectorRef) {}
 
   reload(): void {
     this.showNgxOtpInput = false;
@@ -57,5 +68,20 @@ export class AppComponent {
 
   clear(): void {
     this.ngxOtp.clear();
+  }
+
+  handleOtpChange($event: string[]): void {
+    this.otpChangeResult = $event;
+    this.cdr.detectChanges();
+  }
+
+  handleFill($event: string): void {
+    this.fillResult = $event;
+  }
+
+  changeBehavior(asLegacy: boolean): void {
+    this.otpInputConfig.behavior = asLegacy
+      ? NgxOtpBehavior.LEGACY
+      : NgxOtpBehavior.DEFAULT;
   }
 }
