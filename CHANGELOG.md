@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.11.1] - 2022-06-29
+
+- Bugfix of [Windows copy paste issue](https://github.com/k2peter/ngx-otp-input/issues/11)
+
 ## [0.11.0] - 2022-01-04
 
 ### Added
