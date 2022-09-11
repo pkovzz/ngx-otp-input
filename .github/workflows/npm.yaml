@@ -1,6 +1,7 @@
 name: 'NPM Publish'
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
@@ -9,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2.1.5
+      - uses: actions/setup-node@v3.4.1
         with:
-          node-version: 12
+          node-version: 18
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run build-lib
