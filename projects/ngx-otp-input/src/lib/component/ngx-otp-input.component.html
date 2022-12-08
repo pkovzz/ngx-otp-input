@@ -14,7 +14,7 @@
         [formControl]="control"
         [ngxOtpPattern]="otpConfig.pattern"
         [type]="otpConfig.isPasswordInput ? 'password' : 'text'"
-        [ngClass]="styles[i]"
+          [ngClass]="styles?.length > 0 ? styles[i] : null"
         (keyup)="handleKeyUp(i, $event.key)"
         (keyup.backspace)="handleDelete(i)"
         (keyup.arrowLeft)="stepBackward(i)"

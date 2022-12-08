@@ -11,11 +11,15 @@ export class NgxOtpInputService {
   }
 
   addItemToAll(source: string[][], items: string[]): string[][] {
-    return source.map((entry) => entry.concat(items));
+    if (source?.length > 0) {
+      return source.map((entry) => entry.concat(items));
+    }
   }
 
   removeItemFromAll(source: string[][], items: string[]): string[][] {
-    return source.map((entry) => entry.filter((item) => !items.includes(item)));
+    if (source?.length > 0) {
+      return source.map((entry) => entry.filter((item) => !items.includes(item)));
+    }
   }
 
   addItemAtIndex(
@@ -23,8 +27,10 @@ export class NgxOtpInputService {
     index: number,
     items: string[]
   ): string[][] {
-    source[index] = source[index].concat(items);
-    return source;
+    if (source?.length > 0) {
+      source[index] = source[index].concat(items);
+      return source;
+    }
   }
 
   removeItemAtIndex(
@@ -32,7 +38,9 @@ export class NgxOtpInputService {
     index: number,
     items: string[]
   ): string[][] {
-    source[index] = source[index].filter((item) => !items.includes(item));
-    return source;
+    if (source?.length > 0) {
+      source[index] = source[index].filter((item) => !items.includes(item));
+      return source;
+    }
   }
 }

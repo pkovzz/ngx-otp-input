@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+## [0.11.4]
+
+- Bugfix of [module import issue](https://github.com/pkovzz/ngx-otp-input/issues/16) and other improvements
 
 ## [0.11.1] - 2022-06-29
 
