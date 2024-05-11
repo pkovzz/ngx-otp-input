@@ -2,7 +2,7 @@ name: lint-and-test
 
 run-name: Lint and Test
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   lint-and-test:
