@@ -6,11 +6,13 @@
     "start": "ng serve",
     "build": "ng build",
     "build-lib": "ng build ngx-otp-input --configuration development",
+    "build-lib-watch": "ng build ngx-otp-input --watch --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test-lib": "ng test ngx-otp-input",
     "lint": "ng lint",
-    "lint-lib": "ng lint ngx-otp-input"
+    "lint-lib": "ng lint ngx-otp-input",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -39,13 +41,21 @@
     "@typescript-eslint/eslint-plugin": "7.8.0",
     "@typescript-eslint/parser": "7.8.0",
     "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.11",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "lint-staged": "^15.2.2",
     "ng-packagr": "^17.3.0",
+    "prettier": "3.2.5",
     "typescript": "~5.4.2"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown",
+    "**/*.{ts,js,html,css,scss,md}": "eslint --fix"
   }
 }
