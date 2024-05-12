@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'ngx-otp-input',
   standalone: true,
   imports: [],
-  template: ` <p>ngx-otp-input works!</p> `,
-  styles: ``,
+  templateUrl: 'ngx-otp-input.component.html',
+  styleUrl: 'ngx-otp-input.component.scss',
 })
-export class NgxOtpInputComponent {}
+export class NgxOtpInput {}

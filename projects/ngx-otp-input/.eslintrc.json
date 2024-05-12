@@ -4,7 +4,9 @@
   "overrides": [
     {
       "files": ["*.ts"],
-      "rules": {}
+      "rules": {
+        "@angular-eslint/component-class-suffix": "off"
+      }
     },
     {
       "files": ["*.html"],
