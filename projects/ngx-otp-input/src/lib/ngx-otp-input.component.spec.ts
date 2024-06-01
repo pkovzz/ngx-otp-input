@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { NgxOtpInputComponent } from './ngx-otp-input.component';
 
 describe('NgxOtpInputComponent', () => {
@@ -8,10 +7,9 @@ describe('NgxOtpInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgxOtpInputComponent]
-    })
-    .compileComponents();
-    
+      imports: [NgxOtpInputComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(NgxOtpInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
