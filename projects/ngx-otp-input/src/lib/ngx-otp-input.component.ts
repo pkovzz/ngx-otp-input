@@ -1,12 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
+
+const DEFAULT_OTP_LENGTH = 6;
+
+export interface NgxOtpInputComponentConfig {
+  otpLength: number;
+  autoFocus: boolean;
+  autoBlur: boolean;
+}
 
 @Component({
-  selector: 'ngx-otp-input',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
+  selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
   styleUrl: 'ngx-otp-input.component.scss',
 })
-export class NgxOtpInputComponent {}
+export class NgxOtpInputComponent implements OnInit {
+  protected ngxOtpInputArray!: FormArray<FormControl<string | null>>;
+
+  @Input() config: NgxOtpInputComponentConfig = {
+    otpLength: DEFAULT_OTP_LENGTH,
+    autoFocus: true,
+    autoBlur: true,
+  };
+
+  ngOnInit(): void {
+    this.initOtpInputArray();
+  }
+
+  private initOtpInputArray(): void {
+    this.ngxOtpInputArray = new FormArray<FormControl<string | null>>(
+      Array.from(
+        { length: this.config.otpLength },
+        () => new FormControl(null),
+      ),
+    );
+  }
+}

@@ -1,1 +1,11 @@
-<form id="ngx-otp-input-form"></form>
+<form id="ngx-otp-input-form">
+  <input
+    *ngFor="let control of ngxOtpInputArray.controls; let i = index"
+    #otpInputElement
+    type="text"
+    maxlength="1"
+    spellcheck="false"
+    autocomplete="off"
+    autocapitalize="off"
+  />
+</form>
