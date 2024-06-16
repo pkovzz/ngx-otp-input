@@ -19,7 +19,6 @@ export class AutoFocusDirective implements AfterContentInit {
   ngAfterContentInit(): void {
     if (this.ngxAutoFocus && this.firstInput) {
       this.firstInput.nativeElement.focus();
-      console.log(this.firstInput.nativeElement);
     }
   }
 }
