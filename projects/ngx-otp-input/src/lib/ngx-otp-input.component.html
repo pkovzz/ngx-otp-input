@@ -1,4 +1,8 @@
-<form id="ngx-otp-input-form">
+<form
+  id="ngx-otp-input-form"
+  [ngxAutoFocus]="config.autoFocus"
+  ngxOtpPaste
+>
   <input
     *ngFor="let control of ngxOtpInputArray.controls; let i = index"
     #otpInputElement

@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { PasteDirective } from './directives/paste.directive';
+import { AutoFocusDirective } from './directives/autoFocus.directive';
 
 const DEFAULT_OTP_LENGTH = 6;
 
@@ -12,7 +14,12 @@ export interface NgxOtpInputComponentConfig {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PasteDirective,
+    AutoFocusDirective,
+  ],
   selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
   styleUrl: 'ngx-otp-input.component.scss',
