@@ -1,12 +1,14 @@
 <form
   id="ngx-otp-input-form"
-  [ngxAutoFocus]="config.autoFocus"
-  ngxArrowKeyNavigation
   ngxOtpPaste
+  ngxInputNavigations
+  [ngxAutoFocus]="config.autoFocus"
+  (valueChange)="handleInputChanges($event)"
 >
   <input
     *ngFor="let control of ngxOtpInputArray.controls; let i = index"
     #otpInputElement
+    [value]="control.value"
     type="text"
     maxlength="1"
     spellcheck="false"

@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PasteDirective } from './directives/paste.directive';
 import { AutoFocusDirective } from './directives/autoFocus.directive';
-import { ArrowKeyNavigationDirective } from './directives/arrowKeyNavigation.directive';
+import {
+  InputNavigationsDirective,
+  ValueChangeEvent,
+} from './directives/inputNavigations.directive';
 
 const DEFAULT_OTP_LENGTH = 6;
 
@@ -20,7 +23,7 @@ export interface NgxOtpInputComponentConfig {
     ReactiveFormsModule,
     PasteDirective,
     AutoFocusDirective,
-    ArrowKeyNavigationDirective,
+    InputNavigationsDirective,
   ],
   selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
@@ -46,5 +49,10 @@ export class NgxOtpInputComponent implements OnInit {
         () => new FormControl(null),
       ),
     );
+  }
+
+  handleInputChanges($event: ValueChangeEvent) {
+    const [index, value] = $event;
+    this.ngxOtpInputArray.controls[index].setValue(value);
   }
 }

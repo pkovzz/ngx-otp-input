@@ -3,19 +3,27 @@ import {
   ContentChildren,
   Directive,
   ElementRef,
+  EventEmitter,
   HostListener,
+  Output,
   QueryList,
 } from '@angular/core';
 
+export type ValueChangeEvent = [number, string];
+
 @Directive({
   standalone: true,
-  selector: '[ngxArrowKeyNavigation]',
+  selector: '[ngxInputNavigations]',
 })
-export class ArrowKeyNavigationDirective implements AfterContentInit {
+export class InputNavigationsDirective implements AfterContentInit {
+  private inputsArray: ElementRef<HTMLInputElement>[] = [];
+
   @ContentChildren('otpInputElement', { descendants: true })
   inputs!: QueryList<ElementRef<HTMLInputElement>>;
 
-  private inputsArray: ElementRef<HTMLInputElement>[] = [];
+  @Output()
+  valueChange: EventEmitter<ValueChangeEvent> =
+    new EventEmitter<ValueChangeEvent>();
 
   ngAfterContentInit() {
     this.inputsArray = this.inputs.toArray();
@@ -46,6 +54,26 @@ export class ArrowKeyNavigationDirective implements AfterContentInit {
     const index = this.findInputIndex(event.target as HTMLElement);
     if (index < this.inputs.length - 1) {
       this.setFocus(index + 1);
+    }
+  }
+
+  @HostListener('keyup', ['$event'])
+  onKeyUp(event: KeyboardEvent): void {
+    const index = this.findInputIndex(event.target as HTMLElement);
+    if (event.key.match(/^[0-9]$/)) {
+      // TODO: replace regex
+      this.valueChange.emit([index, event.key]);
+      this.setFocus(index + 1);
+    }
+  }
+
+  @HostListener('keydown.backspace', ['$event'])
+  onBackspace(event: KeyboardEvent): void {
+    const index = this.findInputIndex(event.target as HTMLElement);
+    if (index > 0) {
+      this.valueChange.emit([index, '']);
+      this.setFocus(index - 1);
+      event.preventDefault();
     }
   }
 }
