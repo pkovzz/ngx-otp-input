@@ -5,6 +5,7 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  Input,
   Output,
   QueryList,
 } from '@angular/core';
@@ -20,6 +21,9 @@ export class InputNavigationsDirective implements AfterContentInit {
 
   @ContentChildren('otpInputElement', { descendants: true })
   inputs!: QueryList<ElementRef<HTMLInputElement>>;
+
+  @Input()
+  regexp!: RegExp;
 
   @Output()
   valueChange: EventEmitter<ValueChangeEvent> =
@@ -57,16 +61,6 @@ export class InputNavigationsDirective implements AfterContentInit {
     }
   }
 
-  @HostListener('keyup', ['$event'])
-  onKeyUp(event: KeyboardEvent): void {
-    const index = this.findInputIndex(event.target as HTMLElement);
-    if (event.key.match(/^[0-9]$/)) {
-      // TODO: replace regex
-      this.valueChange.emit([index, event.key]);
-      this.setFocus(index + 1);
-    }
-  }
-
   @HostListener('keydown.backspace', ['$event'])
   onBackspace(event: KeyboardEvent): void {
     const index = this.findInputIndex(event.target as HTMLElement);
@@ -74,6 +68,26 @@ export class InputNavigationsDirective implements AfterContentInit {
       this.valueChange.emit([index, '']);
       this.setFocus(index - 1);
       event.preventDefault();
+    }
+  }
+
+  @HostListener('keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    if (
+      !event.key.match(this.regexp) &&
+      event.key !== 'Backspace' &&
+      event.key !== 'Tab'
+    ) {
+      event.preventDefault();
+    }
+  }
+
+  @HostListener('keyup', ['$event'])
+  onKeyUp(event: KeyboardEvent): void {
+    const index = this.findInputIndex(event.target as HTMLElement);
+    if (event.key.match(this.regexp)) {
+      this.valueChange.emit([index, event.key]);
+      this.setFocus(index + 1);
     }
   }
 }

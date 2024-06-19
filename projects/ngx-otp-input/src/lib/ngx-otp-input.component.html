@@ -2,6 +2,7 @@
   id="ngx-otp-input-form"
   ngxOtpPaste
   ngxInputNavigations
+  [regexp]="config.regexp!"
   [ngxAutoFocus]="config.autoFocus!"
   (valueChange)="handleInputChanges($event)"
 >

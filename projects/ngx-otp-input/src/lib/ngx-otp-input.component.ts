@@ -15,6 +15,7 @@ export interface NgxOtpInputComponentConfig {
   autoFocus?: boolean;
   autoBlur?: boolean;
   hideInputValues?: boolean;
+  regexp?: RegExp;
 }
 
 @Component({
@@ -37,7 +38,8 @@ export class NgxOtpInputComponent implements OnInit {
     otpLength: DEFAULT_OTP_LENGTH,
     autoFocus: true,
     autoBlur: true,
-    hideInputValues: true,
+    hideInputValues: false,
+    regexp: /^[0-9]+$/,
   };
 
   get inputType(): string {
