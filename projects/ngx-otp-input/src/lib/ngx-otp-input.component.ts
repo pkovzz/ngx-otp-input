@@ -12,8 +12,9 @@ const DEFAULT_OTP_LENGTH = 6;
 
 export interface NgxOtpInputComponentConfig {
   otpLength: number;
-  autoFocus: boolean;
-  autoBlur: boolean;
+  autoFocus?: boolean;
+  autoBlur?: boolean;
+  hideInputValues?: boolean;
 }
 
 @Component({
@@ -36,7 +37,12 @@ export class NgxOtpInputComponent implements OnInit {
     otpLength: DEFAULT_OTP_LENGTH,
     autoFocus: true,
     autoBlur: true,
+    hideInputValues: true,
   };
+
+  get inputType(): string {
+    return this.config.hideInputValues ? 'password' : 'text';
+  }
 
   ngOnInit(): void {
     this.initOtpInputArray();
