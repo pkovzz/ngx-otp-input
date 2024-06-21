@@ -3,7 +3,9 @@
   ngxOtpPaste
   ngxInputNavigations
   [regexp]="config.regexp!"
+  [isFormValid]="ngxOtpInputArray.valid"
   [ngxAutoFocus]="config.autoFocus!"
+  [ngxAutoBlur]="config.autoBlur!"
   (valueChange)="handleInputChanges($event)"
 >
   <input

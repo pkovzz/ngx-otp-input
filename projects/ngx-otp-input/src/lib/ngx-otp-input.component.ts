@@ -1,12 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { PasteDirective } from './directives/paste.directive';
 import { AutoFocusDirective } from './directives/autoFocus.directive';
 import {
   InputNavigationsDirective,
   ValueChangeEvent,
 } from './directives/inputNavigations.directive';
+import { AutoBlurDirective } from './directives/autoBlur.directive';
 
 const DEFAULT_OTP_LENGTH = 6;
 
@@ -26,6 +32,7 @@ export interface NgxOtpInputComponentConfig {
     PasteDirective,
     AutoFocusDirective,
     InputNavigationsDirective,
+    AutoBlurDirective,
   ],
   selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
@@ -54,7 +61,7 @@ export class NgxOtpInputComponent implements OnInit {
     this.ngxOtpInputArray = new FormArray<FormControl<string | null>>(
       Array.from(
         { length: this.config.otpLength },
-        () => new FormControl(null),
+        () => new FormControl(null, Validators.required),
       ),
     );
   }
