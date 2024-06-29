@@ -26,15 +26,16 @@ export class AutoBlurDirective implements OnChanges, AfterContentInit {
   isFormValid!: boolean;
 
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes['ngxAutoBlur'].currentValue &&
-      changes['isFormValid'].currentValue &&
-      this.inputHTMLElements.length > 0
-    ) {
-      this.inputHTMLElements.forEach((input) => {
-        input.blur();
-      });
-    }
+    // if (
+    //   changes['ngxAutoBlur'].currentValue &&
+    //   changes['isFormValid'].currentValue &&
+    //   this.inputHTMLElements.length > 0
+    // ) {
+    //   this.inputHTMLElements.forEach((input) => {
+    //     input.blur();
+    //   });
+    // }
+    console.log(changes);
   }
 
   ngAfterContentInit() {

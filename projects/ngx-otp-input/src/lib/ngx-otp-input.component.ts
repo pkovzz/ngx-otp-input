@@ -36,7 +36,7 @@ export interface NgxOtpInputComponentConfig {
   ],
   selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
-  styleUrl: 'ngx-otp-input.component.scss',
+  styleUrls: ['ngx-otp-input.component.scss'],
 })
 export class NgxOtpInputComponent implements OnInit {
   protected ngxOtpInputArray!: FormArray<FormControl<string | null>>;
