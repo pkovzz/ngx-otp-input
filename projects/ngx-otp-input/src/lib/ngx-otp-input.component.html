@@ -6,16 +6,22 @@
   [isFormValid]="ngxOtpInputArray.valid"
   [ngxAutoFocus]="config.autoFocus!"
   [ngxAutoBlur]="config.autoBlur!"
+  [ngxOtpAriaLabels]="config.ariaLabels!"
   (valueChange)="handleInputChanges($event)"
+  [ngClass]="{
+    'ngx-blinking-cursor': config.blinkingCursor
+  }"
 >
   <input
     *ngFor="let control of ngxOtpInputArray.controls; let i = index"
     #otpInputElement
     [value]="control.value"
     [type]="inputType"
+    [disabled]="disabled"
     maxlength="1"
     spellcheck="false"
     autocomplete="off"
     autocapitalize="off"
+    autocorrect="off"
   />
 </form>

@@ -13,6 +13,7 @@ import {
   ValueChangeEvent,
 } from './directives/inputNavigations.directive';
 import { AutoBlurDirective } from './directives/autoBlur.directive';
+import { AriaLabelsDirective } from './directives/ariaLabels.directive';
 
 const DEFAULT_OTP_LENGTH = 6;
 
@@ -22,6 +23,8 @@ export interface NgxOtpInputComponentConfig {
   autoBlur?: boolean;
   hideInputValues?: boolean;
   regexp?: RegExp;
+  blinkingCursor?: boolean;
+  ariaLabels?: string[];
 }
 
 @Component({
@@ -33,6 +36,7 @@ export interface NgxOtpInputComponentConfig {
     AutoFocusDirective,
     InputNavigationsDirective,
     AutoBlurDirective,
+    AriaLabelsDirective,
   ],
   selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
@@ -47,7 +51,11 @@ export class NgxOtpInputComponent implements OnInit {
     autoBlur: true,
     hideInputValues: false,
     regexp: /^[0-9]+$/,
+    blinkingCursor: true,
+    ariaLabels: [],
   };
+
+  @Input() disabled = false;
 
   get inputType(): string {
     return this.config.hideInputValues ? 'password' : 'text';
