@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormArray,
@@ -14,8 +14,7 @@ import {
 } from './directives/inputNavigations.directive';
 import { AutoBlurDirective } from './directives/autoBlur.directive';
 import { AriaLabelsDirective } from './directives/ariaLabels.directive';
-
-const DEFAULT_OTP_LENGTH = 6;
+import defaultConfig from './default.config';
 
 export interface NgxOtpInputComponentConfig {
   otpLength: number;
@@ -43,19 +42,12 @@ export interface NgxOtpInputComponentConfig {
   styleUrls: ['ngx-otp-input.component.scss'],
 })
 export class NgxOtpInputComponent implements OnInit {
-  protected ngxOtpInputArray!: FormArray<FormControl<string | null>>;
-
-  @Input() config: NgxOtpInputComponentConfig = {
-    otpLength: DEFAULT_OTP_LENGTH,
-    autoFocus: true,
-    autoBlur: true,
-    hideInputValues: false,
-    regexp: /^[0-9]+$/,
-    blinkingCursor: true,
-    ariaLabels: [],
-  };
-
+  @Input() config: NgxOtpInputComponentConfig = defaultConfig;
   @Input() disabled = false;
+  @Output() otpChange = new EventEmitter<string[]>();
+  @Output() otpComplete = new EventEmitter<string>();
+
+  protected ngxOtpInputArray!: FormArray;
 
   get inputType(): string {
     return this.config.hideInputValues ? 'password' : 'text';
@@ -66,10 +58,10 @@ export class NgxOtpInputComponent implements OnInit {
   }
 
   private initOtpInputArray(): void {
-    this.ngxOtpInputArray = new FormArray<FormControl<string | null>>(
+    this.ngxOtpInputArray = new FormArray(
       Array.from(
         { length: this.config.otpLength },
-        () => new FormControl(null, Validators.required),
+        () => new FormControl('', Validators.required),
       ),
     );
   }
@@ -77,5 +69,9 @@ export class NgxOtpInputComponent implements OnInit {
   handleInputChanges($event: ValueChangeEvent) {
     const [index, value] = $event;
     this.ngxOtpInputArray.controls[index].setValue(value);
+    this.otpChange.emit(this.ngxOtpInputArray.value);
+    if (this.ngxOtpInputArray.valid) {
+      this.otpComplete.emit(this.ngxOtpInputArray.value.join(''));
+    }
   }
 }

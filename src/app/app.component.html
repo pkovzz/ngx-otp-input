@@ -1,1 +1,4 @@
-<ngx-otp-input></ngx-otp-input>
+<ngx-otp-input
+  (otpComplete)="onOtpComplete($event)"
+  (otpChange)="onOtpChange($event)"
+></ngx-otp-input>

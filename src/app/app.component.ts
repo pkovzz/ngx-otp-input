@@ -11,4 +11,12 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
 })
 export class AppComponent {
   title = 'ngx-otp-input-demo';
+
+  onOtpChange(otp: string[]) {
+    console.log('OTP changed to: ', otp);
+  }
+
+  onOtpComplete(otp: string) {
+    console.log('OTP is complete: ', otp);
+  }
 }

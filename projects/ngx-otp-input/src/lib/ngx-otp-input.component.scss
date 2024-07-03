@@ -1,3 +1,22 @@
+#ngx-otp-input-form {
+  display: flex;
+  gap: 0.5rem;
+
+  input {
+    width: 35px;
+    height: 40px;
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    outline: none;
+    &:focus {
+      border-color: #007bff;
+    }
+  }
+}
+
 .ngx-blinking-cursor {
   caret-color: transparent;
 }

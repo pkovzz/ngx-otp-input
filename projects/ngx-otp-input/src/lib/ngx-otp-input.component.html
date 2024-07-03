@@ -7,10 +7,10 @@
   [ngxAutoFocus]="config.autoFocus!"
   [ngxAutoBlur]="config.autoBlur!"
   [ngxOtpAriaLabels]="config.ariaLabels!"
-  (valueChange)="handleInputChanges($event)"
   [ngClass]="{
     'ngx-blinking-cursor': config.blinkingCursor
   }"
+  (valueChange)="handleInputChanges($event)"
 >
   <input
     *ngFor="let control of ngxOtpInputArray.controls; let i = index"
