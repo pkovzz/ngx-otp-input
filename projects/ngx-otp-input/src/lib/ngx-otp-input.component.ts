@@ -14,16 +14,11 @@ import {
 } from './directives/inputNavigations.directive';
 import { AutoBlurDirective } from './directives/autoBlur.directive';
 import { AriaLabelsDirective } from './directives/ariaLabels.directive';
-import defaultConfig from './default.config';
+import { NgxOtpInputComponentConfig, defaultConfig } from './default.config';
 
-export interface NgxOtpInputComponentConfig {
-  otpLength: number;
-  autoFocus?: boolean;
-  autoBlur?: boolean;
-  hideInputValues?: boolean;
-  regexp?: RegExp;
-  blinkingCursor?: boolean;
-  ariaLabels?: string[];
+export enum OTP_STATUS {
+  SUCCESS = 'success',
+  FAILED = 'failed',
 }
 
 @Component({
@@ -44,6 +39,7 @@ export interface NgxOtpInputComponentConfig {
 export class NgxOtpInputComponent implements OnInit {
   @Input() config: NgxOtpInputComponentConfig = defaultConfig;
   @Input() disabled = false;
+  @Input() status: OTP_STATUS | null | undefined;
   @Output() otpChange = new EventEmitter<string[]>();
   @Output() otpComplete = new EventEmitter<string>();
 
@@ -51,6 +47,14 @@ export class NgxOtpInputComponent implements OnInit {
 
   get inputType(): string {
     return this.config.hideInputValues ? 'password' : 'text';
+  }
+
+  get isOTPSuccess(): boolean {
+    return this.status === OTP_STATUS.SUCCESS;
+  }
+
+  get isOTPFailed(): boolean {
+    return this.status === OTP_STATUS.FAILED;
   }
 
   ngOnInit(): void {

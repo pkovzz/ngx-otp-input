@@ -1,9 +1,15 @@
-import { NgxOtpInputComponentConfig } from './ngx-otp-input.component';
+export interface NgxOtpInputComponentConfig {
+  otpLength: number;
+  autoFocus?: boolean;
+  autoBlur?: boolean;
+  hideInputValues?: boolean;
+  regexp?: RegExp;
+  blinkingCursor?: boolean;
+  ariaLabels?: string[];
+}
 
-const DEFAULT_OTP_LENGTH = 6;
-
-const defaultConfig: NgxOtpInputComponentConfig = {
-  otpLength: DEFAULT_OTP_LENGTH,
+export const defaultConfig: NgxOtpInputComponentConfig = {
+  otpLength: 6,
   autoFocus: true,
   autoBlur: true,
   hideInputValues: false,
@@ -11,5 +17,3 @@ const defaultConfig: NgxOtpInputComponentConfig = {
   blinkingCursor: true,
   ariaLabels: [],
 };
-
-export default defaultConfig;

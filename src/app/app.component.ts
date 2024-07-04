@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NgxOtpInputComponent } from 'ngx-otp-input';
+import { NgxOtpInputComponent, OTP_STATUS } from 'ngx-otp-input';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +11,7 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
 })
 export class AppComponent {
   title = 'ngx-otp-input-demo';
+  otpStatusEnum = OTP_STATUS;
 
   onOtpChange(otp: string[]) {
     console.log('OTP changed to: ', otp);

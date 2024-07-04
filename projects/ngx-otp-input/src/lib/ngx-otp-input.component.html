@@ -18,6 +18,12 @@
     [value]="control.value"
     [type]="inputType"
     [disabled]="disabled"
+    class="ngx-otp-input"
+    [ngClass]="{
+      'ngx-otp-input-disabled': disabled,
+      'ngx-otp-success': isOTPSuccess,
+      'ngx-otp-failed': isOTPFailed
+    }"
     maxlength="1"
     spellcheck="false"
     autocomplete="off"
