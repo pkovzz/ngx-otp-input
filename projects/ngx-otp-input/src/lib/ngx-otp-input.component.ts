@@ -16,7 +16,7 @@ import { AutoBlurDirective } from './directives/autoBlur.directive';
 import { AriaLabelsDirective } from './directives/ariaLabels.directive';
 import { NgxOtpInputComponentConfig, defaultConfig } from './default.config';
 
-export enum OTP_STATUS {
+export enum NGX_OTP_STATUS {
   SUCCESS = 'success',
   FAILED = 'failed',
 }
@@ -38,9 +38,8 @@ export enum OTP_STATUS {
 })
 export class NgxOtpInputComponent implements OnInit {
   protected ngxOtpInputArray!: FormArray;
-
   @Input() config: NgxOtpInputComponentConfig = defaultConfig;
-  @Input() status: OTP_STATUS | null | undefined;
+  @Input() status: NGX_OTP_STATUS | null | undefined;
   @Input() disabled = false;
   @Output() otpChange = new EventEmitter<string[]>();
   @Output() otpComplete = new EventEmitter<string>();
@@ -50,11 +49,11 @@ export class NgxOtpInputComponent implements OnInit {
   }
 
   get isOTPSuccess(): boolean {
-    return this.status === OTP_STATUS.SUCCESS;
+    return this.status === NGX_OTP_STATUS.SUCCESS;
   }
 
   get isOTPFailed(): boolean {
-    return this.status === OTP_STATUS.FAILED;
+    return this.status === NGX_OTP_STATUS.FAILED;
   }
 
   ngOnInit(): void {
