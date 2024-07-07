@@ -14,11 +14,19 @@
   </div>
   <div class="info">
     <span class="material-symbols-rounded"> description </span>
-    <p>
-      This quick demo showcases the ngx-otp-input component. You can configure
-      the component options below and see the changes in the preview. For more
-      information, check out the <a href="/">documentation</a>.
-    </p>
+    <div>
+      <b>About this site</b>
+      <p>
+        This quick demo showcases the ngx-otp-input component. You can configure
+        the component options below and see the changes in the preview. For more
+        information, check out the
+        <a
+          href="https://github.com/pkovzz/ngx-otp-input"
+          target="_blank"
+          >documentation</a
+        >.
+      </p>
+    </div>
   </div>
   <div class="component-wrapper">
     <div class="component-options">
@@ -104,10 +112,18 @@
         (otpComplete)="onOtpComplete($event)"
         (otpChange)="onOtpChange($event)"
       ></ngx-otp-input>
-      <div class="results">
+      <div class="results-container">
         <h4>Results</h4>
-        <div><b>On changes</b>: [{{ otpChangeValue }}]</div>
-        <div><b>On complete</b>: {{ otpCompleteValue }}</div>
+        <div class="results">
+          <div class="result-box">
+            <b>On changes</b>:
+            <div>{{ otpChangeValue }}</div>
+          </div>
+          <div class="result-box">
+            <b>On complete</b>:
+            <div>{{ otpCompleteValue }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

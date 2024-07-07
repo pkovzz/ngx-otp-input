@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
   };
   ariaLabels = '';
   disabled = false;
-  otpChangeValue = '…';
+  otpChangeValue = '-';
   otpCompleteValue = '-';
 
   ngOnInit(): void {
@@ -50,7 +50,12 @@ export class AppComponent implements OnInit {
   }
 
   onOtpChange(otp: string[]) {
-    this.otpChangeValue = otp.join(', ');
+    const hasValue = otp.some((value) => value !== '');
+    if (hasValue) {
+      this.otpChangeValue = otp.join(', ');
+    } else {
+      this.otpChangeValue = '-';
+    }
   }
 
   onOtpComplete(otp: string) {

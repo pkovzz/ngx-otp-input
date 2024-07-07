@@ -21,7 +21,9 @@
   margin: 2rem 0;
   padding: 1rem;
   background-color: #f3f3f3;
+  border: 1px solid #c7c6c6;
   border-radius: 0.5rem;
+  color: #3d3d3d;
 }
 
 .component-wrapper {
@@ -58,9 +60,25 @@ mat-checkbox {
   display: block;
 }
 
-.results {
+.results-container {
   margin-top: 2rem;
   h4 {
+    font-size: 1.5rem;
+  }
+}
+
+.results {
+  display: flex;
+  gap: 1rem;
+}
+
+.result-box {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #c7c6c6;
+  border-radius: 0.5rem;
+  div {
+    margin-top: 1rem;
     font-size: 1.5rem;
   }
 }
