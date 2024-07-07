@@ -81,4 +81,8 @@ export class NgxOtpInputComponent implements OnInit {
   isInputFilled(index: number): boolean {
     return !!this.ngxOtpInputArray.controls[index].value;
   }
+
+  clearOtpInputs(): void {
+    this.ngxOtpInputArray.reset();
+  }
 }
