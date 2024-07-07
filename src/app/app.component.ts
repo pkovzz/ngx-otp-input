@@ -40,6 +40,7 @@ export class AppComponent implements OnInit {
     blinkingCursor: true,
     ariaLabels: ['a', 'b', 'c', 'd', 'e', 'f'],
   };
+  regexp = '^[0-9]+$';
   ariaLabels = '';
   disabled = false;
   otpChangeValue = '-';
@@ -72,6 +73,10 @@ export class AppComponent implements OnInit {
     this.otpOptions.ariaLabels = ariaLabelsInputValue.map((entry) =>
       entry.replace(/\s/g, ''),
     );
+  }
+
+  convertStringToRegexp() {
+    this.otpOptions.regexp = new RegExp(this.regexp);
   }
 
   handleComponentReload() {

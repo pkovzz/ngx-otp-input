@@ -1,6 +1,7 @@
 .container {
   width: 976px;
   margin: 0 auto;
+  padding-bottom: 60px;
 }
 
 .header {
@@ -38,6 +39,7 @@
   flex: 1;
   mat-form-field {
     width: 100%;
+    margin-bottom: 1rem;
   }
 }
 
@@ -61,9 +63,9 @@ mat-checkbox {
 }
 
 .results-container {
-  margin-top: 2rem;
+  margin-top: 0.75rem;
   h4 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 }
 

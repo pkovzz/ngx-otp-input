@@ -4,7 +4,6 @@
     <a
       class="github-button"
       href="https://github.com/pkovzz/ngx-otp-input"
-      data-color-scheme="no-preference: light; light: light; dark: dark;"
       data-icon="octicon-star"
       data-size="large"
       data-show-count="true"
@@ -47,12 +46,16 @@
           />
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Regexp</mat-label>
+          <mat-label>Accepted characters</mat-label>
           <input
             matInput
-            [(ngModel)]="otpOptions.regexp"
+            [(ngModel)]="regexp"
+            (blur)="convertStringToRegexp()"
             name="regexp"
           />
+          <mat-hint align="start">
+            Regexp pattern to match the accepted characters
+          </mat-hint>
         </mat-form-field>
         <mat-form-field>
           <mat-label>Aria-labels</mat-label>

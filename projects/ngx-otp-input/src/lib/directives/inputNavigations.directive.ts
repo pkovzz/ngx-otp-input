@@ -84,6 +84,8 @@ export class InputNavigationsDirective implements AfterContentInit {
 
   @HostListener('keyup', ['$event'])
   onKeyUp(event: KeyboardEvent): void {
+    console.log(this.regexp);
+    console.log(event.key.match(this.regexp));
     const index = this.findInputIndex(event.target as HTMLElement);
     if (event.key.match(this.regexp)) {
       this.valueChange.emit([index, event.key]);
