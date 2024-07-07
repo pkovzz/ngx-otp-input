@@ -55,6 +55,7 @@ export class AppComponent implements OnInit {
       this.otpChangeValue = otp.join(', ');
     } else {
       this.otpChangeValue = '-';
+      this.otpCompleteValue = '-';
     }
   }
 
