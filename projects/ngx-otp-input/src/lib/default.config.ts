@@ -1,4 +1,4 @@
-export interface NgxOtpInputComponentConfig {
+export interface NgxOtpInputComponentOptions {
   otpLength: number;
   autoFocus?: boolean;
   autoBlur?: boolean;
@@ -8,7 +8,7 @@ export interface NgxOtpInputComponentConfig {
   ariaLabels?: string[];
 }
 
-export const defaultConfig: NgxOtpInputComponentConfig = {
+export const defaultOptions: NgxOtpInputComponentOptions = {
   otpLength: 6,
   autoFocus: true,
   autoBlur: true,

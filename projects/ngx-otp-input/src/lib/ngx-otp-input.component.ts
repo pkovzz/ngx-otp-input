@@ -14,7 +14,7 @@ import {
 } from './directives/inputNavigations.directive';
 import { AutoBlurDirective } from './directives/autoBlur.directive';
 import { AriaLabelsDirective } from './directives/ariaLabels.directive';
-import { NgxOtpInputComponentConfig, defaultConfig } from './default.config';
+import { NgxOtpInputComponentOptions, defaultOptions } from './default.config';
 
 export enum NGX_OTP_STATUS {
   SUCCESS = 'success',
@@ -38,14 +38,14 @@ export enum NGX_OTP_STATUS {
 })
 export class NgxOtpInputComponent implements OnInit {
   protected ngxOtpInputArray!: FormArray;
-  @Input() config: NgxOtpInputComponentConfig = defaultConfig;
+  @Input() options: NgxOtpInputComponentOptions = defaultOptions;
   @Input() status: NGX_OTP_STATUS | null | undefined;
   @Input() disabled = false;
   @Output() otpChange = new EventEmitter<string[]>();
   @Output() otpComplete = new EventEmitter<string>();
 
   get inputType(): string {
-    return this.config.hideInputValues ? 'password' : 'text';
+    return this.options.hideInputValues ? 'password' : 'text';
   }
 
   get isOTPSuccess(): boolean {
@@ -63,7 +63,7 @@ export class NgxOtpInputComponent implements OnInit {
   private initOtpInputArray(): void {
     this.ngxOtpInputArray = new FormArray(
       Array.from(
-        { length: this.config.otpLength },
+        { length: this.options.otpLength },
         () => new FormControl('', Validators.required),
       ),
     );

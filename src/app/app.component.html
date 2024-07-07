@@ -1,4 +1,114 @@
-<ngx-otp-input
-  (otpComplete)="onOtpComplete($event)"
-  (otpChange)="onOtpChange($event)"
-></ngx-otp-input>
+<div class="container">
+  <div class="header">
+    <h1>ngx-otp-input</h1>
+    <a
+      class="github-button"
+      href="https://github.com/pkovzz/ngx-otp-input"
+      data-color-scheme="no-preference: light; light: light; dark: dark;"
+      data-icon="octicon-star"
+      data-size="large"
+      data-show-count="true"
+      aria-label="Star pkovzz/ngx-otp-input on GitHub"
+      >Star</a
+    >
+  </div>
+  <div class="info">
+    <span class="material-symbols-rounded"> description </span>
+    <p>
+      This quick demo showcases the ngx-otp-input component. You can configure
+      the component options below and see the changes in the preview. For more
+      information, check out the <a href="/">documentation</a>.
+    </p>
+  </div>
+  <div class="component-wrapper">
+    <div class="component-options">
+      <h3>Component Options</h3>
+      <form
+        #componentOptionsForm="ngForm"
+        (ngSubmit)="handleComponentReload()"
+      >
+        <mat-form-field>
+          <mat-label>Number of Inputs</mat-label>
+          <input
+            matInput
+            [(ngModel)]="otpOptions.otpLength"
+            name="otpLength"
+            min="1"
+            max="8"
+            type="number"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Regexp</mat-label>
+          <input
+            matInput
+            [(ngModel)]="otpOptions.regexp"
+            name="regexp"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Aria-labels</mat-label>
+          <input
+            matInput
+            [(ngModel)]="ariaLabels"
+            (blur)="formatAriaLabelsForSave()"
+            name="ariaLabels"
+          />
+          <mat-hint align="start"> Separate aria-labels with comma </mat-hint>
+        </mat-form-field>
+        <div class="checkbox-wrapper">
+          <mat-checkbox
+            [(ngModel)]="otpOptions.autoFocus"
+            name="autofocus"
+            >Autofocus</mat-checkbox
+          >
+          <mat-checkbox
+            [(ngModel)]="otpOptions.autoBlur"
+            name="autoblur"
+            >Autoblur</mat-checkbox
+          >
+          <mat-checkbox
+            [(ngModel)]="otpOptions.hideInputValues"
+            name="hideInputValues"
+            >Hide input values</mat-checkbox
+          >
+          <mat-checkbox
+            [(ngModel)]="otpOptions.blinkingCursor"
+            name="blinkingCursor"
+            >Blinking cursor</mat-checkbox
+          >
+          <mat-checkbox
+            [(ngModel)]="disabled"
+            name="disabled"
+            >Disabled</mat-checkbox
+          >
+        </div>
+        <div class="reload-info">
+          <span class="material-symbols-rounded">info</span>
+          <span>To apply new configuration changes, reload the component</span>
+        </div>
+        <button
+          mat-flat-button
+          type="submit"
+        >
+          Load changes
+        </button>
+      </form>
+    </div>
+    <div class="component-preview">
+      <h3>Component Preview</h3>
+      <ngx-otp-input
+        *ngIf="showNgxOtpInput"
+        [options]="otpOptions"
+        [disabled]="disabled"
+        (otpComplete)="onOtpComplete($event)"
+        (otpChange)="onOtpChange($event)"
+      ></ngx-otp-input>
+      <div class="results">
+        <h4>Results</h4>
+        <div><b>On changes</b>: [{{ otpChangeValue }}]</div>
+        <div><b>On complete</b>: {{ otpCompleteValue }}</div>
+      </div>
+    </div>
+  </div>
+</div>

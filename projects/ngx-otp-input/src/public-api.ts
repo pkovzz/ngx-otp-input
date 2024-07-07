@@ -3,3 +3,4 @@
  */
 
 export * from './lib/ngx-otp-input.component';
+export { NgxOtpInputComponentOptions } from './lib/default.config';
