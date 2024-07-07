@@ -1,5 +1,5 @@
-#ngx-otp-input-form {
-  display: flex;
+.ngx-otp-input-form {
+  display: inline-flex;
   gap: 0.5rem;
 }
 
@@ -8,23 +8,15 @@
 }
 
 .ngx-otp-input {
-  width: 35px;
-  height: 40px;
+  width: 30px;
+  height: 35px;
   padding: 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 0.25rem;
+  border: 1px solid #c4c4c4;
+  border-radius: 0.5rem;
   outline: none;
   &:focus {
     border-color: #007bff;
   }
-}
-
-.ngx-otp-success {
-  border-color: #28a745;
-}
-
-.ngx-otp-failed {
-  border-color: #dc3545;
 }

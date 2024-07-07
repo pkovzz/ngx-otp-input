@@ -1,5 +1,4 @@
 <form
-  id="ngx-otp-input-form"
   ngxOtpPaste
   ngxInputNavigations
   [regexp]="config.regexp!"
@@ -11,6 +10,7 @@
     'ngx-blinking-cursor': config.blinkingCursor
   }"
   (valueChange)="handleInputChanges($event)"
+  class="ngx-otp-input-form"
 >
   <input
     *ngFor="let control of ngxOtpInputArray.controls; let i = index"
@@ -18,12 +18,13 @@
     [value]="control.value"
     [type]="inputType"
     [disabled]="disabled"
-    class="ngx-otp-input"
     [ngClass]="{
       'ngx-otp-input-disabled': disabled,
-      'ngx-otp-success': isOTPSuccess,
-      'ngx-otp-failed': isOTPFailed
+      'ngx-otp-input-filled': isInputFilled(i),
+      'ngx-otp-input-success': isOTPSuccess,
+      'ngx-otp-input-failed': isOTPFailed
     }"
+    class="ngx-otp-input"
     maxlength="1"
     spellcheck="false"
     autocomplete="off"

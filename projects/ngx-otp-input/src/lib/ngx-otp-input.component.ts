@@ -37,13 +37,13 @@ export enum OTP_STATUS {
   styleUrls: ['ngx-otp-input.component.scss'],
 })
 export class NgxOtpInputComponent implements OnInit {
+  protected ngxOtpInputArray!: FormArray;
+
   @Input() config: NgxOtpInputComponentConfig = defaultConfig;
-  @Input() disabled = false;
   @Input() status: OTP_STATUS | null | undefined;
+  @Input() disabled = false;
   @Output() otpChange = new EventEmitter<string[]>();
   @Output() otpComplete = new EventEmitter<string>();
-
-  protected ngxOtpInputArray!: FormArray;
 
   get inputType(): string {
     return this.config.hideInputValues ? 'password' : 'text';
@@ -77,5 +77,9 @@ export class NgxOtpInputComponent implements OnInit {
     if (this.ngxOtpInputArray.valid) {
       this.otpComplete.emit(this.ngxOtpInputArray.value.join(''));
     }
+  }
+
+  isInputFilled(index: number): boolean {
+    return !!this.ngxOtpInputArray.controls[index].value;
   }
 }
