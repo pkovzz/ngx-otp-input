@@ -4,7 +4,7 @@ export interface NgxOtpInputComponentOptions {
   autoBlur?: boolean;
   hideInputValues?: boolean;
   regexp?: RegExp;
-  blinkingCursor?: boolean;
+  showBlinkingCursor?: boolean;
   ariaLabels?: string[];
 }
 
@@ -14,6 +14,6 @@ export const defaultOptions: NgxOtpInputComponentOptions = {
   autoBlur: true,
   hideInputValues: false,
   regexp: /^[0-9]+$/,
-  blinkingCursor: true,
+  showBlinkingCursor: false,
   ariaLabels: [],
 };

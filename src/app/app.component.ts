@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
     autoBlur: true,
     hideInputValues: false,
     regexp: /^[0-9]+$/,
-    blinkingCursor: true,
+    showBlinkingCursor: false,
     ariaLabels: ['a', 'b', 'c', 'd', 'e', 'f'],
   };
   regexp = '^[0-9]+$';

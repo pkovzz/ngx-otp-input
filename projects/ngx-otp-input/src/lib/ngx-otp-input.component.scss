@@ -1,10 +1,11 @@
 .ngx-otp-input-form {
   display: inline-flex;
   gap: 0.5rem;
+  caret-color: transparent;
 }
 
 .ngx-blinking-cursor {
-  caret-color: transparent;
+  caret-color: initial;
 }
 
 .ngx-otp-input {
