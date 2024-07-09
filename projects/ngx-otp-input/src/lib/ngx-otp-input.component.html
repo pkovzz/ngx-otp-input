@@ -11,6 +11,7 @@
   }"
   (valueChange)="handleInputChanges($event)"
   class="ngx-otp-input-form"
+  data-testid="ngx-otp-input-form"
 >
   <input
     *ngFor="let control of ngxOtpInputArray.controls; let i = index"
@@ -30,5 +31,6 @@
     autocomplete="off"
     autocapitalize="off"
     autocorrect="off"
+    data-testid="ngx-otp-input-box"
   />
 </form>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   NgxOtpInputComponent,
-  NGX_OTP_STATUS,
+  NgxOtpStatus,
   NgxOtpInputComponentOptions,
 } from 'ngx-otp-input';
 import { CommonModule } from '@angular/common';
@@ -29,7 +29,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  otpStatusEnum = NGX_OTP_STATUS;
+  @ViewChild('ngxOtpInput') ngxOtpInput!: NgxOtpInputComponent;
+  otpStatusEnum = NgxOtpStatus;
   showNgxOtpInput = true;
   otpOptions: NgxOtpInputComponentOptions = {
     otpLength: 6,
@@ -84,5 +85,11 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       this.showNgxOtpInput = true;
     });
+  }
+
+  handleReset() {
+    this.ngxOtpInput.reset();
+    this.otpChangeValue = '-';
+    this.otpCompleteValue = '-';
   }
 }

@@ -22,11 +22,9 @@ export class InputNavigationsDirective implements AfterContentInit {
   @ContentChildren('otpInputElement', { descendants: true })
   inputs!: QueryList<ElementRef<HTMLInputElement>>;
 
-  @Input()
-  regexp!: RegExp;
+  @Input() regexp!: RegExp;
 
-  @Output()
-  valueChange: EventEmitter<ValueChangeEvent> =
+  @Output() valueChange: EventEmitter<ValueChangeEvent> =
     new EventEmitter<ValueChangeEvent>();
 
   ngAfterContentInit() {
@@ -84,8 +82,6 @@ export class InputNavigationsDirective implements AfterContentInit {
 
   @HostListener('keyup', ['$event'])
   onKeyUp(event: KeyboardEvent): void {
-    console.log(this.regexp);
-    console.log(event.key.match(this.regexp));
     const index = this.findInputIndex(event.target as HTMLElement);
     if (event.key.match(this.regexp)) {
       this.valueChange.emit([index, event.key]);

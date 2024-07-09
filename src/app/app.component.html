@@ -98,17 +98,29 @@
           <span class="material-symbols-rounded">info</span>
           <span>To apply new configuration changes, reload the component</span>
         </div>
-        <button
-          mat-flat-button
-          type="submit"
-        >
-          Load changes
-        </button>
+        <div class="form-actions">
+          <button
+            mat-flat-button
+            type="submit"
+          >
+            Load changes
+          </button>
+        </div>
       </form>
     </div>
     <div class="component-preview">
-      <h3>Component Preview</h3>
+      <div class="comment-preview-header">
+        <h3>Component Preview</h3>
+        <button
+          mat-button
+          type="button"
+          (click)="handleReset()"
+        >
+          Reset form value
+        </button>
+      </div>
       <ngx-otp-input
+        #ngxOtpInput
         *ngIf="showNgxOtpInput"
         [options]="otpOptions"
         [disabled]="disabled"
