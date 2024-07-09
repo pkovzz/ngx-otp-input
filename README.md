@@ -2,9 +2,7 @@
 
 ![GitHub License](https://img.shields.io/github/license/pkovzz/ngx-otp-input)
 
-```
-Important note: starting with version 1.0.0, the library has been completely rewritten to use standalone components and introduce breaking changes. As the section "Requirements" states, the library now requires Angular 14 or above.
-```
+:warning: **Important note:** starting with version 1.0.0, the library has been completely rewritten to use standalone components and introduce breaking changes. As the section "Requirements" states, the library now requires Angular 14 or above.
 
 ## What is this?
 
