@@ -184,7 +184,7 @@ If you would like to contribute to this project, please refer to the [CONTRIBUTI
 
 ## Code of Conduct
 
-Please read the [CODE_OF_CONDUCT](docs/CODE_OF_CONDUCT.md) file for more information.
+Please read the [CODE OF CONDUCT](docs/CODE_OF_CONDUCT.md) file for more information.
 
 ## Changelog
 
