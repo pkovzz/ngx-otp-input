@@ -17,18 +17,18 @@ We welcome contributions to the project. To contribute, please follow these step
    Then, run the library in development mode:
 
    ```bash
-   npm build-lib-watch
+   npm run build-lib-watch
    ```
 
    Finally, in a new terminal window, run the demo app:
 
    ```bash
-   npm start
+   npm run start
    ```
 
 4. After you have made your changes, run the tests:
    ```bash
-   npm test
+   npm run test-lib
    ```
 5. If all tests pass, commit your changes.
 6. Push your changes to your fork.
