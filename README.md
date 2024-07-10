@@ -4,9 +4,13 @@
 
 :warning: **Important note:** starting with version 1.0.0, the library has been completely rewritten to use standalone components and introduce breaking changes. As the section "Requirements" states, the library now requires Angular 14 or above.
 
+TODO: copy the final version of the README.md to library's root folder
+
 ## What is this?
 
 This is a simple Angular library that allows you to create an OTP (One Time Password) form by providing a set of options. The library is designed to be easy to use and highly customizable, allowing you to configure the form to suit your needs. If you like the library, please consider giving it a star on GitHub.
+
+TODO: Vercel and Stackblitz demo links
 
 ## Requirements
 
