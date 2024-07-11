@@ -38,14 +38,17 @@ export enum NgxOtpStatus {
 })
 export class NgxOtpInputComponent implements OnInit {
   protected ngxOtpInputArray!: FormArray;
-  @Input() options: NgxOtpInputComponentOptions = defaultOptions;
+  protected ngxOtpOptions: NgxOtpInputComponentOptions = defaultOptions;
+  @Input() set options(customOptions: NgxOtpInputComponentOptions) {
+    this.ngxOtpOptions = { ...defaultOptions, ...customOptions };
+  }
   @Input() status: NgxOtpStatus | null | undefined;
   @Input() disabled = false;
   @Output() otpChange = new EventEmitter<string[]>();
   @Output() otpComplete = new EventEmitter<string>();
 
   get inputType(): string {
-    return this.options.hideInputValues ? 'password' : 'text';
+    return this.ngxOtpOptions.hideInputValues ? 'password' : 'text';
   }
 
   get isOTPSuccess(): boolean {
@@ -63,7 +66,7 @@ export class NgxOtpInputComponent implements OnInit {
   private initOtpInputArray(): void {
     this.ngxOtpInputArray = new FormArray(
       Array.from(
-        { length: this.options.otpLength },
+        { length: this.ngxOtpOptions.otpLength! },
         () => new FormControl('', Validators.required),
       ),
     );

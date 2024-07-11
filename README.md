@@ -93,7 +93,7 @@ The `NgxOtpInputComponentOptions` interface allows you to configure the OTP form
 
 | Option               | Type     | Default value | Description                                                                                                                                                             |
 | -------------------- | -------- | ------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `otpLength`          | number   |             6 | The number of inputs in the OTP form, this field is `required`                                                                                                          |
+| `otpLength`          | number   |             6 | The number of inputs in the OTP form                                                                                                                                    |
 | `autoFocus`          | boolean  |          true | Whether the first input should be focused sautomatically                                                                                                                |
 | `autoBlur`           | boolean  |          true | Whether the form should be blurred on complete                                                                                                                          |
 | `hideInputValues`    | boolean  |         false | Whether the input values should be shown as password fields                                                                                                             |

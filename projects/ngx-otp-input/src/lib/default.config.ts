@@ -1,5 +1,5 @@
 export interface NgxOtpInputComponentOptions {
-  otpLength: number;
+  otpLength?: number;
   autoFocus?: boolean;
   autoBlur?: boolean;
   hideInputValues?: boolean;
@@ -14,6 +14,6 @@ export const defaultOptions: NgxOtpInputComponentOptions = {
   autoBlur: true,
   hideInputValues: false,
   regexp: /^[0-9]+$/,
-  showBlinkingCursor: false,
+  showBlinkingCursor: true,
   ariaLabels: [],
 };

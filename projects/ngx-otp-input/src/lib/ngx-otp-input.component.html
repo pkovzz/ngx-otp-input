@@ -1,13 +1,13 @@
 <form
   ngxOtpPaste
   ngxInputNavigations
-  [regexp]="options.regexp!"
+  [regexp]="ngxOtpOptions.regexp!"
   [isFormValid]="ngxOtpInputArray.valid"
-  [ngxAutoFocus]="options.autoFocus!"
-  [ngxAutoBlur]="options.autoBlur!"
-  [ngxOtpAriaLabels]="options.ariaLabels!"
+  [ngxAutoFocus]="ngxOtpOptions.autoFocus!"
+  [ngxAutoBlur]="ngxOtpOptions.autoBlur!"
+  [ngxOtpAriaLabels]="ngxOtpOptions.ariaLabels!"
   [ngClass]="{
-    'ngx-blinking-cursor': options.showBlinkingCursor
+    'ngx-blinking-cursor': ngxOtpOptions.showBlinkingCursor
   }"
   (valueChange)="handleInputChanges($event)"
   class="ngx-otp-input-form"
