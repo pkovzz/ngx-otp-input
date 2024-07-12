@@ -47,6 +47,11 @@ export class NgxOtpInputComponent implements OnInit {
   @Output() otpChange = new EventEmitter<string[]>();
   @Output() otpComplete = new EventEmitter<string>();
 
+  // For testing purposes
+  get ngxOtpOptionsInUse(): NgxOtpInputComponentOptions {
+    return this.ngxOtpOptions;
+  }
+
   get inputType(): string {
     return this.ngxOtpOptions.hideInputValues ? 'password' : 'text';
   }

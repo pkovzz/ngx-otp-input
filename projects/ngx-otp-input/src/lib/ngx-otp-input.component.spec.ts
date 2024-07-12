@@ -22,12 +22,14 @@ describe('NgxOtpInputComponent with default options', () => {
   });
 
   it('should have the default options', () => {
-    expect(component.options).toBeDefined();
+    expect(component.ngxOtpOptionsInUse).toBeDefined();
   });
 
   it('should have as many inputs as the length of the otp', () => {
     const inputElements = fixture.nativeElement.querySelectorAll('input');
-    expect(inputElements.length).toEqual(component.options.otpLength);
+    expect(inputElements.length).toEqual(
+      component.ngxOtpOptionsInUse.otpLength,
+    );
   });
 
   it('should have been focused on the first input', () => {
@@ -117,12 +119,14 @@ describe('NgxOtpInputComponent with custom options', () => {
   });
 
   it('should have custom options', () => {
-    expect(component.options).toEqual(options);
+    expect(component.ngxOtpOptionsInUse).toEqual(options);
   });
 
   it('should have as many inputs as the length of the otp', () => {
     const inputElements = document.querySelectorAll('input');
-    expect(inputElements.length).toEqual(component.options.otpLength);
+    expect(inputElements.length).toEqual(
+      component.ngxOtpOptionsInUse.otpLength!,
+    );
   });
 
   it('should not have been focused on the first input', () => {
