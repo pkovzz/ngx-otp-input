@@ -10,7 +10,7 @@ import {
   QueryList,
 } from '@angular/core';
 
-export type ValueChangeEvent = [number, string];
+export type OtpValueChangeEvent = [number, string];
 
 @Directive({
   standalone: true,
@@ -24,8 +24,8 @@ export class InputNavigationsDirective implements AfterContentInit {
 
   @Input() regexp!: RegExp;
 
-  @Output() valueChange: EventEmitter<ValueChangeEvent> =
-    new EventEmitter<ValueChangeEvent>();
+  @Output() valueChange: EventEmitter<OtpValueChangeEvent> =
+    new EventEmitter<OtpValueChangeEvent>();
 
   ngAfterContentInit() {
     this.inputsArray = this.inputs.toArray();

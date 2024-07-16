@@ -10,7 +10,7 @@ import { PasteDirective } from './directives/paste.directive';
 import { AutoFocusDirective } from './directives/autoFocus.directive';
 import {
   InputNavigationsDirective,
-  ValueChangeEvent,
+  OtpValueChangeEvent,
 } from './directives/inputNavigations.directive';
 import { AutoBlurDirective } from './directives/autoBlur.directive';
 import { AriaLabelsDirective } from './directives/ariaLabels.directive';
@@ -77,7 +77,7 @@ export class NgxOtpInputComponent implements OnInit {
     );
   }
 
-  handleInputChanges($event: ValueChangeEvent) {
+  handleInputChanges($event: OtpValueChangeEvent) {
     const [index, value] = $event;
     this.ngxOtpInputArray.controls[index].setValue(value);
     this.otpChange.emit(this.ngxOtpInputArray.value);
