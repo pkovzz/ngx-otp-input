@@ -14,5 +14,6 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - run: npm run build-lib
       - run: npm run lint-lib
       - run: npm run test-lib --no-watch --no-progress --browsers=ChromeHeadless
