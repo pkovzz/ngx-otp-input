@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test-lib": "ng test ngx-otp-input",
-    "test-lib:ci": "ng test ngx-otp-input --no-watch --no-progress --browsers=ChromeHeadless"
+    "test-lib:ci": "ng test ngx-otp-input --no-watch --no-progress --browsers=ChromeHeadless",
     "lint": "ng lint",
     "lint-lib": "ng lint ngx-otp-input",
     "prepare": "husky"
