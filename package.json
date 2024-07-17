@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build-lib": "ng build ngx-otp-input --configuration development",
+    "build-lib:prod": "ng build ngx-otp-input",
     "build-lib-watch": "ng build ngx-otp-input --watch --configuration development",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
