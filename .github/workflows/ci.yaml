@@ -16,4 +16,4 @@ jobs:
       - run: npm ci
       - run: npm run build-lib
       - run: npm run lint-lib
-      - run: npm run test-lib --no-watch --no-progress --browsers=ChromeHeadless
+      - run: npm run test-lib:ci
