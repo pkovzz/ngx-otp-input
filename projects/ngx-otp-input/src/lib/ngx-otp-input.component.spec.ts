@@ -3,6 +3,10 @@ import { NgxOtpInputComponent } from './ngx-otp-input.component';
 import { NgxOtpInputComponentOptions } from './default.config';
 import { NgxOtpStatus } from 'ngx-otp-input';
 
+/**
+ * TODO: add many-many more test cases!
+ */
+
 describe('NgxOtpInputComponent with default options', () => {
   let component: NgxOtpInputComponent;
   let fixture: ComponentFixture<NgxOtpInputComponent>;
