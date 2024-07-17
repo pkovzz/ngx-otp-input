@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormArray,
@@ -36,7 +44,7 @@ export enum NgxOtpStatus {
   templateUrl: 'ngx-otp-input.component.html',
   styleUrls: ['ngx-otp-input.component.scss'],
 })
-export class NgxOtpInputComponent implements OnInit {
+export class NgxOtpInputComponent implements OnInit, OnChanges {
   protected ngxOtpInputArray!: FormArray;
   protected ngxOtpOptions: NgxOtpInputComponentOptions = defaultOptions;
   @Input() set options(customOptions: NgxOtpInputComponentOptions) {
@@ -44,6 +52,7 @@ export class NgxOtpInputComponent implements OnInit {
   }
   @Input() status: NgxOtpStatus | null | undefined;
   @Input() disabled = false;
+  @Input() otp: string | null | undefined;
   @Output() otpChange = new EventEmitter<string[]>();
   @Output() otpComplete = new EventEmitter<string>();
 
@@ -68,6 +77,17 @@ export class NgxOtpInputComponent implements OnInit {
     this.initOtpInputArray();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    const otpChange = changes['otp'];
+    if (otpChange?.currentValue) {
+      if (!otpChange.firstChange) {
+        this.setInitialOtp(otpChange.currentValue);
+      } else {
+        this.ngxOtpOptions.autoFocus = false;
+      }
+    }
+  }
+
   private initOtpInputArray(): void {
     this.ngxOtpInputArray = new FormArray(
       Array.from(
@@ -75,18 +95,42 @@ export class NgxOtpInputComponent implements OnInit {
         () => new FormControl('', Validators.required),
       ),
     );
+    if (this.otp) {
+      this.setInitialOtp(this.otp);
+    }
   }
 
-  handleInputChanges($event: OtpValueChangeEvent) {
-    const [index, value] = $event;
-    this.ngxOtpInputArray.controls[index].setValue(value);
+  private setInitialOtp(otp: string): void {
+    if (this.ngxOtpOptions.regexp!.test(otp)) {
+      const otpValueArray = otp.split('');
+      otpValueArray.forEach((value, index) => {
+        this.ngxOtpInputArray.controls[index].setValue(value ?? '');
+      });
+      this.emitOtpValueChange();
+      if (otpValueArray.length !== this.ngxOtpOptions.otpLength) {
+        console.warn(
+          'OTP length does not match the provided otpLength option!',
+        );
+      }
+    } else {
+      throw new Error('Invalid OTP provided for the component <ngx-otp-input>');
+    }
+  }
+
+  private emitOtpValueChange(): void {
     this.otpChange.emit(this.ngxOtpInputArray.value);
     if (this.ngxOtpInputArray.valid) {
       this.otpComplete.emit(this.ngxOtpInputArray.value.join(''));
     }
   }
 
-  isInputFilled(index: number): boolean {
+  protected handleInputChanges($event: OtpValueChangeEvent) {
+    const [index, value] = $event;
+    this.ngxOtpInputArray.controls[index].setValue(value);
+    this.emitOtpValueChange();
+  }
+
+  protected isInputFilled(index: number): boolean {
     return !!this.ngxOtpInputArray.controls[index].value;
   }
 
