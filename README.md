@@ -53,6 +53,10 @@ export class AppComponent {
 
 The `options` input is an object that allows you to configure the OTP form. For a list of available options, refer to the [Configuration options](#configuration-options) section.
 
+### `otp: string | null | undefined`
+
+The `otp` input is a string that allows you to set the OTP value of the form. This input is useful when you want to pre-fill the form with an OTP value. If the `otp` input is set to `null` or `undefined`, the form will be empty. The library will match the length of the OTP value with the `otpLength` option and fill the input fields accordingly, in case the OTP value is shorter than the `otpLength` option, the remaining fields will be empty. If the given value will not match the `regexp` option, the library will throw an error.
+
 ### `status: NgxOtpStatus | null | undefined`
 
 The `status` input is a string that allows you to set the status of the OTP form. The status can be one of the following values: `null`, `undefined`, `'success'` or `'failed'`. This status is only used to visually indicate the result of the OTP verification process.
