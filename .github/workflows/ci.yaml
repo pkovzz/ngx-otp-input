@@ -14,5 +14,5 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      - run: ng lint ngx-otp-input
-      - run: ng test ngx-otp-input --no-watch --no-progress --browsers=ChromeHeadless
+      - run: npm run lint-lib
+      - run: npm run test-lib --no-watch --no-progress --browsers=ChromeHeadless
