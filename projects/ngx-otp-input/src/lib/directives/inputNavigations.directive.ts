@@ -17,6 +17,39 @@ export type OtpValueChangeEvent = [number, string];
   selector: '[ngxInputNavigations]',
 })
 export class InputNavigationsDirective implements AfterContentInit {
+  private readonly blockedKeys = [
+    'Alt',
+    'Control',
+    'Meta',
+    'Shift',
+    'CapsLock',
+    'Tab',
+    'Backspace',
+    'Escape',
+    'ArrowLeft',
+    'ArrowUp',
+    'ArrowRight',
+    'ArrowDown',
+    'F1',
+    'F2',
+    'F3',
+    'F4',
+    'F5',
+    'F6',
+    'F7',
+    'F8',
+    'F9',
+    'F10',
+    'F11',
+    'F12',
+    'ContextMenu',
+    'Insert',
+    'Home',
+    'End',
+    'PageUp',
+    'PageDown',
+  ];
+
   private inputsArray: ElementRef<HTMLInputElement>[] = [];
 
   @ContentChildren('otpInputElement', { descendants: true })
@@ -72,10 +105,17 @@ export class InputNavigationsDirective implements AfterContentInit {
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     if (
-      !event.key.match(this.regexp) &&
-      event.key !== 'Backspace' &&
-      event.key !== 'Tab'
+      (event.code === 'KeyA' && event.ctrlKey === true) || // Allow: Ctrl+A
+      (event.code === 'KeyC' && event.ctrlKey === true) || // Allow: Ctrl+C
+      (event.code === 'KeyV' && event.ctrlKey === true) || // Allow: Ctrl+V
+      (event.code === 'KeyX' && event.ctrlKey === true) || // Allow: Ctrl+X
+      (event.code === 'KeyA' && event.metaKey === true) || // Cmd+A (Mac)
+      (event.code === 'KeyC' && event.metaKey === true) || // Cmd+C (Mac)
+      (event.code === 'KeyV' && event.metaKey === true) || // Cmd+V (Mac)
+      (event.code === 'KeyX' && event.metaKey === true) // Cmd+X (Mac)
     ) {
+      return; // let it happen, don't do anything
+    } else if (!this.regexp.test(event.key)) {
       event.preventDefault();
     }
   }
@@ -83,7 +123,7 @@ export class InputNavigationsDirective implements AfterContentInit {
   @HostListener('keyup', ['$event'])
   onKeyUp(event: KeyboardEvent): void {
     const index = this.findInputIndex(event.target as HTMLElement);
-    if (event.key.match(this.regexp)) {
+    if (event.key.match(this.regexp) && !this.blockedKeys.includes(event.key)) {
       this.valueChange.emit([index, event.key]);
       this.setFocus(index + 1);
     }
