@@ -1,0 +1,36 @@
+<form
+  ngxOtpPaste
+  ngxInputNavigations
+  [regexp]="ngxOtpOptions.regexp!"
+  [isFormValid]="ngxOtpInputArray.valid"
+  [ngxAutoFocus]="ngxOtpOptions.autoFocus!"
+  [ngxAutoBlur]="ngxOtpOptions.autoBlur!"
+  [ngxOtpAriaLabels]="ngxOtpOptions.ariaLabels!"
+  [ngClass]="{
+    'ngx-blinking-cursor': ngxOtpOptions.showBlinkingCursor
+  }"
+  (valueChange)="handleInputChanges($event)"
+  class="ngx-otp-input-form"
+  data-testid="ngx-otp-input-form"
+>
+  <input
+    *ngFor="let control of ngxOtpInputArray.controls; let i = index"
+    #otpInputElement
+    [value]="control.value"
+    [type]="inputType"
+    [disabled]="disabled"
+    [ngClass]="{
+      'ngx-otp-input-disabled': disabled,
+      'ngx-otp-input-filled': isInputFilled(i),
+      'ngx-otp-input-success': isOTPSuccess,
+      'ngx-otp-input-failed': isOTPFailed
+    }"
+    class="ngx-otp-input-box"
+    maxlength="1"
+    spellcheck="false"
+    autocomplete="off"
+    autocapitalize="off"
+    autocorrect="off"
+    data-testid="ngx-otp-input-box"
+  />
+</form>

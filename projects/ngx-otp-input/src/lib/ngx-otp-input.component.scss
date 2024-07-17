@@ -1,0 +1,23 @@
+.ngx-otp-input-form {
+  display: inline-flex;
+  gap: 0.5rem;
+  caret-color: transparent;
+}
+
+.ngx-blinking-cursor {
+  caret-color: initial;
+}
+
+.ngx-otp-input-box {
+  width: 30px;
+  height: 35px;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 1px solid #c4c4c4;
+  border-radius: 0.5rem;
+  outline: none;
+  &:focus {
+    border-color: #007bff;
+  }
+}

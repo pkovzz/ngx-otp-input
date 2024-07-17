@@ -1,87 +1,92 @@
-section {
-  max-width: 768px;
+.container {
+  width: 976px;
   margin: 0 auto;
-  overflow: hidden;
+  padding-bottom: 60px;
 }
 
-.demo-container {
+.header {
   display: flex;
-  flex-direction: column;
-
-  h3 {
-    align-self: flex-start;
+  align-items: center;
+  margin: 2rem 0;
+  border-bottom: 1px solid #c7c6c6;
+  h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-right: auto;
   }
 }
 
-ngx-otp-input {
-  display: block;
-  margin: 40px 0;
-}
-
-.settings {
+.info {
   display: flex;
+  gap: 8px;
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: #f3f3f3;
+  border: 1px solid #c7c6c6;
+  border-radius: 0.5rem;
+  color: #3d3d3d;
 }
 
-.inputs {
-  flex: 1;
+.component-wrapper {
+  display: flex;
+  gap: 3rem;
+  h3 {
+    font-size: 1.5rem;
+  }
+}
 
+.component-options {
+  flex: 1;
   mat-form-field {
     width: 100%;
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
 }
 
-.options {
+.component-preview {
   flex: 1;
-  padding-left: 32px;
-
-  mat-checkbox,
-  mat-radio-button {
-    display: block;
-    margin-bottom: 16px;
-  }
 }
 
-.actions {
-  align-self: flex-start;
-  button {
-    display: block;
-    margin-top: 24px;
-  }
+.reload-info {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
-.hint {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 13px;
+.checkbox-wrapper {
+  margin-top: 1rem;
 }
 
-.result {
-  margin: 4px 0;
-}
-
-mat-radio-group {
+mat-checkbox {
   display: block;
-  margin-top: 30px;
 }
 
-@media screen and (max-width: 768px) {
-  section {
-    padding: 20px;
+.results-container {
+  margin-top: 0.75rem;
+  h4 {
+    font-size: 1.25rem;
   }
+}
 
-  .settings {
-    flex-direction: column;
-  }
+.results {
+  display: flex;
+  gap: 1rem;
+}
 
-  .options {
-    margin-top: 16px;
-    padding: 0;
+.result-box {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #c7c6c6;
+  border-radius: 0.5rem;
+  div {
+    margin-top: 1rem;
+    font-size: 1.5rem;
   }
+}
 
-  .actions {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+.comment-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

@@ -1,87 +1,95 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import {
-  NgxOtpBehavior,
   NgxOtpInputComponent,
-  NgxOtpInputConfig,
+  NgxOtpStatus,
+  NgxOtpInputComponentOptions,
 } from 'ngx-otp-input';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'ngx-app-root',
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    NgxOtpInputComponent,
+  ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  @ViewChild('ngxOtpInput') ngxOtpInput!: NgxOtpInputComponent;
+  otpStatusEnum = NgxOtpStatus;
   showNgxOtpInput = true;
-
-  otpInputConfig: NgxOtpInputConfig = {
-    otpLength: 4,
-    autofocus: true,
-    autoblur: true,
-    isPasswordInput: false,
-    behavior: NgxOtpBehavior.DEFAULT,
-    ariaLabels: ['a', 'b', 'v', 'c'],
-    classList: {
-      container: 'my-super-container',
-      inputBox: 'my-super-box-class',
-      input: ['my-super-input-class', 'my-super-input-class-array-test'],
-      inputFilled: 'my-super-filled-class',
-      inputDisabled: 'my-super-disable-class',
-      inputSuccess: 'my-super-success-class',
-      inputError: 'my-super-error-class',
-    },
+  otpOptions: NgxOtpInputComponentOptions = {
+    otpLength: 6,
+    autoFocus: true,
+    autoBlur: true,
+    hideInputValues: false,
+    showBlinkingCursor: true,
+    regexp: /^[0-9]+$/,
+    ariaLabels: ['a', 'b', 'c', 'd', 'e', 'f'],
   };
+  regexp = '^[0-9]+$';
+  ariaLabels = '';
+  disabled = false;
+  otpChangeValue = '-';
+  otpCompleteValue = '-';
 
-  regex: string;
-  ariaLabels: string;
-  ngxOtpDisable = false;
-  status = null;
+  ngOnInit(): void {
+    this.formatAriaLabelsForDisplay();
+  }
 
-  otpChangeResult = [];
-  fillResult = null;
+  onOtpChange(otp: string[]) {
+    const hasValue = otp.some((value) => value !== '');
+    if (hasValue) {
+      this.otpChangeValue = otp.join(', ');
+    } else {
+      this.otpChangeValue = '-';
+      this.otpCompleteValue = '-';
+    }
+  }
 
-  @ViewChild('ngxotp') ngxOtp: NgxOtpInputComponent;
+  onOtpComplete(otp: string) {
+    this.otpCompleteValue = otp;
+  }
 
-  constructor(private readonly cdr: ChangeDetectorRef) {}
+  formatAriaLabelsForDisplay() {
+    this.ariaLabels = this.otpOptions.ariaLabels!.join(', ');
+  }
 
-  reload(): void {
+  formatAriaLabelsForSave() {
+    const ariaLabelsInputValue = this.ariaLabels.split(',');
+    this.otpOptions.ariaLabels = ariaLabelsInputValue.map((entry) =>
+      entry.replace(/\s/g, ''),
+    );
+  }
+
+  convertStringToRegexp() {
+    this.otpOptions.regexp = new RegExp(this.regexp);
+  }
+
+  handleComponentReload() {
     this.showNgxOtpInput = false;
     setTimeout(() => {
       this.showNgxOtpInput = true;
     });
   }
 
-  setRegex(): void {
-    // TODO: proper string-to-regexp transform
-    this.otpInputConfig.pattern = new RegExp(this.regex);
-  }
-
-  setAriaLabels(): void {
-    const arr = this.ariaLabels.split(',');
-    if (arr.length === 1) {
-      this.otpInputConfig.ariaLabels = arr[0];
-    } else {
-      this.otpInputConfig.ariaLabels = arr.map((entry) =>
-        entry.replace(/\s/g, '')
-      );
-    }
-  }
-
-  clear(): void {
-    this.ngxOtp.clear();
-  }
-
-  handleOtpChange($event: string[]): void {
-    this.otpChangeResult = $event;
-    this.cdr.detectChanges();
-  }
-
-  handleFill($event: string): void {
-    this.fillResult = $event;
-  }
-
-  changeBehavior(asLegacy: boolean): void {
-    this.otpInputConfig.behavior = asLegacy
-      ? NgxOtpBehavior.LEGACY
-      : NgxOtpBehavior.DEFAULT;
+  handleReset() {
+    this.ngxOtpInput.reset();
+    this.otpChangeValue = '-';
+    this.otpCompleteValue = '-';
   }
 }

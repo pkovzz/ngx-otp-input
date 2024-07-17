@@ -1,35 +1,10 @@
 {
   "extends": "../../.eslintrc.json",
-  "ignorePatterns": ["!**/*", "src/test.ts"],
+  "ignorePatterns": ["!**/*"],
   "overrides": [
     {
       "files": ["*.ts"],
-      "parserOptions": {
-        "project": [
-          "projects/ngx-otp-input/tsconfig.*.json",
-          "projects/ngx-otp-input/tsconfig.*.json"
-        ],
-        "createDefaultProgram": true
-      },
-      "plugins": ["eslint-plugin-react"],
-      "rules": {
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "type": "element",
-            "prefix": "ngx",
-            "style": "kebab-case"
-          }
-        ],
-        "@angular-eslint/directive-selector": [
-          "error",
-          {
-            "type": "attribute",
-            "prefix": "ngx",
-            "style": "camelCase"
-          }
-        ]
-      }
+      "rules": {}
     },
     {
       "files": ["*.html"],

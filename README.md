@@ -1,6 +1,12 @@
 # ngx-otp-input
 
-**ngx-otp-input** is a simple one time password input library for Angular.
+![GitHub License](https://img.shields.io/github/license/pkovzz/ngx-otp-input)
+
+:warning: **Important note:** starting with version 1.0.0, the library has been completely rewritten to use standalone components and introduce breaking changes. As the section "Requirements" states, the library now requires Angular 14 or above.
+
+## What is this?
+
+This is a simple Angular library that allows you to create an OTP (One Time Password) form by providing a set of options. The library is designed to be easy to use and highly customizable, allowing you to configure the form to suit your needs. If you like the library, please consider giving it a star on GitHub.
 
 ### Demo page
 
@@ -10,224 +16,192 @@ http://ngx-otp-input.vercel.app
 
 https://stackblitz.com/edit/angular-ngx-otp-input
 
-## Overview
+## Requirements
 
-- [Install](#install)
-- [Usage](#usage)
-- [@Input()](#input)
-- [@Output()](#output)
-- [Configurations](#configurations)
-- [Styling](#styling)
-- [How to clear values](#clear)
-- [Difference between behaviors](#behaviors)
-- [Side notes](#side-notes)
-- [Contributing](#contributing)
-- [Changelog](#changelog)
-- [License](#license)
+To use this library, your project must be running **Angular 14** or above. This requirement stems from our adoption of standalone components, which are an integral feature in Angular's modern development approach. Standalone components offer a more streamlined and modular way to manage your components and simplify the dependency management, positioning them as the future of Angular development.
 
-## Install
+## Installation
 
-```
-npm i ngx-otp-input --save
+To install this library, run:
+
+```bash
+npm install ngx-otp-input --save
 ```
 
-_You can find the package on [NPM](https://www.npmjs.com/package/ngx-otp-input)._
+## Example Usage
 
-## Usage
+Since the library uses standalone components, you can directly import and use them in your Angular application without needing to declare them in any module. For more configuration options, refer to the [Configuration options](#configuration-options) section.
 
-Import **NgxOtpInputModule** to your module:
+```typescript
+import { Component } from '@angular/core';
+import { NgxOtpInputComponent, NgxOtpInputComponentOptions } from 'ngx-otp-input';
 
-```javascript
-import { NgxOtpInputModule } from 'ngx-otp-input';
-
-@NgModule({
-  imports: [NgxOtpInputModule],
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [NgxOtpInputComponent],
+  template: `
+    <h1>Welcome to My Angular App</h1>
+    <ngx-otp-input [options]="otpOptions"></ngx-otp-input>
+  `,
+  styleUrls: ['./app.component.scss'],
 })
-export class MySuperModule {}
+export class AppComponent {
+  otpOptions: NgxOtpInputComponentOptions = {...};
+}
 ```
 
-Set up the [configuration](#configurations) object in your component file:
+## Inputs
 
-```javascript
-otpInputConfig: NgxOtpInputConfig = {
-  otpLength: 6,
-  autoFocus: true,
-  ...
-};
+### `options: NgxOtpInputComponentOptions`
+
+The `options` input is an object that allows you to configure the OTP form. For a list of available options, refer to the [Configuration options](#configuration-options) section.
+
+### `otp: string | null | undefined`
+
+The `otp` input is a string that allows you to set the OTP value of the form. This input is useful when you want to pre-fill the form with an OTP value. If the `otp` input is set to `null` or `undefined`, the form will be empty. The library will match the length of the OTP value with the `otpLength` option and fill the input fields accordingly, in case the OTP value is shorter than the `otpLength` option, the remaining fields will be empty. If the given value will not match the `regexp` option, the library will throw an error.
+
+### `status: NgxOtpStatus | null | undefined`
+
+The `status` input is a string that allows you to set the status of the OTP form. The status can be one of the following values: `null`, `undefined`, `'success'` or `'failed'`. This status is only used to visually indicate the result of the OTP verification process.
+
+For type safety, you can use the `NgxOtpStatus` enum:
+
+```typescript
+import { NgxOtpStatus } from 'ngx-otp-input';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [NgxOtpInputComponent],
+  template: ` <ngx-otp-input [status]="otpStatusEnum.SUCCESS"></ngx-otp-input> `,
+})
+export class AppComponent {
+  status = NgxOtpStatus;
+}
 ```
 
-Then use the `<ngx-otp-input>` tag with your config in your template file:
+### `disabled: boolean`
 
-```html
-<ngx-otp-input [config]="otpInputConfig"></ngx-otp-input>
-```
+The `disabled` input is a boolean that allows you to disable the OTP form. When set to `true`, the form will be disabled and the user will not be able to interact with it.
 
-## Input
+## Outputs
 
-The following `@Input()` properties are:
+### `otpChange: string[]`
 
-### [config]
+The `otpChange` output is an event that is emitted whenever the OTP value changes. The event payload is an array of strings, where each string represents a value in the OTP form.
 
-The configuration object set the library's initial behavior.
+### `otpComplete: string`
 
-| Property | Type              | Required |
-| -------- | ----------------- | -------- |
-| [config] | NgxOtpInputConfig | true     |
+The `otpComplete` output is an event that is emitted whenever the OTP form is completed. The event payload is string, which represents the complete OTP value.
 
-For more information, check the [configurations](#configurations) section.
+## Configuration options
 
-### [disable]
+The `NgxOtpInputComponentOptions` interface allows you to configure the OTP form. The following options are available:
 
-Disable inputs.
-
-| Property  | Type    | Required | Default value |
-| --------- | ------- | -------- | ------------- |
-| [disable] | boolean | false    | false         |
-
-### [status]
-
-Set a visible status to the component. This status will apply `inputSuccess` or `inputError` styles.
-
-| Property | Value                | Required | Default value |
-| -------- | -------------------- | -------- | ------------- |
-| [status] | "success" or "error" | false    | -             |
-
-For more information, check the [styling](#styling) section.
-
-## Output
-
-### (otpChange)
-
-Emit a string array value on every input change.
-
-### (fill)
-
-Emit the final value as a single string when every input is filled and valid.
-
-## Configurations
-
-| Property         | Type                 | Required | Default value             | Description                                                                                                                                                                                                                                  |
-| ---------------- | -------------------- | -------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| otpLength        | number               | true     | 6                         | Set the number of inputs.                                                                                                                                                                                                                    |
-| pattern          | RegExp               | false    | `/^\d+$/` (numbers only)  | Determines which characters are allowed according to a RegExp pattern.                                                                                                                                                                       |
-| autofocus        | boolean              | false    | true                      | Set focus on the first input on component's load.                                                                                                                                                                                            |
-| autoblur         | boolean              | false    | true                      | Remove focus when every input box is filled.                                                                                                                                                                                                 |
-| isPasswordInput  | boolean              | false    | false                     | Set the type of the inputs. It can be `text` or `password`. Check [side notes](#If-input-type-is-password).                                                                                                                                  |
-| ariaLabels       | string _or_ string[] | false    | "One time password input" | Set the aria label attribute to the `label` tag around the input. Check [side notes](#If-you-set-a-single-string-as-aria-label).                                                                                                             |
-| classList        | NgxOtpStyles         | false    | -                         | `classList` is an object, which contains further properties, each with the type of string or string[]. These properties are addressing certain elements of the component. For more information, please read the [Styling](#styling) section. |
-| numericInputMode | boolean              | false    | -                         | Set [HTML input mode](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode) to numeric. If this is set, the config's **pattern** property will be forced to the default value (numbers only).                       |
-| behavior         | NgxOtpBehavior       | false    | DEFAULT                   | From version 0.11.0, ngx-otp-input's behaviour has changed. See more on [Difference between behaviors](#behaviors).                                                                                                                          |
+| Option               | Type     | Default value | Description                                                                                                                                                             |
+| -------------------- | -------- | ------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `otpLength`          | number   |             6 | The number of inputs in the OTP form                                                                                                                                    |
+| `autoFocus`          | boolean  |          true | Whether the first input should be focused sautomatically                                                                                                                |
+| `autoBlur`           | boolean  |          true | Whether the form should be blurred on complete                                                                                                                          |
+| `hideInputValues`    | boolean  |         false | Whether the input values should be shown as password fields                                                                                                             |
+| `regexp`             | RegExp   |    /^[0-9]+$/ | The regular expression that the input values should match                                                                                                               |
+| `showBlinkingCursor` | boolean  |          true | Whether the input fields should have a blinking cursor                                                                                                                  |
+| `ariaLabels`         | string[] |            [] | An array of strings that represent the aria-labels for each input field. For more information, please refer to the [More on aria-labels](#more-on-aria-labels) section. |
 
 ## Styling
 
-To apply css classes to certain parts of the library, you have to define them in the configuration object's `classList`
-property as mentioned above. Each property has the type `string` or `string[]`. These classes will be applied
-as [[ngClass]](https://angular.io/api/common/NgClass).
+The library provides a set of CSS classes that you can use to style the OTP form. The following classes are available:
 
-Here is an example:
+| Class name               | Description                            |
+| ------------------------ | -------------------------------------- |
+| `ngx-otp-input-form`     | The main container of the OTP form     |
+| `ngx-otp-input-box`      | The input field of the OTP form        |
+| `ngx-blinking-cursor`    | The blinking cursor of the input field |
+| `ngx-otp-input-disabled` | The disabled state of the form         |
+| `ngx-otp-input-filled`   | The filled state of an input field     |
+| `ngx-otp-input-success`  | The success state of the form          |
+| `nngx-otp-input-failed`  | The failed state of the form           |
 
-```javascript
-otpInputConfig: NgxOtpInputConfig = {
-  classList: {
-    input: 'my-super-class',
-    inputFilled: 'my-super-filled-class',
-    inputDisabled: 'my-super-disable-class',
-    inputSuccess: 'my-super-success-class',
-    inputError: 'my-super-error-class',
-  },
-};
-```
+### How to use the classes
 
-You can use these properties:
-
-| Property      | Description                                                                |
-| ------------- | -------------------------------------------------------------------------- |
-| container     | The top level container. Default class is `ngx-otp-input-container`.       |
-| inputBox      | The wrapper element of each input. Default class is `ngx-otp-input-box`    |
-| input         | The input element itself. Default class is `ngx-otp-input`.                |
-| inputFilled   | The set class will be only applied if the input has some value.            |
-| inputDisabled | The set class will be only applied, if the `[disabled]` option is `true`.  |
-| inputSuccess  | The set class will be only applied, if the `[status]` option is `success`. |
-| inputError    | The set class will be only applied, if the `[status]` option is `error`.   |
-
-### How to apply new styles
-
-For now, the recommended way to customize the component is to use the `styles.scss` file in your app's root like this:
+Styling is quite simple, but you have to use the classes directly in **root** style file, otherwise it will not work:
 
 ```scss
 ngx-otp-input {
-  .my-new-special-class {
+  .ngx-otp-input-form {
     ...
   }
+  .ngx-otp-input-box {
+    ...
+  }
+  ...
 }
 ```
 
-### How to override existing styles
+## Reset the form
 
-Same as applying new styles, but you have to address it more precisely. You can find the default classes above.
+In order to reset the form, you can use the `reset` method of the `NgxOtpInputComponent`:
 
-```scss
-ngx-otp-input {
-  .ngx-otp-input-box.my-new-special-box-class {
-    ...
-  }
-}
+First, get a reference to the component in your template:
+
+```html
+<ngx-otp-input
+  #otpInput
+  [options]="otpOptions"
+></ngx-otp-input>
 ```
 
-## Clear
-
-Sometimes you may want to clear the input's value. To do this, invoke the library's `clear` method.
-
-First, add a template reference variable as a string:
-
-```angular2html
-<ngx-otp-input #ngxotp></ngx-otp-input>
-```
-
-Now you access it in your parent component like this:
+Then, get a reference to the component in your component class:
 
 ```typescript
-export class AppComponent {
-  @ViewChild('ngxotp') ngxOtp: NgxOtpInputComponent;
+import { Component, ViewChild } from '@angular/core';
+import { NgxOtpInputComponent } from 'ngx-otp-input';
 
-  mySuperEvent(): void {
-    this.ngxOtp.clear();
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [NgxOtpInputComponent],
+  template: `
+    <ngx-otp-input
+      #otpInput
+      [options]="otpOptions"
+    ></ngx-otp-input>
+  `,
+})
+export class AppComponent {
+  @ViewChild('otpInput') otpInput: NgxOtpInputComponent;
+
+  resetForm() {
+    this.otpInput.reset();
   }
 }
 ```
 
-## Behaviors
+Under the hood, the `reset` method will clear all the input values and reset the form to its initial state. For more information, refer to the [Angular FormArray reset](https://angular.dev/api/forms/FormArray#reset) documentation.
 
-Try the [demo](http://ngx-otp-input.vercel.app) to see the differences.
+## More on aria-labels
 
-### Default
+The `ariaLabels` option allows you to provide a set of strings that represent the aria-labels for each input field. This option is useful for making the form more accessible to users who rely on screen readers. The `aria-label` attribute provides a way to specify a string that labels the current element, which can be read by screen readers to provide additional context to the user. The library will automatically assign the `aria-label` attribute to each input with a default value of `One Time Password Input Number` followed by the input index. However, you can override this default value by providing your own set of labels in the `ariaLabels` option.
 
-By default, when the user hit the backspace key, the focused box's value will be cleared and the focus will jump backwards.
-
-### Legacy
-
-With "legacy" behavior, there is a check before deletion. First, we check if the focused box has value. If so, we delete the value but the focus remains on the same box. If the user hit the backspace on an empty box, only then will the focus jump backwards.
+If you provide an array of strings in the `ariaLabels` option, the library will use the values in the array to assign the `aria-label` attribute to each input field. The array should contain the same number of strings as the `otpLength` option, with each string representing the label for the corresponding input field. If the array contains fewer strings than the `otpLength` option, the library will use the default value for the remaining input fields.
 
 ## Side notes
 
-### If input type is password
-
-Password managers like 1Password or NordPass could place their icon into the inputs and causes design issues.
-
-### If you set a single string as aria label
-
-It will be applied to every label. However, you can set different aria label text for
-each input if you provide them as a string array. Please note, that if the given array's length is less than the number
-of inputs, the leftover will get the default value.
+If `hideInputValues` is set to `true`, the input values will be hidden by default, using the `password` input type. However certain password managers may place their browser extension icon on the input field, which may interfere with the input field's appearance.
 
 ## Contributing
 
-See more [here](CONTRIBUTING.md).
+If you would like to contribute to this project, please refer to the [CONTRIBUTING](docs/CONTRIBUTING.md) file for more information.
+
+## Code of Conduct
+
+Please read the [CODE OF CONDUCT](docs/CODE_OF_CONDUCT.md) file for more information.
 
 ## Changelog
 
-You can find the previous changes [here](CHANGELOG.md).
+See the [CHANGELOG](docs/CHANGELOG.md) file for details.
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](docs/LICENSE) file for details.

@@ -1,17 +1,19 @@
-name: CI
+name: lint-and-test
 
-on: push
+run-name: Lint and Test
+
+on: [pull_request]
 
 jobs:
-  ci:
-    name: "Lint & test"
-    
+  lint-and-test:
+    name: Lint and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2.1.5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '14'
-      - run: npm install
+          node-version: '20'
+      - run: npm ci
+      - run: npm run build-lib
       - run: npm run lint-lib
-      - run: npm run test-lib
+      - run: npm run test-lib:ci
