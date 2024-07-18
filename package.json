@@ -16,7 +16,6 @@
     "lint-lib": "ng lint ngx-otp-input",
     "prepare": "husky"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "^18.0.1",
     "@angular/cdk": "^18.0.6",
