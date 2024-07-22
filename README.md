@@ -12,10 +12,6 @@ This is a simple Angular library that allows you to create an OTP (One Time Pass
 
 http://ngx-otp-input.vercel.app
 
-### StackBlitz example
-
-https://stackblitz.com/edit/angular-ngx-otp-input
-
 ## Requirements
 
 To use this library, your project must be running **Angular 14** or above. This requirement stems from our adoption of standalone components, which are an integral feature in Angular's modern development approach. Standalone components offer a more streamlined and modular way to manage your components and simplify the dependency management, positioning them as the future of Angular development.
