@@ -188,16 +188,16 @@ If `hideInputValues` is set to `true`, the input values will be hidden by defaul
 
 ## Contributing
 
-If you would like to contribute to this project, please refer to the [CONTRIBUTING](docs/CONTRIBUTING.md) file for more information.
+If you would like to contribute to this project, please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for more information.
 
 ## Code of Conduct
 
-Please read the [CODE OF CONDUCT](docs/CODE_OF_CONDUCT.md) file for more information.
+Please read the [CODE OF CONDUCT](CODE_OF_CONDUCT.md) file for more information.
 
 ## Changelog
 
-See the [CHANGELOG](docs/CHANGELOG.md) file for details.
+See the [CHANGELOG](CHANGELOG.md) file for details.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](docs/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
