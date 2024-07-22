@@ -6,6 +6,7 @@ export interface NgxOtpInputComponentOptions {
   regexp?: RegExp;
   showBlinkingCursor?: boolean;
   ariaLabels?: string[];
+  inputMode?: string;
 }
 
 export const defaultOptions: NgxOtpInputComponentOptions = {
@@ -16,4 +17,5 @@ export const defaultOptions: NgxOtpInputComponentOptions = {
   regexp: /^[0-9]+$/,
   showBlinkingCursor: true,
   ariaLabels: [],
+  inputMode: 'numeric',
 };
