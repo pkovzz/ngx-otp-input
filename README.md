@@ -104,6 +104,7 @@ The `NgxOtpInputComponentOptions` interface allows you to configure the OTP form
 | `regexp`             | RegExp   |    /^[0-9]+$/ | The regular expression that the input values should match                                                                                                               |
 | `showBlinkingCursor` | boolean  |          true | Whether the input fields should have a blinking cursor                                                                                                                  |
 | `ariaLabels`         | string[] |            [] | An array of strings that represent the aria-labels for each input field. For more information, please refer to the [More on aria-labels](#more-on-aria-labels) section. |
+| `inputMode`          | string   |     'numeric' | The `inputmode` attribute of the input fields. For more information, please refer to the [HTML `inputmode` attribute](#html-inputmode-attribute) section.               |
 
 ## Styling
 
@@ -181,6 +182,14 @@ Under the hood, the `reset` method will clear all the input values and reset the
 The `ariaLabels` option allows you to provide a set of strings that represent the aria-labels for each input field. This option is useful for making the form more accessible to users who rely on screen readers. The `aria-label` attribute provides a way to specify a string that labels the current element, which can be read by screen readers to provide additional context to the user. The library will automatically assign the `aria-label` attribute to each input with a default value of `One Time Password Input Number` followed by the input index. However, you can override this default value by providing your own set of labels in the `ariaLabels` option.
 
 If you provide an array of strings in the `ariaLabels` option, the library will use the values in the array to assign the `aria-label` attribute to each input field. The array should contain the same number of strings as the `otpLength` option, with each string representing the label for the corresponding input field. If the array contains fewer strings than the `otpLength` option, the library will use the default value for the remaining input fields.
+
+## HTML `inputmode` attribute
+
+The `inputMode` option allows you to set the `inputmode` attribute of the input fields. The `inputmode` attribute provides a hint to the browser about the type of data that is expected to be entered by the user. This hint can help the browser provide a more appropriate **virtual keyboard** layout for the input field, making it easier for the user to enter the correct data. The `inputMode` option accepts a string value that represents the input mode of the input fields. For more details, check out this [documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode).
+
+Please note, that `regexp` option should be set to support the `inputmode` attribute. For example, if you set the `inputMode` option to `text` and the `regexp` option to `/^[a-zA-Z]+$/`, the browser will provide a virtual keyboard layout that is optimized for entering text data, but if the `inputMode` option is set to `numeric` and the `regexo` is still `/^[a-zA-Z]+$/`, the browser may provide a numeric keyboard layout, which may not be suitable for entering text data.
+
+**Default** options for `inputMode` and `regexp` are set to `'numeric'` and `/^[0-9]+$/` respectively, as these are the most common values for one time password inputs.
 
 ## Side notes
 

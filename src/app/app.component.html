@@ -58,6 +58,17 @@
           </mat-hint>
         </mat-form-field>
         <mat-form-field>
+          <mat-label>Input mode</mat-label>
+          <input
+            matInput
+            [(ngModel)]="otpOptions.inputMode"
+            name="inputMode"
+          />
+          <mat-hint align="start">
+            For detaild information, check the documentation
+          </mat-hint>
+        </mat-form-field>
+        <mat-form-field>
           <mat-label>Aria-labels</mat-label>
           <input
             matInput
