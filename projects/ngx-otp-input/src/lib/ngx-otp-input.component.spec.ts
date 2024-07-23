@@ -96,6 +96,13 @@ describe('NgxOtpInputComponent with default options', () => {
       ).toBeTrue();
     });
   });
+
+  it('should have numeric inputmode by default', () => {
+    const inputElements = fixture.nativeElement.querySelectorAll('input');
+    inputElements.forEach((inputElement: HTMLInputElement) => {
+      expect(inputElement.getAttribute('inputmode')).toEqual('numeric');
+    });
+  });
 });
 
 describe('NgxOtpInputComponent with custom options', () => {
@@ -107,6 +114,7 @@ describe('NgxOtpInputComponent with custom options', () => {
     hideInputValues: true,
     showBlinkingCursor: true,
     ariaLabels: ['First', 'Second', 'Third', 'Fourth', 'Fifth'],
+    inputMode: 'text',
   };
 
   let component: NgxOtpInputComponent;
@@ -153,6 +161,13 @@ describe('NgxOtpInputComponent with custom options', () => {
           options.ariaLabels[index],
         );
       }
+    });
+  });
+
+  it('should have text inputmode', () => {
+    const inputElements = document.querySelectorAll('input');
+    inputElements.forEach((inputElement: HTMLInputElement) => {
+      expect(inputElement.getAttribute('inputmode')).toEqual('text');
     });
   });
 
