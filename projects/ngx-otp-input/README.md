@@ -182,6 +182,14 @@ The `ariaLabels` option allows you to provide a set of strings that represent th
 
 If you provide an array of strings in the `ariaLabels` option, the library will use the values in the array to assign the `aria-label` attribute to each input field. The array should contain the same number of strings as the `otpLength` option, with each string representing the label for the corresponding input field. If the array contains fewer strings than the `otpLength` option, the library will use the default value for the remaining input fields.
 
+## HTML `inputmode` attribute
+
+The `inputMode` option allows you to set the `inputmode` attribute of the input fields. The `inputmode` attribute provides a hint to the browser about the type of data that is expected to be entered by the user. This hint can help the browser provide a more appropriate **virtual keyboard** layout for the input field, making it easier for the user to enter the correct data. The `inputMode` option accepts a string value that represents the input mode of the input fields. For more details, check out this [documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode).
+
+Please note, that `regexp` option should be set to support the `inputmode` attribute. For example, if you set the `inputMode` option to `text` and the `regexp` option to `/^[a-zA-Z]+$/`, the browser will provide a virtual keyboard layout that is optimized for entering text data, but if the `inputMode` option is set to `numeric` and the `regexp` is still `/^[a-zA-Z]+$/`, the browser may provide a numeric keyboard layout, which may not be suitable for entering text data.
+
+**Default** options for `inputMode` and `regexp` are set to `'numeric'` and `/^[0-9]+$/` respectively, as these are the most common values for one time password inputs.
+
 ## Side notes
 
 If `hideInputValues` is set to `true`, the input values will be hidden by default, using the `password` input type. However certain password managers may place their browser extension icon on the input field, which may interfere with the input field's appearance.
