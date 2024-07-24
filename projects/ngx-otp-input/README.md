@@ -1,6 +1,6 @@
 # ngx-otp-input
 
-[![License](https://img.shields.io/github/license/pkovzz/ngx-otp-input?style=flat)](LICENSE.txt)
+[![License](https://img.shields.io/github/license/pkovzz/ngx-otp-input?style=flat)](/../../LICENSE.txt)
 
 :warning: **Important note:** starting with version 1.0.0, the library has been completely rewritten to use standalone components and introduce breaking changes. As the section "Requirements" states, the library now requires Angular 14 or above.
 
@@ -188,16 +188,16 @@ If `hideInputValues` is set to `true`, the input values will be hidden by defaul
 
 ## Contributing
 
-If you would like to contribute to this project, please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for more information.
+If you would like to contribute to this project, please refer to the [CONTRIBUTING](/../../CONTRIBUTING.md) file for more information.
 
 ## Code of Conduct
 
-Please read the [CODE OF CONDUCT](CODE_OF_CONDUCT.md) file for more information.
+Please read the [CODE OF CONDUCT](/../../CODE_OF_CONDUCT.md) file for more information.
 
 ## Changelog
 
-See the [CHANGELOG](CHANGELOG.md) file for details.
+See the [CHANGELOG](/../../CHANGELOG.md) file for details.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](/../../LICENSE) file for details.
