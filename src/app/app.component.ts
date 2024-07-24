@@ -40,6 +40,7 @@ export class AppComponent implements OnInit {
     showBlinkingCursor: true,
     regexp: /^[0-9]+$/,
     ariaLabels: ['a', 'b', 'c', 'd', 'e', 'f'],
+    inputMode: 'numeric',
   };
   regexp = '^[0-9]+$';
   ariaLabels = '';

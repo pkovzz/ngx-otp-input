@@ -17,13 +17,12 @@ export type OtpValueChangeEvent = [number, string];
   selector: '[ngxInputNavigations]',
 })
 export class InputNavigationsDirective implements AfterContentInit {
-  private readonly blockedKeys = [
+  private readonly nonInputKeys = [
     'Alt',
     'Control',
     'Meta',
     'Shift',
     'CapsLock',
-    'Tab',
     'Backspace',
     'Escape',
     'ArrowLeft',
@@ -48,6 +47,8 @@ export class InputNavigationsDirective implements AfterContentInit {
     'End',
     'PageUp',
     'PageDown',
+    'Tab',
+    'Enter',
   ];
 
   private inputsArray: ElementRef<HTMLInputElement>[] = [];
@@ -105,6 +106,7 @@ export class InputNavigationsDirective implements AfterContentInit {
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     if (
+      this.nonInputKeys.includes(event.key) ||
       (event.code === 'KeyA' && event.ctrlKey === true) || // Allow: Ctrl+A
       (event.code === 'KeyC' && event.ctrlKey === true) || // Allow: Ctrl+C
       (event.code === 'KeyV' && event.ctrlKey === true) || // Allow: Ctrl+V
@@ -123,7 +125,10 @@ export class InputNavigationsDirective implements AfterContentInit {
   @HostListener('keyup', ['$event'])
   onKeyUp(event: KeyboardEvent): void {
     const index = this.findInputIndex(event.target as HTMLElement);
-    if (event.key.match(this.regexp) && !this.blockedKeys.includes(event.key)) {
+    if (
+      event.key.match(this.regexp) &&
+      !this.nonInputKeys.includes(event.key)
+    ) {
       this.valueChange.emit([index, event.key]);
       this.setFocus(index + 1);
     }

@@ -5,15 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.0
+
+### Added
+
+- Add `inputMode` configuration option.
+
 ## 1.0.0
 
 - Library is now a standalone component and introduced a new API with several breaking changes. Plese check the [Documentation](../README.md) for more information.
 
 ## 0.11.4
 
+### Fixed
+
 - Bugfix of [module import issue](https://github.com/pkovzz/ngx-otp-input/issues/16) and other improvements
 
 ## 0.11.1
+
+### Fixed
 
 - Bugfix of [Windows copy paste issue](https://github.com/k2peter/ngx-otp-input/issues/11)
 

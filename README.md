@@ -1,6 +1,6 @@
 # ngx-otp-input
 
-![GitHub License](https://img.shields.io/github/license/pkovzz/ngx-otp-input)
+[![License](https://img.shields.io/github/license/pkovzz/ngx-otp-input?style=flat)](./LICENSE.txt)
 
 :warning: **Important note:** starting with version 1.0.0, the library has been completely rewritten to use standalone components and introduce breaking changes. As the section "Requirements" states, the library now requires Angular 14 or above.
 
@@ -11,10 +11,6 @@ This is a simple Angular library that allows you to create an OTP (One Time Pass
 ### Demo page
 
 http://ngx-otp-input.vercel.app
-
-### StackBlitz example
-
-https://stackblitz.com/edit/angular-ngx-otp-input
 
 ## Requirements
 
@@ -108,6 +104,7 @@ The `NgxOtpInputComponentOptions` interface allows you to configure the OTP form
 | `regexp`             | RegExp   |    /^[0-9]+$/ | The regular expression that the input values should match                                                                                                               |
 | `showBlinkingCursor` | boolean  |          true | Whether the input fields should have a blinking cursor                                                                                                                  |
 | `ariaLabels`         | string[] |            [] | An array of strings that represent the aria-labels for each input field. For more information, please refer to the [More on aria-labels](#more-on-aria-labels) section. |
+| `inputMode`          | string   |     'numeric' | The `inputmode` attribute of the input fields. For more information, please refer to the [HTML `inputmode` attribute](#html-inputmode-attribute) section.               |
 
 ## Styling
 
@@ -186,22 +183,30 @@ The `ariaLabels` option allows you to provide a set of strings that represent th
 
 If you provide an array of strings in the `ariaLabels` option, the library will use the values in the array to assign the `aria-label` attribute to each input field. The array should contain the same number of strings as the `otpLength` option, with each string representing the label for the corresponding input field. If the array contains fewer strings than the `otpLength` option, the library will use the default value for the remaining input fields.
 
+## HTML `inputmode` attribute
+
+The `inputMode` option allows you to set the `inputmode` attribute of the input fields. The `inputmode` attribute provides a hint to the browser about the type of data that is expected to be entered by the user. This hint can help the browser provide a more appropriate **virtual keyboard** layout for the input field, making it easier for the user to enter the correct data. The `inputMode` option accepts a string value that represents the input mode of the input fields. For more details, check out this [documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode).
+
+Please note, that `regexp` option should be set to support the `inputmode` attribute. For example, if you set the `inputMode` option to `text` and the `regexp` option to `/^[a-zA-Z]+$/`, the browser will provide a virtual keyboard layout that is optimized for entering text data, but if the `inputMode` option is set to `numeric` and the `regexp` is still `/^[a-zA-Z]+$/`, the browser may provide a numeric keyboard layout, which may not be suitable for entering text data.
+
+**Default** options for `inputMode` and `regexp` are set to `'numeric'` and `/^[0-9]+$/` respectively, as these are the most common values for one time password inputs.
+
 ## Side notes
 
 If `hideInputValues` is set to `true`, the input values will be hidden by default, using the `password` input type. However certain password managers may place their browser extension icon on the input field, which may interfere with the input field's appearance.
 
 ## Contributing
 
-If you would like to contribute to this project, please refer to the [CONTRIBUTING](docs/CONTRIBUTING.md) file for more information.
+If you would like to contribute to this project, please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for more information.
 
 ## Code of Conduct
 
-Please read the [CODE OF CONDUCT](docs/CODE_OF_CONDUCT.md) file for more information.
+Please read the [CODE OF CONDUCT](CODE_OF_CONDUCT.md) file for more information.
 
 ## Changelog
 
-See the [CHANGELOG](docs/CHANGELOG.md) file for details.
+See the [CHANGELOG](CHANGELOG.md) file for details.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](docs/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
