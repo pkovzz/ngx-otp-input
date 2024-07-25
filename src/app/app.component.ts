@@ -1,16 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   NgxOtpInputComponent,
   NgxOtpStatus,
   NgxOtpInputComponentOptions,
 } from 'ngx-otp-input';
-import { CommonModule } from '@angular/common';
+import { BasicInformationComponent } from '../components/BasicInformation.component';
+import { HeaderComponent } from '../components/Header.component';
 
 @Component({
   selector: 'app-root',
@@ -19,11 +17,9 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     RouterOutlet,
     FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
     NgxOtpInputComponent,
+    HeaderComponent,
+    BasicInformationComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
