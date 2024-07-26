@@ -17,7 +17,7 @@ import { Component } from '@angular/core';
           >Star</a
         >
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <img
           alt="GitHub License"
           src="https://img.shields.io/github/license/pkovzz/ngx-otp-input"

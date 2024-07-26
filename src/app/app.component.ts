@@ -1,3 +1,4 @@
+import { inject } from '@vercel/analytics';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -45,6 +46,7 @@ export class AppComponent implements OnInit {
   otpCompleteValue = '-';
 
   ngOnInit(): void {
+    inject();
     this.formatAriaLabelsForDisplay();
   }
 
