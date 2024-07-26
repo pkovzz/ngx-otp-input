@@ -38,6 +38,10 @@ import { Component } from '@angular/core';
           >.
         </p>
         <p>To apply the changes, click the <i>Apply changes</i> button.</p>
+        <p>
+          If you like the library, please consider giving it a star on GitHub!
+          🌟
+        </p>
       </div>
     </div>
   `,

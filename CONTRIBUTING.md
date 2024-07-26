@@ -32,7 +32,7 @@ We welcome contributions to the project. To contribute, please follow these step
    ```
 5. If all tests pass, commit your changes.
 6. Push your changes to your fork.
-7. Open a pull request.
+7. [Open a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
 8. Wait for the maintainers to review your pull request.
 9. If your pull request is approved and merged, it will be included in the next release.
 
