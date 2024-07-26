@@ -5,17 +5,21 @@ import { Component } from '@angular/core';
   selector: 'app-header',
   template: `
     <div>
-      <div class="flex items-center justify-between">
+      <div
+        class="flex flex-col-reverse md:flex-row md:items-center justify-between"
+      >
         <h1>ngx-otp-input</h1>
-        <a
-          class="github-button"
-          href="https://github.com/pkovzz/ngx-otp-input"
-          data-icon="octicon-star"
-          data-size="large"
-          data-show-count="true"
-          aria-label="Star pkovzz/ngx-otp-input on GitHub"
-          >Star</a
-        >
+        <div class="mt-4">
+          <a
+            class="github-button"
+            href="https://github.com/pkovzz/ngx-otp-input"
+            data-icon="octicon-star"
+            data-size="large"
+            data-show-count="true"
+            aria-label="Star pkovzz/ngx-otp-input on GitHub"
+            >Star</a
+          >
+        </div>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <img
