@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   otpStatusEnum = NgxOtpStatus;
   showNgxOtpInput = true;
   otpOptions: NgxOtpInputComponentOptions = {
-    otpLength: 6,
+    otpLength: 5,
     autoFocus: true,
     autoBlur: true,
     hideInputValues: false,
