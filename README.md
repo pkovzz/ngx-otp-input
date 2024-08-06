@@ -210,3 +210,5 @@ See the [CHANGELOG](CHANGELOG.md) file for details.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+_This project is tested with BrowserStack_
