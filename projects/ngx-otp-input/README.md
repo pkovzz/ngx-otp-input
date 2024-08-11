@@ -196,15 +196,15 @@ If `hideInputValues` is set to `true`, the input values will be hidden by defaul
 
 ## Contributing
 
-If you would like to contribute to this project, please refer to the [CONTRIBUTING](<[/../../CONTRIBUTING.md](https://github.com/pkovzz/ngx-otp-input/blob/master/CONTRIBUTING.md)>) file for more information.
+If you would like to contribute to this project, please refer to the [CONTRIBUTING](https://github.com/pkovzz/ngx-otp-input/blob/master/CONTRIBUTING.md) file for more information.
 
 ## Code of Conduct
 
-Please read the [CODE OF CONDUCT](<[/../../CODE_OF_CONDUCT.md](https://github.com/pkovzz/ngx-otp-input/blob/master/CODE_OF_CONDUCT.md)>) file for more information.
+Please read the [CODE OF CONDUCT](https://github.com/pkovzz/ngx-otp-input/blob/master/CODE_OF_CONDUCT.md) file for more information.
 
 ## Changelog
 
-See the [CHANGELOG](<[/../../CHANGELOG.md](https://github.com/pkovzz/ngx-otp-input/blob/master/CHANGELOG.md)>) file for details.
+See the [CHANGELOG](https://github.com/pkovzz/ngx-otp-input/blob/master/CHANGELOG.md) file for details.
 
 ## License
 
