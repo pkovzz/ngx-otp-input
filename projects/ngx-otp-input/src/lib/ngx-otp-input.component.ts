@@ -47,9 +47,11 @@ export enum NgxOtpStatus {
 export class NgxOtpInputComponent implements OnInit, OnChanges {
   protected ngxOtpInputArray!: FormArray;
   protected ngxOtpOptions: NgxOtpInputComponentOptions = defaultOptions;
+
   @Input() set options(customOptions: NgxOtpInputComponentOptions) {
     this.ngxOtpOptions = { ...defaultOptions, ...customOptions };
   }
+
   @Input() status: NgxOtpStatus | null | undefined;
   @Input() disabled = false;
   @Input() otp: string | null | undefined;
@@ -117,17 +119,22 @@ export class NgxOtpInputComponent implements OnInit, OnChanges {
     }
   }
 
+  protected handleInputChanges($event: OtpValueChangeEvent) {
+    const [index, value] = $event;
+    this.ngxOtpInputArray.controls[index].setValue(value);
+    this.emitOtpValueChange();
+  }
+
+  protected handlePasteChange($event: string[]): void {
+    this.ngxOtpInputArray.setValue($event);
+    this.emitOtpValueChange();
+  }
+
   private emitOtpValueChange(): void {
     this.otpChange.emit(this.ngxOtpInputArray.value);
     if (this.ngxOtpInputArray.valid) {
       this.otpComplete.emit(this.ngxOtpInputArray.value.join(''));
     }
-  }
-
-  protected handleInputChanges($event: OtpValueChangeEvent) {
-    const [index, value] = $event;
-    this.ngxOtpInputArray.controls[index].setValue(value);
-    this.emitOtpValueChange();
   }
 
   protected isInputFilled(index: number): boolean {

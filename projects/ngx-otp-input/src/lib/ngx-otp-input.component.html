@@ -10,6 +10,7 @@
     'ngx-blinking-cursor': ngxOtpOptions.showBlinkingCursor
   }"
   (valueChange)="handleInputChanges($event)"
+  (handlePaste)="handlePasteChange($event)"
   class="ngx-otp-input-form"
   data-testid="ngx-otp-input-form"
 >
