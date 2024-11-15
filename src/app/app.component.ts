@@ -51,6 +51,7 @@ export class AppComponent implements OnInit {
   }
 
   onOtpChange(otp: string[]) {
+    console.log(otp);
     const hasValue = otp.some((value) => value !== '');
     if (hasValue) {
       this.otpChangeValue = otp.join(', ');
@@ -61,6 +62,7 @@ export class AppComponent implements OnInit {
   }
 
   onOtpComplete(otp: string) {
+    console.log(otp);
     this.otpCompleteValue = otp;
   }
 

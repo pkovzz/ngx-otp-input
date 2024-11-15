@@ -126,7 +126,13 @@ export class NgxOtpInputComponent implements OnInit, OnChanges {
   }
 
   protected handlePasteChange($event: string[]): void {
-    this.ngxOtpInputArray.setValue($event);
+    if ($event.length === this.ngxOtpOptions.otpLength) {
+      this.ngxOtpInputArray.setValue($event);
+    } else {
+      $event.map((value, index) => {
+        this.ngxOtpInputArray.controls[index].setValue(value);
+      });
+    }
     this.emitOtpValueChange();
   }
 

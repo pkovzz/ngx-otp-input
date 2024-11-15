@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.2
+
+### Fixed
+
+- [(#28)](https://github.com/pkovzz/ngx-otp-input/issues/29) Paste will fire only one _otpChange_ and one _otpComplete_ event
+
 ## 1.1.1
 
 ### Fixed
