@@ -8,7 +8,6 @@ import {
   Output,
   QueryList,
 } from '@angular/core';
-import { OtpValueChangeEvent } from './inputNavigations.directive';
 
 @Directive({
   standalone: true,
@@ -20,24 +19,20 @@ export class PasteDirective {
 
   @Input() regexp!: RegExp;
 
-  @Output() valueChange: EventEmitter<OtpValueChangeEvent> =
-    new EventEmitter<OtpValueChangeEvent>();
+  @Output() handlePaste: EventEmitter<string[]> = new EventEmitter<string[]>();
 
   @HostListener('paste', ['$event'])
   onPaste(event: ClipboardEvent): void {
     event.preventDefault();
-    this.handlePaste(event.clipboardData?.getData('text'));
-  }
-
-  private handlePaste(value: string | undefined): void {
-    if (value && this.regexp.test(value)) {
-      const values = value.split('');
+    const clipboardData = event.clipboardData?.getData('text');
+    if (clipboardData && this.regexp.test(clipboardData)) {
+      const values = clipboardData.split('');
       this.inputs.forEach((input, index) => {
         if (values[index]) {
           input.nativeElement.value = values[index];
-          this.valueChange.emit([index, values[index]]);
         }
       });
+      this.handlePaste.emit(values);
     }
   }
 }
