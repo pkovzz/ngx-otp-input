@@ -130,7 +130,7 @@ export class NgxOtpInputComponent implements OnInit, OnChanges {
       this.ngxOtpInputArray.setValue($event);
     } else {
       $event.map((value, index) => {
-        this.ngxOtpInputArray.controls[index].setValue(value);
+        this.ngxOtpInputArray.controls[index]?.setValue?.(value);
       });
     }
     this.emitOtpValueChange();
