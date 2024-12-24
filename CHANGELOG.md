@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.3
+
+- [(#31)](https://github.com/pkovzz/ngx-otp-input/issues/31) Prevent error when pasting more characters than input boxes
+
 ## 1.1.2
 
 ### Fixed
@@ -25,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 1.0.0
 
-- Library is now a standalone component and introduced a new API with several breaking changes. Plese check the [Documentation](../README.md) for more information.
+- Library is now a standalone component and introduced a new API with several breaking changes. Please check the [Documentation](../README.md) for more information.
 
 ## 0.11.4
 
