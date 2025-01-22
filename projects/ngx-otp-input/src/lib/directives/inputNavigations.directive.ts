@@ -72,8 +72,8 @@ export class InputNavigationsDirective implements AfterContentInit {
   @HostListener('input', ['$event'])
   onKeyUp(event: InputEvent): void {
     const index = this.findInputIndex(event.target as HTMLElement);
-    if (event.data?.match(this.regexp)) {
-      this.valueChange.emit([index, event.data]);
+    if ((event.target as HTMLInputElement).value?.match(this.regexp)) {
+      this.valueChange.emit([index, (event.target as HTMLInputElement).value]);
       this.setFocus(index + 1);
     } else {
       this.inputsArray[index].nativeElement.value = '';
