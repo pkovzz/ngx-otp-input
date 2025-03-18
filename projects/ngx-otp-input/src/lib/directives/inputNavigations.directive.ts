@@ -63,7 +63,10 @@ export class InputNavigationsDirective implements AfterContentInit {
   onBackspace(event: KeyboardEvent): void {
     const index = this.findInputIndex(event.target as HTMLElement);
     if (index >= 0) {
-      this.valueChange.emit([index, '']);
+      const indexToChange = this.inputsArray[index].nativeElement.value === ''
+        ? index - 1
+        : index;
+      this.valueChange.emit([indexToChange, '']);
       this.setFocus(index - 1);
       event.preventDefault();
     }
