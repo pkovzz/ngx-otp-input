@@ -252,9 +252,9 @@ import {
                   [inputMode]="config.inputMode"
                   [ariaLabel]="config.ariaLabel"
                   [status]="config.status"
-                  (valueChange)="onOtpChange($event)"
-                  (valueComplete)="onOtpComplete($event)"
-                  (valueInvalid)="onOtpInvalid($event)"
+                  (otpChange)="onOtpChange($event)"
+                  (otpComplete)="onOtpComplete($event)"
+                  (otpInvalid)="onOtpInvalid($event)"
                 ></ngx-otp-input>
               }
 
@@ -333,9 +333,9 @@ import {
                     <span
                       class="shrink-0"
                       [class]="
-                        line.type === 'valueComplete'
+                        line.type === 'otpComplete'
                           ? 'text-green-400'
-                          : line.type === 'valueInvalid'
+                          : line.type === 'otpInvalid'
                             ? 'text-red-400'
                             : 'text-blue-400'
                       "
@@ -460,15 +460,15 @@ export class PlaygroundComponent {
 
   onOtpChange(event: OtpChangeEvent): void {
     this.isComplete = event.isComplete;
-    this.addLog('valueChange', JSON.stringify(event));
+    this.addLog('otpChange', JSON.stringify(event));
   }
 
   onOtpComplete(value: string): void {
-    this.addLog('valueComplete', `"${value}"`);
+    this.addLog('otpComplete', `"${value}"`);
   }
 
   onOtpInvalid(event: OtpInvalidEvent): void {
-    this.addLog('valueInvalid', JSON.stringify(event));
+    this.addLog('otpInvalid', JSON.stringify(event));
   }
 
   private addLog(type: string, payload: string): void {

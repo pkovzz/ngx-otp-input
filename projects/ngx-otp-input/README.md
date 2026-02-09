@@ -39,7 +39,7 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
         formControlName="otp"
         [length]="6"
         [status]="status"
-        (valueComplete)="verify($event)"
+        (otpComplete)="verify($event)"
       ></ngx-otp-input>
     </form>
   `,
@@ -73,11 +73,11 @@ export class AppComponent {
 
 ## Outputs
 
-| Output          | Payload                                  | Description                                                       |
-| --------------- | ---------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
-| `valueChange`   | `{ value: string; isComplete: boolean }` | Emitted when value changes                                        |
-| `valueComplete` | `string`                                 | Emitted when OTP reaches full length                              |
-| `valueInvalid`  | `{ reason: 'too-long' \\                 | 'char-rejected'; attemptedValue: string; acceptedValue: string }` | Emitted when input is rejected during sanitize |
+| Output        | Payload                                  | Description                                                       |
+| ------------- | ---------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
+| `otpChange`   | `{ value: string; isComplete: boolean }` | Emitted when value changes                                        |
+| `otpComplete` | `string`                                 | Emitted when OTP reaches full length                              |
+| `otpInvalid`  | `{ reason: 'too-long' \\                 | 'char-rejected'; attemptedValue: string; acceptedValue: string }` | Emitted when input is rejected during sanitize |
 
 ## Styling
 
@@ -168,9 +168,9 @@ Set `mask` to `true` to hide the characters (password-style). Some password mana
 ## Migration notes (v1 → v2)
 
 - `options` object was removed. Use explicit inputs like `[length]`, `[mask]`, `[charPattern]`.
-- `otp` / `otpChange` were removed. Use **Reactive Forms** (`formControlName`) to read/write values.
-- `otpComplete` → `(valueComplete)`
-- `otpInvalid` → `(valueInvalid)`
+- `otp` input was removed. Use **Reactive Forms** (`formControlName`) to read/write values.
+- `otpChange` payload changed from `string[]` to `{ value: string; isComplete: boolean }`.
+- `otpInvalid` payload changed to `{ reason; attemptedValue; acceptedValue }`.
 - `status` values changed to `'idle' | 'success' | 'error'`.
 
 ## Contributing

@@ -61,9 +61,9 @@ export class NgxOtpInputComponent
   @Input() status: OtpStatus = 'idle';
   @Input() statusMessages: OtpStatusMessages = defaultV2.statusMessages;
 
-  @Output() valueChange = new EventEmitter<OtpChangeEvent>();
-  @Output() valueComplete = new EventEmitter<string>();
-  @Output() valueInvalid = new EventEmitter<OtpInvalidEvent>();
+  @Output() otpChange = new EventEmitter<OtpChangeEvent>();
+  @Output() otpComplete = new EventEmitter<string>();
+  @Output() otpInvalid = new EventEmitter<OtpInvalidEvent>();
 
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -167,7 +167,7 @@ export class NgxOtpInputComponent
 
     this.hasInvalidOtp = !!result.rejectedReason;
     if (result.rejectedReason) {
-      this.valueInvalid.emit({
+      this.otpInvalid.emit({
         reason: result.rejectedReason,
         attemptedValue: result.attempted,
         acceptedValue: result.accepted,
@@ -205,7 +205,7 @@ export class NgxOtpInputComponent
 
     this.hasInvalidOtp = !!result.rejectedReason;
     if (result.rejectedReason) {
-      this.valueInvalid.emit({
+      this.otpInvalid.emit({
         reason: result.rejectedReason,
         attemptedValue: result.attempted,
         acceptedValue: result.accepted,
@@ -231,10 +231,10 @@ export class NgxOtpInputComponent
   private setValueFromUser(nextValue: string): void {
     this.value = nextValue;
     this.onChange(this.value);
-    this.valueChange.emit({ value: this.value, isComplete: this.isComplete });
+    this.otpChange.emit({ value: this.value, isComplete: this.isComplete });
 
     if (this.isComplete) {
-      this.valueComplete.emit(this.value);
+      this.otpComplete.emit(this.value);
       if (this.autoBlur) {
         this.otpInput?.nativeElement.blur();
       }

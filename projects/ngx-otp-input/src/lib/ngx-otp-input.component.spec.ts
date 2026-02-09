@@ -15,8 +15,8 @@ import { NgxOtpInputComponent } from './ngx-otp-input.component';
         [autoBlur]="autoBlur"
         [status]="status"
         [ariaLabel]="ariaLabel"
-        (valueComplete)="completeValue = $event"
-        (valueInvalid)="invalidReason = $event.reason"
+        (otpComplete)="completeValue = $event"
+        (otpInvalid)="invalidReason = $event.reason"
       ></ngx-otp-input>
     </form>
   `,

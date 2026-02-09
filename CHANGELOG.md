@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Add `(valueChange)`, `(valueComplete)`, and `(valueInvalid)` outputs for value lifecycle events.
+- Add `(otpChange)`, `(otpComplete)`, and `(otpInvalid)` outputs for value lifecycle events.
 - Add `charPattern` input to control per-character allowlist.
 - Preserve boxed design while improving accessibility and keyboard handling.
 
