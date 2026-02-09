@@ -44,6 +44,7 @@ export class NgxOtpInputComponent
   implements ControlValueAccessor, OnChanges, AfterViewInit
 {
   private value = '';
+  private caretIndex: number | null = null;
   isDisabled = false;
   hasInvalidOtp = false;
   readonly statusMessageId = `ngx-otp-input-status-${nextStatusId++}`;
@@ -92,8 +93,22 @@ export class NgxOtpInputComponent
     });
   }
 
+  get displayCharacters(): string[] {
+    return this.characters.map((char) => {
+      if (this.mask && char) {
+        return '•';
+      }
+      return char;
+    });
+  }
+
   get activeIndex(): number {
-    return Math.min(this.value.length, Math.max(0, this.resolvedLength - 1));
+    const fallbackIndex = this.value.length;
+    const caretIndex = this.caretIndex ?? fallbackIndex;
+    return Math.min(
+      Math.max(0, caretIndex),
+      Math.max(0, this.resolvedLength - 1),
+    );
   }
 
   get boxes(): number[] {
@@ -130,6 +145,7 @@ export class NgxOtpInputComponent
         this.onChange(this.value);
       }
       this.syncNativeInputValue();
+      this.setCaretIndex(this.value.length);
       this.cdr.markForCheck();
     }
   }
@@ -139,6 +155,7 @@ export class NgxOtpInputComponent
     this.hasInvalidOtp = false;
     this.cdr.markForCheck();
     this.syncNativeInputValue();
+    this.setCaretIndex(this.value.length);
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -158,6 +175,7 @@ export class NgxOtpInputComponent
     event.preventDefault();
     if (!this.isDisabled) {
       this.otpInput?.nativeElement.focus();
+      queueMicrotask(() => this.setCaretIndex(this.value.length));
     }
   }
 
@@ -176,17 +194,47 @@ export class NgxOtpInputComponent
 
     this.setValueFromUser(result.accepted);
     this.syncNativeInputValue();
+    this.setCaretIndex(target.selectionStart ?? this.value.length);
   }
 
   handleKeyDown(event: KeyboardEvent): void {
     if (this.isDisabled) {
       return;
     }
+    const input = this.otpInput?.nativeElement;
+    const selectionStart = input?.selectionStart ?? this.value.length;
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      this.setCaretIndex(selectionStart - 1);
+      return;
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      this.setCaretIndex(selectionStart + 1);
+      return;
+    }
     if (event.key === 'Backspace') {
       event.preventDefault();
-      if (this.value.length > 0) {
-        this.setValueFromUser(this.value.slice(0, -1));
+      if (selectionStart > 0) {
+        const nextValue =
+          this.value.slice(0, selectionStart - 1) +
+          this.value.slice(selectionStart);
+        this.setValueFromUser(nextValue);
         this.syncNativeInputValue();
+        this.setCaretIndex(selectionStart - 1);
+      }
+      return;
+    }
+    if (event.key === 'Delete') {
+      event.preventDefault();
+      if (selectionStart < this.value.length) {
+        const nextValue =
+          this.value.slice(0, selectionStart) +
+          this.value.slice(selectionStart + 1);
+        this.setValueFromUser(nextValue);
+        this.syncNativeInputValue();
+        this.setCaretIndex(selectionStart);
       }
       return;
     }
@@ -214,6 +262,7 @@ export class NgxOtpInputComponent
 
     this.setValueFromUser(result.accepted);
     this.syncNativeInputValue();
+    this.setCaretIndex(this.value.length);
   }
 
   handleBlur(): void {
@@ -223,6 +272,7 @@ export class NgxOtpInputComponent
   reset(): void {
     this.setValueFromUser('');
     this.syncNativeInputValue();
+    this.setCaretIndex(0);
   }
 
   private onChange: (value: string) => void = () => {};
@@ -281,5 +331,21 @@ export class NgxOtpInputComponent
     if (input && input.value !== this.value) {
       input.value = this.value;
     }
+  }
+
+  private setCaretIndex(nextIndex: number): void {
+    const input = this.otpInput?.nativeElement;
+    const maxIndex = this.value.length;
+    const clamped = Math.min(Math.max(0, nextIndex), maxIndex);
+    this.caretIndex = clamped;
+
+    if (input) {
+      try {
+        input.setSelectionRange(clamped, clamped);
+      } catch {
+        // Ignore selection errors for unsupported input types.
+      }
+    }
+    this.cdr.markForCheck();
   }
 }

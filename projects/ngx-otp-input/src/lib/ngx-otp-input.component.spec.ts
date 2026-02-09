@@ -14,6 +14,7 @@ import { NgxOtpInputComponent } from './ngx-otp-input.component';
         [autoFocus]="false"
         [autoBlur]="autoBlur"
         [status]="status"
+        [mask]="mask"
         [ariaLabel]="ariaLabel"
         (otpComplete)="completeValue = $event"
         (otpInvalid)="invalidReason = $event.reason"
@@ -25,6 +26,7 @@ class TestHostComponent {
   length = 6;
   autoBlur = false;
   status: 'idle' | 'success' | 'error' = 'idle';
+  mask = false;
   ariaLabel = 'Test OTP';
   completeValue: string | null = null;
   invalidReason: string | null = null;
@@ -86,6 +88,42 @@ describe('NgxOtpInputComponent v2', () => {
     expect(fixture.componentInstance.completeValue).toEqual('123456');
   });
 
+  it('NgxOtpInputComponent › should move active box with arrow keys', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '1234';
+    nativeInput.setSelectionRange(4, 4);
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    let boxes: NodeListOf<HTMLDivElement> =
+      fixture.nativeElement.querySelectorAll(
+        '[data-testid="ngx-otp-input-box"]',
+      );
+    expect(boxes[4].classList.contains('ngx-otp-input-active')).toBeTrue();
+
+    nativeInput.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowLeft' }),
+    );
+    fixture.detectChanges();
+
+    boxes = fixture.nativeElement.querySelectorAll(
+      '[data-testid="ngx-otp-input-box"]',
+    );
+    expect(boxes[3].classList.contains('ngx-otp-input-active')).toBeTrue();
+
+    nativeInput.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight' }),
+    );
+    fixture.detectChanges();
+
+    boxes = fixture.nativeElement.querySelectorAll(
+      '[data-testid="ngx-otp-input-box"]',
+    );
+    expect(boxes[4].classList.contains('ngx-otp-input-active')).toBeTrue();
+  });
+
   it('NgxOtpInputComponent › should reject non-matching characters and emit invalid', () => {
     const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
       '[data-testid="ngx-otp-input-native"]',
@@ -123,5 +161,26 @@ describe('NgxOtpInputComponent v2', () => {
       '[data-testid="ngx-otp-input-native"]',
     );
     expect(nativeInput.getAttribute('aria-invalid')).toEqual('true');
+  });
+
+  it('NgxOtpInputComponent › should render masked dots when mask is true', () => {
+    fixture.componentInstance.mask = true;
+    fixture.detectChanges();
+
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '12';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const boxes: HTMLElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll(
+        '[data-testid="ngx-otp-input-box"]',
+      ),
+    );
+
+    expect(boxes[0].textContent?.trim()).toEqual('•');
+    expect(boxes[1].textContent?.trim()).toEqual('•');
   });
 });
