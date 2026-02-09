@@ -67,7 +67,7 @@ import {
                 max="8"
                 step="1"
                 class="w-full accent-[var(--color-accent)]"
-                (change)="rebuildComponent()"
+                (ngModelChange)="onLengthChange($event)"
               />
               <div
                 class="flex justify-between text-xs text-[var(--color-stone-400)] mt-1"
@@ -240,23 +240,21 @@ import {
               >
                 Live Preview
               </div>
-              @if (showComponent) {
-                <ngx-otp-input
-                  #playgroundOtp
-                  [formControl]="otpControl"
-                  [length]="config.length"
-                  [autoFocus]="false"
-                  [autoBlur]="config.autoBlur"
-                  [mask]="config.mask"
-                  [charPattern]="currentPattern"
-                  [inputMode]="config.inputMode"
-                  [ariaLabel]="config.ariaLabel"
-                  [status]="config.status"
-                  (otpChange)="onOtpChange($event)"
-                  (otpComplete)="onOtpComplete($event)"
-                  (otpInvalid)="onOtpInvalid($event)"
-                ></ngx-otp-input>
-              }
+              <ngx-otp-input
+                #playgroundOtp
+                [formControl]="otpControl"
+                [length]="config.length"
+                [autoFocus]="false"
+                [autoBlur]="config.autoBlur"
+                [mask]="config.mask"
+                [charPattern]="currentPattern"
+                [inputMode]="config.inputMode"
+                [ariaLabel]="config.ariaLabel"
+                [status]="config.status"
+                (otpChange)="onOtpChange($event)"
+                (otpComplete)="onOtpComplete($event)"
+                (otpInvalid)="onOtpInvalid($event)"
+              ></ngx-otp-input>
 
               <div class="mt-6 flex items-center gap-4 text-sm">
                 <div class="text-[var(--color-stone-400)]">
@@ -358,7 +356,6 @@ export class PlaygroundComponent {
   @ViewChild('playgroundOtp') playgroundOtp?: NgxOtpInputComponent;
 
   otpControl = new FormControl('', { nonNullable: true });
-  showComponent = true;
   isComplete = false;
   codeCopied = false;
 
@@ -444,11 +441,20 @@ export class PlaygroundComponent {
     this.rebuildComponent();
   }
 
-  rebuildComponent(): void {
-    this.showComponent = false;
+  onLengthChange(value: number | string): void {
+    const nextValue = Number(value);
+    if (Number.isFinite(nextValue)) {
+      this.config.length = nextValue;
+    } else {
+      this.config.length = 6;
+    }
     this.otpControl.reset();
     this.isComplete = false;
-    setTimeout(() => (this.showComponent = true));
+  }
+
+  rebuildComponent(): void {
+    this.otpControl.reset();
+    this.isComplete = false;
   }
 
   copyCode(): void {
