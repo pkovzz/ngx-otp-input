@@ -2,7 +2,6 @@ import { inject } from '@vercel/analytics';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
 import {
   NgxOtpInputComponent,
   NgxOtpStatus,
@@ -16,7 +15,6 @@ import { HeaderComponent } from '../components/Header.component';
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet,
     FormsModule,
     NgxOtpInputComponent,
     HeaderComponent,

@@ -44,36 +44,41 @@ export class InputNavigationsDirective implements AfterContentInit {
   }
 
   @HostListener('keydown.arrowLeft', ['$event'])
-  onArrowLeft(event: KeyboardEvent): void {
-    const index = this.findInputIndex(event.target as HTMLElement);
+  onArrowLeft(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    const index = this.findInputIndex(keyboardEvent.target as HTMLElement);
     if (index > 0) {
       this.setFocus(index - 1);
     }
   }
 
   @HostListener('keydown.arrowRight', ['$event'])
-  onArrowRight(event: KeyboardEvent): void {
-    const index = this.findInputIndex(event.target as HTMLElement);
+  onArrowRight(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    const index = this.findInputIndex(keyboardEvent.target as HTMLElement);
     if (index < this.inputs.length - 1) {
       this.setFocus(index + 1);
     }
   }
 
   @HostListener('keydown.backspace', ['$event'])
-  onBackspace(event: KeyboardEvent): void {
-    const index = this.findInputIndex(event.target as HTMLElement);
+  onBackspace(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    const index = this.findInputIndex(keyboardEvent.target as HTMLElement);
     if (index >= 0) {
       this.valueChange.emit([index, '']);
       this.setFocus(index - 1);
-      event.preventDefault();
+      keyboardEvent.preventDefault();
     }
   }
 
   @HostListener('input', ['$event'])
-  onKeyUp(event: InputEvent): void {
-    const index = this.findInputIndex(event.target as HTMLElement);
-    if ((event.target as HTMLInputElement).value?.match(this.regexp)) {
-      this.valueChange.emit([index, (event.target as HTMLInputElement).value]);
+  onKeyUp(event: Event): void {
+    const inputEvent = event as InputEvent;
+    const target = inputEvent.target as HTMLInputElement;
+    const index = this.findInputIndex(target as HTMLElement);
+    if (target.value?.match(this.regexp)) {
+      this.valueChange.emit([index, target.value]);
       this.setFocus(index + 1);
     } else {
       this.inputsArray[index].nativeElement.value = '';
