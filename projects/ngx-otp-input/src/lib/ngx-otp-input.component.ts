@@ -203,6 +203,55 @@ export class NgxOtpInputComponent
     }
     const input = this.otpInput?.nativeElement;
     const selectionStart = input?.selectionStart ?? this.value.length;
+    const selectionEnd = input?.selectionEnd ?? selectionStart;
+
+    if (
+      event.key.length === 1 &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.altKey
+    ) {
+      event.preventDefault();
+      if (!this.isCharAllowed(event.key)) {
+        this.hasInvalidOtp = true;
+        this.otpInvalid.emit({
+          reason: 'char-rejected',
+          attemptedValue: event.key,
+          acceptedValue: this.value,
+        });
+        this.cdr.markForCheck();
+        return;
+      }
+
+      const start = Math.min(selectionStart, selectionEnd);
+      const end = Math.max(selectionStart, selectionEnd);
+      let nextValue = this.value;
+
+      if (start < this.value.length) {
+        nextValue =
+          this.value.slice(0, start) +
+          event.key +
+          this.value.slice(
+            Math.min(end + (start === end ? 1 : 0), this.value.length),
+          );
+      } else if (this.value.length < this.resolvedLength) {
+        nextValue = this.value + event.key;
+      }
+
+      const sanitized = this.sanitize(nextValue);
+      this.hasInvalidOtp = !!sanitized.rejectedReason;
+      if (sanitized.rejectedReason) {
+        this.otpInvalid.emit({
+          reason: sanitized.rejectedReason,
+          attemptedValue: sanitized.attempted,
+          acceptedValue: sanitized.accepted,
+        });
+      }
+      this.setValueFromUser(sanitized.accepted);
+      this.syncNativeInputValue();
+      this.setCaretIndex(start + 1);
+      return;
+    }
 
     if (event.key === 'ArrowLeft') {
       event.preventDefault();

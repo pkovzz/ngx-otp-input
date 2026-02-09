@@ -124,6 +124,21 @@ describe('NgxOtpInputComponent v2', () => {
     expect(boxes[4].classList.contains('ngx-otp-input-active')).toBeTrue();
   });
 
+  it('NgxOtpInputComponent › should replace value when typing on a filled input', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123';
+    nativeInput.setSelectionRange(1, 1);
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    nativeInput.dispatchEvent(new KeyboardEvent('keydown', { key: '4' }));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('143');
+  });
+
   it('NgxOtpInputComponent › should reject non-matching characters and emit invalid', () => {
     const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
       '[data-testid="ngx-otp-input-native"]',
