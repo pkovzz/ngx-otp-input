@@ -62,6 +62,7 @@ Agents must:
 - Prefer **clarity over cleverness**
 - Minimize breaking changes
 - Assume the library is used in production environments
+- Use relevant skills when available for the task at hand
 
 ### Prohibited Behavior
 
