@@ -1,153 +1,285 @@
 import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
+  forwardRef,
+  inject,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
-  FormArray,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { PasteDirective } from './directives/paste.directive';
-import { AutoFocusDirective } from './directives/autoFocus.directive';
-import {
-  InputNavigationsDirective,
-  OtpValueChangeEvent,
-} from './directives/inputNavigations.directive';
-import { AutoBlurDirective } from './directives/autoBlur.directive';
-import { AriaLabelsDirective } from './directives/ariaLabels.directive';
-import { NgxOtpInputComponentOptions, defaultOptions } from './default.config';
+  defaultV2,
+  OtpChangeEvent,
+  OtpInvalidEvent,
+  OtpStatus,
+  OtpStatusMessages,
+} from './default.config';
 
-export enum NgxOtpStatus {
-  SUCCESS = 'success',
-  FAILED = 'failed',
-}
+let nextStatusId = 0;
 
 @Component({
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    PasteDirective,
-    AutoFocusDirective,
-    InputNavigationsDirective,
-    AutoBlurDirective,
-    AriaLabelsDirective,
-  ],
+  imports: [CommonModule],
   selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
   styleUrls: ['ngx-otp-input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => NgxOtpInputComponent),
+      multi: true,
+    },
+  ],
 })
-export class NgxOtpInputComponent implements OnInit, OnChanges {
-  protected ngxOtpInputArray!: FormArray;
-  protected ngxOtpOptions: NgxOtpInputComponentOptions = defaultOptions;
+export class NgxOtpInputComponent
+  implements ControlValueAccessor, OnChanges, AfterViewInit
+{
+  private value = '';
+  isDisabled = false;
+  hasInvalidOtp = false;
+  readonly statusMessageId = `ngx-otp-input-status-${nextStatusId++}`;
 
-  @Input() set options(customOptions: NgxOtpInputComponentOptions) {
-    this.ngxOtpOptions = { ...defaultOptions, ...customOptions };
-  }
+  @ViewChild('otpInput', { static: true })
+  private otpInput?: ElementRef<HTMLInputElement>;
 
-  @Input() status: NgxOtpStatus | null | undefined;
-  @Input() disabled = false;
-  @Input() otp: string | null | undefined;
-  @Output() otpChange = new EventEmitter<string[]>();
-  @Output() otpComplete = new EventEmitter<string>();
+  @Input() length = defaultV2.length;
+  @Input() autoFocus = defaultV2.autoFocus;
+  @Input() autoBlur = defaultV2.autoBlur;
+  @Input() mask = defaultV2.mask;
+  @Input() charPattern: RegExp = defaultV2.charPattern;
+  @Input() inputMode = defaultV2.inputMode;
+  @Input() ariaLabel = defaultV2.ariaLabel;
+  @Input() status: OtpStatus = 'idle';
+  @Input() statusMessages: OtpStatusMessages = defaultV2.statusMessages;
 
-  // For testing purposes
-  get ngxOtpOptionsInUse(): NgxOtpInputComponentOptions {
-    return this.ngxOtpOptions;
-  }
+  @Output() valueChange = new EventEmitter<OtpChangeEvent>();
+  @Output() valueComplete = new EventEmitter<string>();
+  @Output() valueInvalid = new EventEmitter<OtpInvalidEvent>();
+
+  private readonly cdr = inject(ChangeDetectorRef);
 
   get inputType(): string {
-    return this.ngxOtpOptions.hideInputValues ? 'password' : 'text';
+    return this.mask ? 'password' : 'text';
   }
 
-  get isOTPSuccess(): boolean {
-    return this.status === NgxOtpStatus.SUCCESS;
+  get statusMessage(): string {
+    if (this.status === 'success') {
+      return this.statusMessages?.success ?? defaultV2.statusMessages.success;
+    }
+    if (this.status === 'error') {
+      return this.statusMessages?.error ?? defaultV2.statusMessages.error;
+    }
+    return '';
   }
 
-  get isOTPFailed(): boolean {
-    return this.status === NgxOtpStatus.FAILED;
+  private get isComplete(): boolean {
+    return this.value.length === this.resolvedLength;
   }
 
-  ngOnInit(): void {
-    this.initOtpInputArray();
+  get characters(): string[] {
+    const chars = this.value.split('');
+    return Array.from({ length: this.resolvedLength }, (_, index) => {
+      return chars[index] ?? '';
+    });
+  }
+
+  get activeIndex(): number {
+    return Math.min(this.value.length, Math.max(0, this.resolvedLength - 1));
+  }
+
+  get boxes(): number[] {
+    return Array.from({ length: this.resolvedLength }, (_, index) => index);
+  }
+
+  get patternAttribute(): string | null {
+    const source = this.charPattern?.source ?? '';
+    if (!source) {
+      return null;
+    }
+    const unanchored = source.replace(/^\^/, '').replace(/\$$/, '');
+    return `(?:${unanchored}){0,${this.resolvedLength}}`;
+  }
+
+  get resolvedLength(): number {
+    const length = Number.isFinite(this.length)
+      ? Math.max(1, Math.floor(this.length))
+      : defaultV2.length;
+    return length;
+  }
+
+  ngAfterViewInit(): void {
+    if (this.autoFocus && !this.isDisabled) {
+      queueMicrotask(() => this.otpInput?.nativeElement.focus());
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const otpChange = changes['otp'];
-    if (otpChange?.currentValue) {
-      if (!otpChange.firstChange) {
-        this.setInitialOtp(otpChange.currentValue);
-      } else {
-        this.ngxOtpOptions.autoFocus = false;
+    if (changes['length'] || changes['charPattern']) {
+      const result = this.sanitize(this.value);
+      if (result.accepted !== this.value) {
+        this.value = result.accepted;
+        this.onChange(this.value);
       }
+      this.syncNativeInputValue();
+      this.cdr.markForCheck();
     }
   }
 
-  private initOtpInputArray(): void {
-    this.ngxOtpInputArray = new FormArray(
-      Array.from(
-        { length: this.ngxOtpOptions.otpLength! },
-        () => new FormControl('', Validators.required),
-      ),
-    );
-    if (this.otp) {
-      this.setInitialOtp(this.otp);
+  writeValue(value: string | null): void {
+    this.value = this.sanitize(value ?? '').accepted;
+    this.hasInvalidOtp = false;
+    this.cdr.markForCheck();
+    this.syncNativeInputValue();
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
+  }
+
+  handleContainerMouseDown(event: MouseEvent): void {
+    event.preventDefault();
+    if (!this.isDisabled) {
+      this.otpInput?.nativeElement.focus();
     }
   }
 
-  private setInitialOtp(otp: string): void {
-    if (this.ngxOtpOptions.regexp!.test(otp)) {
-      const otpValueArray = otp.split('');
-      otpValueArray.forEach((value, index) => {
-        this.ngxOtpInputArray.controls[index].setValue(value ?? '');
-      });
-      this.emitOtpValueChange();
-      if (otpValueArray.length !== this.ngxOtpOptions.otpLength) {
-        console.warn(
-          'OTP length does not match the provided otpLength option!',
-        );
-      }
-    } else {
-      throw new Error('Invalid OTP provided for the component <ngx-otp-input>');
-    }
-  }
+  handleInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const result = this.sanitize(target.value ?? '');
 
-  protected handleInputChanges($event: OtpValueChangeEvent) {
-    const [index, value] = $event;
-    this.ngxOtpInputArray.controls[index].setValue(value);
-    this.emitOtpValueChange();
-  }
-
-  protected handlePasteChange($event: string[]): void {
-    if ($event.length === this.ngxOtpOptions.otpLength) {
-      this.ngxOtpInputArray.setValue($event);
-    } else {
-      $event.map((value, index) => {
-        this.ngxOtpInputArray.controls[index]?.setValue?.(value);
+    this.hasInvalidOtp = !!result.rejectedReason;
+    if (result.rejectedReason) {
+      this.valueInvalid.emit({
+        reason: result.rejectedReason,
+        attemptedValue: result.attempted,
+        acceptedValue: result.accepted,
       });
     }
-    this.emitOtpValueChange();
+
+    this.setValueFromUser(result.accepted);
+    this.syncNativeInputValue();
   }
 
-  private emitOtpValueChange(): void {
-    this.otpChange.emit(this.ngxOtpInputArray.value);
-    if (this.ngxOtpInputArray.valid) {
-      this.otpComplete.emit(this.ngxOtpInputArray.value.join(''));
+  handleKeyDown(event: KeyboardEvent): void {
+    if (this.isDisabled) {
+      return;
+    }
+    if (event.key === 'Backspace') {
+      event.preventDefault();
+      if (this.value.length > 0) {
+        this.setValueFromUser(this.value.slice(0, -1));
+        this.syncNativeInputValue();
+      }
+      return;
+    }
+    if (event.key === 'Enter') {
+      event.preventDefault();
     }
   }
 
-  protected isInputFilled(index: number): boolean {
-    return !!this.ngxOtpInputArray.controls[index].value;
+  handlePaste(event: ClipboardEvent): void {
+    if (this.isDisabled) {
+      return;
+    }
+    event.preventDefault();
+    const text = event.clipboardData?.getData('text') ?? '';
+    const result = this.sanitize(text);
+
+    this.hasInvalidOtp = !!result.rejectedReason;
+    if (result.rejectedReason) {
+      this.valueInvalid.emit({
+        reason: result.rejectedReason,
+        attemptedValue: result.attempted,
+        acceptedValue: result.accepted,
+      });
+    }
+
+    this.setValueFromUser(result.accepted);
+    this.syncNativeInputValue();
+  }
+
+  handleBlur(): void {
+    this.onTouched();
   }
 
   reset(): void {
-    this.ngxOtpInputArray.reset();
+    this.setValueFromUser('');
+    this.syncNativeInputValue();
+  }
+
+  private onChange: (value: string) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  private setValueFromUser(nextValue: string): void {
+    this.value = nextValue;
+    this.onChange(this.value);
+    this.valueChange.emit({ value: this.value, isComplete: this.isComplete });
+
+    if (this.isComplete) {
+      this.valueComplete.emit(this.value);
+      if (this.autoBlur) {
+        this.otpInput?.nativeElement.blur();
+      }
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  private sanitize(value: string): {
+    attempted: string;
+    accepted: string;
+    rejectedReason?: OtpInvalidEvent['reason'];
+  } {
+    const attempted = value ?? '';
+    const chars = attempted.split('');
+    let rejectedReason: OtpInvalidEvent['reason'] | undefined;
+
+    const acceptedChars: string[] = [];
+    for (const ch of chars) {
+      if (acceptedChars.length >= this.resolvedLength) {
+        rejectedReason = rejectedReason ?? 'too-long';
+        continue;
+      }
+      if (!this.isCharAllowed(ch)) {
+        rejectedReason = rejectedReason ?? 'char-rejected';
+        continue;
+      }
+      acceptedChars.push(ch);
+    }
+
+    return { attempted, accepted: acceptedChars.join(''), rejectedReason };
+  }
+
+  private isCharAllowed(ch: string): boolean {
+    const isValid = this.charPattern.test(ch);
+    if (this.charPattern.global) {
+      this.charPattern.lastIndex = 0;
+    }
+    return isValid;
+  }
+
+  private syncNativeInputValue(): void {
+    const input = this.otpInput?.nativeElement;
+    if (input && input.value !== this.value) {
+      input.value = this.value;
+    }
   }
 }

@@ -10,7 +10,7 @@ import {
 
 interface EventLogEntry {
   time: string;
-  type: 'change' | 'complete' | 'invalid';
+  type: 'valueChange' | 'valueComplete' | 'valueInvalid';
   payload: string;
 }
 
@@ -182,9 +182,10 @@ interface EventLogEntry {
               <h3 class="example-card-title">Event Log</h3>
               <p class="example-card-desc">
                 Watch
-                <span class="code-inline">(change)</span>,
-                <span class="code-inline">(complete)</span>, and
-                <span class="code-inline">(invalid)</span> events fire live.
+                <span class="code-inline">(valueChange)</span>,
+                <span class="code-inline">(valueComplete)</span>, and
+                <span class="code-inline">(valueInvalid)</span> events fire
+                live.
               </p>
             </div>
             <div class="example-card-demo">
@@ -193,9 +194,9 @@ interface EventLogEntry {
                 [formControl]="eventOtp"
                 [length]="4"
                 [autoFocus]="false"
-                (change)="onEventChange($event)"
-                (complete)="onEventComplete($event)"
-                (invalid)="onEventInvalid($event)"
+                (valueChange)="onEventChange($event)"
+                (valueComplete)="onEventComplete($event)"
+                (valueInvalid)="onEventInvalid($event)"
               ></ngx-otp-input>
               <div
                 class="mt-4 w-full max-h-32 overflow-y-auto rounded-lg bg-[var(--color-stone-900)] p-3 font-mono text-xs leading-relaxed"
@@ -213,9 +214,9 @@ interface EventLogEntry {
                     <span
                       class="shrink-0"
                       [class]="
-                        entry.type === 'complete'
+                        entry.type === 'valueComplete'
                           ? 'text-green-400'
-                          : entry.type === 'invalid'
+                          : entry.type === 'valueInvalid'
                             ? 'text-red-400'
                             : 'text-blue-400'
                       "
@@ -319,15 +320,15 @@ export class ExamplesComponent {
   }
 
   onEventChange(event: OtpChangeEvent): void {
-    this.addLog('change', JSON.stringify(event));
+    this.addLog('valueChange', JSON.stringify(event));
   }
 
   onEventComplete(value: string): void {
-    this.addLog('complete', `"${value}"`);
+    this.addLog('valueComplete', `"${value}"`);
   }
 
   onEventInvalid(event: OtpInvalidEvent): void {
-    this.addLog('invalid', JSON.stringify(event));
+    this.addLog('valueInvalid', JSON.stringify(event));
   }
 
   clearEventLog(): void {

@@ -11,6 +11,8 @@
     [type]="inputType"
     [disabled]="isDisabled"
     [inputMode]="inputMode"
+    [attr.pattern]="patternAttribute"
+    [attr.maxlength]="resolvedLength"
     autocomplete="one-time-code"
     autocapitalize="off"
     autocorrect="off"
@@ -28,7 +30,7 @@
     class="ngx-otp-input-form"
     aria-hidden="true"
   >
-    @for (_ of Array(resolvedLength); track $index; let i = $index) {
+    @for (i of boxes; track i) {
       <div
         class="ngx-otp-input-box"
         [class.ngx-otp-input-disabled]="isDisabled"
@@ -38,7 +40,7 @@
         [class.ngx-otp-input-active]="i === activeIndex && !isDisabled"
         data-testid="ngx-otp-input-box"
       >
-        {{ characters[i] ?? '' }}
+        {{ characters[i] }}
       </div>
     }
   </div>
