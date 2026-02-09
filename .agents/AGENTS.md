@@ -63,6 +63,7 @@ Agents must:
 - Minimize breaking changes
 - Assume the library is used in production environments
 - Use relevant skills when available for the task at hand
+- Use GitHub CLI when available for GitHub operations
 
 ### Prohibited Behavior
 
