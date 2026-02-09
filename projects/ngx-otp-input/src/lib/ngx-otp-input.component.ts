@@ -179,6 +179,17 @@ export class NgxOtpInputComponent
     }
   }
 
+  handleBoxMouseDown(event: MouseEvent | TouchEvent, index: number): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (this.isDisabled) {
+      return;
+    }
+    this.otpInput?.nativeElement.focus();
+    const nextIndex = Math.min(index, this.value.length);
+    queueMicrotask(() => this.setCaretIndex(nextIndex));
+  }
+
   handleInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     const result = this.sanitize(target.value ?? '');

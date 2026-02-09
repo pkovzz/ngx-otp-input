@@ -124,6 +124,24 @@ describe('NgxOtpInputComponent v2', () => {
     expect(boxes[4].classList.contains('ngx-otp-input-active')).toBeTrue();
   });
 
+  it('NgxOtpInputComponent › should focus the clicked box index', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '1234';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const boxes: NodeListOf<HTMLDivElement> =
+      fixture.nativeElement.querySelectorAll(
+        '[data-testid="ngx-otp-input-box"]',
+      );
+    boxes[1].dispatchEvent(new MouseEvent('mousedown'));
+    fixture.detectChanges();
+
+    expect(boxes[1].classList.contains('ngx-otp-input-active')).toBeTrue();
+  });
+
   it('NgxOtpInputComponent › should replace value when typing on a filled input', () => {
     const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
       '[data-testid="ngx-otp-input-native"]',

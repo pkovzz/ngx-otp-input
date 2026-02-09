@@ -38,6 +38,8 @@
         [class.ngx-otp-input-success]="status === 'success'"
         [class.ngx-otp-input-failed]="status === 'error'"
         [class.ngx-otp-input-active]="i === activeIndex && !isDisabled"
+        (mousedown)="handleBoxMouseDown($event, i)"
+        (touchstart)="handleBoxMouseDown($event, i)"
         data-testid="ngx-otp-input-box"
       >
         {{ displayCharacters[i] }}
