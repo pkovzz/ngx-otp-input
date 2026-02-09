@@ -67,7 +67,7 @@ import {
                 max="8"
                 step="1"
                 class="w-full accent-[var(--color-accent)]"
-                (ngModelChange)="onLengthChange($event)"
+                (change)="rebuildComponent()"
               />
               <div
                 class="flex justify-between text-xs text-[var(--color-stone-400)] mt-1"
