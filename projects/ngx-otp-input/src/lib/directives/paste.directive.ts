@@ -4,9 +4,11 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  inject,
   Input,
   Output,
   QueryList,
+  Renderer2,
 } from '@angular/core';
 
 @Directive({
@@ -21,16 +23,20 @@ export class PasteDirective {
 
   @Output() handlePaste: EventEmitter<string[]> = new EventEmitter<string[]>();
 
+  private readonly renderer = inject(Renderer2);
+
   @HostListener('paste', ['$event'])
   onPaste(event: ClipboardEvent): void {
     event.preventDefault();
     const clipboardData = event.clipboardData?.getData('text');
     if (clipboardData && this.regexp.test(clipboardData)) {
+      if (this.regexp.global) {
+        this.regexp.lastIndex = 0;
+      }
       const values = clipboardData.split('');
       this.inputs.forEach((input, index) => {
-        if (values[index]) {
-          input.nativeElement.value = values[index];
-        }
+        const nextValue = values[index] ?? '';
+        this.renderer.setProperty(input.nativeElement, 'value', nextValue);
       });
       this.handlePaste.emit(values);
     }

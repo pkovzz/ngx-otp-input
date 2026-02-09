@@ -64,6 +64,7 @@ Agents must:
 - Assume the library is used in production environments
 - Use relevant skills when available for the task at hand
 - Use GitHub CLI when available for GitHub operations
+- Ask for clarification whenever any question remains
 
 ### Prohibited Behavior
 

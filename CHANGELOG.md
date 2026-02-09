@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0
+
+### Breaking
+
+- Redesign component around ControlValueAccessor (CVA). `otp` / `otpChange` and the `options` object were removed.
+- Switch to a single real input with visual boxes for improved mobile SMS autofill/paste reliability.
+- Replace status handling with `status: 'idle' | 'success' | 'error'` and `statusMessages` (`error` instead of `failed`).
+
+### Added
+
+- Add `(change)`, `(complete)`, and `(invalid)` outputs for value lifecycle events.
+- Add `charPattern` input to control per-character allowlist.
+- Preserve boxed design while improving accessibility and keyboard handling.
+
+### Changed
+
+- Use `autocomplete="one-time-code"` for OTP input.
+
+### Removed
+
+- Remove per-box directives and the multi-input FormArray implementation (internal).
+
 ## 1.1.4
 
 - [(#32)](https://github.com/pkovzz/ngx-otp-input/issues/35) Fix iOS paste from quickbar
