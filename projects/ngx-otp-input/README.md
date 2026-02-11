@@ -1,33 +1,32 @@
 # ngx-otp-input
 
-[![License](https://img.shields.io/github/license/pkovzz/ngx-otp-input?style=flat)](/../../LICENSE.txt)
+[![License](https://img.shields.io/github/license/pkovzz/ngx-otp-input?style=flat)](../../LICENSE)
 
-:warning: **Important note:** starting with version 2.0.0, the library is CVA-first (Angular forms) and introduces breaking API changes. Please review the usage examples and migration notes below.
+`ngx-otp-input` is a standalone, CVA-first Angular component for One-Time Password (OTP) entry.
+It combines:
 
-## What is this?
+- robust mobile input behavior (`autocomplete="one-time-code"`, paste handling)
+- polished boxed UI
+- Angular Forms integration
+- accessibility defaults (labels, invalid state, live status announcements)
 
-A lightweight Angular OTP (One Time Password) input with a boxed UI, strong mobile UX (SMS autofill / paste), and accessible defaults.
+## Compatibility
 
-### Demo page
-
-http://ngx-otp-input.vercel.app
-
-## Requirements
-
-Angular **17.2** or above.
+- Angular `>=17.2.0`
+- `@angular/forms` is required
 
 ## Installation
 
 ```bash
-npm install ngx-otp-input --save
+npm install ngx-otp-input
 ```
 
-## Example usage (Reactive Forms)
+## Basic usage (Reactive Forms)
 
 ```typescript
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { NgxOtpInputComponent } from 'ngx-otp-input';
+import { NgxOtpInputComponent, OtpStatus } from 'ngx-otp-input';
 
 @Component({
   selector: 'app-root',
@@ -39,152 +38,170 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
         formControlName="otp"
         [length]="6"
         [status]="status"
-        (otpComplete)="verify($event)"
+        (otpComplete)="onOtpComplete($event)"
       ></ngx-otp-input>
     </form>
   `,
 })
 export class AppComponent {
-  status: 'idle' | 'success' | 'error' = 'idle';
+  status: OtpStatus = 'idle';
 
   form = new FormGroup({
     otp: new FormControl('', { nonNullable: true }),
   });
 
-  verify(value: string) {
-    // call API, then set status
+  onOtpComplete(code: string): void {
+    // verify code and update this.status
   }
 }
 ```
 
-## Inputs
-
-| Input            | Type                                   | Default             | Notes                                    |
-| ---------------- | -------------------------------------- | ------------------- | ---------------------------------------- | ------ | ----------------------------- |
-| `length`         | number                                 | 6                   | Number of boxes / expected OTP length    |
-| `autoFocus`      | boolean                                | true                | Focus the input on init                  |
-| `autoBlur`       | boolean                                | true                | Blur after completion                    |
-| `mask`           | boolean                                | false               | Render masked characters (password-like) |
-| `charPattern`    | RegExp                                 | `/^\\d$/`           | Per-character allowlist                  |
-| `inputMode`      | string                                 | `numeric`           | Mobile keyboard hint                     |
-| `ariaLabel`      | string                                 | `One Time Password` | Accessible label for the group           |
-| `status`         | `'idle' \\                             | 'success' \\        | 'error'`                                 | `idle` | Visual + screen reader status |
-| `statusMessages` | `{ success?: string; error?: string }` | see defaults        | Screen reader messages                   |
-
-## Outputs
-
-| Output        | Payload                                  | Description                                                       |
-| ------------- | ---------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------- |
-| `otpChange`   | `{ value: string; isComplete: boolean }` | Emitted when value changes                                        |
-| `otpComplete` | `string`                                 | Emitted when OTP reaches full length                              |
-| `otpInvalid`  | `{ reason: 'too-long' \\                 | 'char-rejected'; attemptedValue: string; acceptedValue: string }` | Emitted when input is rejected during sanitize |
-
-## Styling
-
-The library provides a set of CSS classes that you can use to style the OTP form. The following classes are available:
-
-| Class name               | Description                |
-| ------------------------ | -------------------------- |
-| `ngx-otp-input-root`     | The root container         |
-| `ngx-otp-input-form`     | The visual boxes container |
-| `ngx-otp-input-box`      | The visual box             |
-| `ngx-otp-input-active`   | The active box             |
-| `ngx-otp-input-disabled` | The disabled state         |
-| `ngx-otp-input-filled`   | The filled state of a box  |
-| `ngx-otp-input-success`  | The success state          |
-| `ngx-otp-input-failed`   | The error state            |
-
-### How to use the classes
-
-Styling is quite simple, but you have to use the classes directly in a **root** style file:
-
-```scss
-ngx-otp-input {
-  .ngx-otp-input-form {
-    ...
-  }
-  .ngx-otp-input-box {
-    ...
-  }
-}
-```
-
-## Reset the control
+## Advanced usage example
 
 ```html
-<form [formGroup]="form">
-  <ngx-otp-input
-    #otpInput
-    formControlName="otp"
-  ></ngx-otp-input>
-</form>
+<ngx-otp-input
+  formControlName="otp"
+  [length]="8"
+  [autoFocus]="true"
+  [autoBlur]="false"
+  [mask]="true"
+  [charPattern]="/^[A-Za-z0-9]$/"
+  inputMode="text"
+  ariaLabel="Enter your 8-character verification code"
+  [status]="status"
+  [statusMessages]="{
+    success: 'Verification successful.',
+    error: 'Verification failed. Please try again.'
+  }"
+  (otpChange)="onOtpChange($event)"
+  (otpInvalid)="onOtpInvalid($event)"
+></ngx-otp-input>
 ```
+
+## API
+
+### Inputs
+
+| Input            | Type                | Default                                                 | Description                                                                    |
+| ---------------- | ------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `length`         | `number`            | `6`                                                     | Number of OTP characters / visual boxes. Minimum effective value is `1`.       |
+| `autoFocus`      | `boolean`           | `true`                                                  | Automatically focuses the input after view init (if enabled and not disabled). |
+| `autoBlur`       | `boolean`           | `true`                                                  | Blurs the input when all characters are entered.                               |
+| `mask`           | `boolean`           | `false`                                                 | Displays `•` in the visual boxes while preserving the actual value.            |
+| `charPattern`    | `RegExp`            | `/^\d$/`                                                | Validates each character individually.                                         |
+| `inputMode`      | `string`            | `'numeric'`                                             | Keyboard hint for touch devices (`numeric`, `text`, etc.).                     |
+| `ariaLabel`      | `string`            | `'One Time Password'`                                   | Accessible label for the input group.                                          |
+| `status`         | `OtpStatus`         | `'idle'`                                                | Status state: `'idle' \| 'success' \| 'error'`.                                |
+| `statusMessages` | `OtpStatusMessages` | `{ success: 'Code verified.', error: 'Invalid code.' }` | Custom text announced in the live region for success/error states.             |
+
+### Outputs
+
+| Output        | Type                            | Description                                                                       |
+| ------------- | ------------------------------- | --------------------------------------------------------------------------------- |
+| `otpChange`   | `EventEmitter<OtpChangeEvent>`  | Emitted on every valid change with `{ value, isComplete }`.                       |
+| `otpComplete` | `EventEmitter<string>`          | Emitted once the value reaches `length`.                                          |
+| `otpInvalid`  | `EventEmitter<OtpInvalidEvent>` | Emitted when characters are rejected (`char-rejected`) or truncated (`too-long`). |
+
+### Exported types
+
+```typescript
+type OtpStatus = 'idle' | 'success' | 'error';
+
+interface OtpStatusMessages {
+  success?: string;
+  error?: string;
+}
+
+interface OtpChangeEvent {
+  value: string;
+  isComplete: boolean;
+}
+
+interface OtpInvalidEvent {
+  reason: 'too-long' | 'char-rejected';
+  attemptedValue: string;
+  acceptedValue: string;
+}
+```
+
+### Public method
+
+`NgxOtpInputComponent` exposes:
+
+- `reset(): void`
 
 ```typescript
 import { Component, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgxOtpInputComponent } from 'ngx-otp-input';
 
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [ReactiveFormsModule, NgxOtpInputComponent],
-  template: `
-    <form [formGroup]="form">
-      <ngx-otp-input
-        #otpInput
-        formControlName="otp"
-      ></ngx-otp-input>
-    </form>
-  `,
-})
 export class AppComponent {
-  @ViewChild('otpInput') otpInput: NgxOtpInputComponent;
+  @ViewChild(NgxOtpInputComponent) otpInput?: NgxOtpInputComponent;
 
-  form = new FormGroup({
-    otp: new FormControl('', { nonNullable: true }),
-  });
+  clearOtp(): void {
+    this.otpInput?.reset();
+  }
+}
+```
 
-  resetForm() {
-    this.otpInput.reset();
+## Styling
+
+The component exposes stable class names for custom theming:
+
+- `ngx-otp-input-root`
+- `ngx-otp-input-native`
+- `ngx-otp-input-form`
+- `ngx-otp-input-box`
+- `ngx-otp-input-active`
+- `ngx-otp-input-disabled`
+- `ngx-otp-input-filled`
+- `ngx-otp-input-success`
+- `ngx-otp-input-failed`
+- `ngx-otp-input-status`
+
+Example:
+
+```scss
+ngx-otp-input {
+  .ngx-otp-input-box {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+  }
+
+  .ngx-otp-input-box.ngx-otp-input-active {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgb(99 102 241 / 20%);
   }
 }
 ```
 
 ## Accessibility notes
 
-- The component renders a single native input for screen readers and an `aria-live` region for status announcements.
-- `ariaLabel` controls the accessible name for the group.
-- Visual boxes are `aria-hidden` to avoid duplicate announcements.
+- Uses one native input for predictable assistive technology behavior.
+- Sets `aria-invalid` when status is `error` or invalid input is detected.
+- Announces status messages through a polite `aria-live` region.
+- Keeps visual OTP boxes hidden from screen readers to avoid duplicate output.
 
-## Input mode and charPattern
+## Behavior details
 
-`inputMode` hints the mobile keyboard, while `charPattern` restricts allowed characters per digit. Use both together for the best mobile OTP experience.
+- Input is sanitized on typing and paste.
+- Values longer than `length` are truncated.
+- Characters not matching `charPattern` are ignored.
+- Arrow keys, backspace, and delete are supported for keyboard editing.
 
-## Masked input
+## Migration (v1 to v2)
 
-Set `mask` to `true` to hide the characters (password-style). Some password managers may overlay icons on inputs.
+Version `2.x` is a breaking release:
 
-## Migration notes (v1 → v2)
+- Removed the old `options` object API.
+- Removed direct `otp` input binding.
+- Moved to explicit inputs and ControlValueAccessor-based forms usage.
+- Updated event payloads and status values.
 
-- `options` object was removed. Use explicit inputs like `[length]`, `[mask]`, `[charPattern]`.
-- `otp` input was removed. Use **Reactive Forms** (`formControlName`) to read/write values.
-- `otpChange` payload changed from `string[]` to `{ value: string; isComplete: boolean }`.
-- `otpInvalid` payload changed to `{ reason; attemptedValue; acceptedValue }`.
-- `status` values changed to `'idle' | 'success' | 'error'`.
+## Links
 
-## Contributing
-
-If you would like to contribute to this project, please refer to the [CONTRIBUTING](https://github.com/pkovzz/ngx-otp-input/blob/master/CONTRIBUTING.md) file for more information.
-
-## Code of Conduct
-
-Please read the [CODE_OF_CONDUCT](https://github.com/pkovzz/ngx-otp-input/blob/master/CODE_OF_CONDUCT.md) file for more information.
-
-## Changelog
-
-See the [CHANGELOG](https://github.com/pkovzz/ngx-otp-input/blob/master/CHANGELOG.md) file for details.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/pkovzz/ngx-otp-input/blob/master/LICENSE) file for details.
+- Demo: http://ngx-otp-input.vercel.app
+- Changelog: https://github.com/pkovzz/ngx-otp-input/blob/master/CHANGELOG.md
+- Contributing: https://github.com/pkovzz/ngx-otp-input/blob/master/CONTRIBUTING.md
+- Code of conduct: https://github.com/pkovzz/ngx-otp-input/blob/master/CODE_OF_CONDUCT.md
+- License: https://github.com/pkovzz/ngx-otp-input/blob/master/LICENSE

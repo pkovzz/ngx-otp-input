@@ -1,41 +1,81 @@
-### Contributing
+# Contributing
 
-We welcome contributions to the project. To contribute, please follow these steps:
+Thanks for your interest in contributing to `ngx-otp-input`.
+This guide explains how to set up the project, run checks, and submit a pull request.
 
-1. [Fork the repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo).
-2. Create a new branch for your feature or bug fix.
-3. Make your changes.
+## Before you start
 
-   #### To run the project locally:
+- Be respectful and follow the project's [Code of Conduct](./CODE_OF_CONDUCT.md).
+- Search existing issues and pull requests to avoid duplicate work.
+- Open an issue before large changes so maintainers can align on direction.
 
-   First, install the dependencies:
+## Development setup
+
+1. [Fork the repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) and clone your fork.
+2. Install dependencies:
 
    ```bash
-    npm install
+   npm install
    ```
 
-   Then, run the library in development mode:
+3. Build the library in watch mode:
 
    ```bash
    npm run build-lib-watch
    ```
 
-   Finally, in a new terminal window, run the demo app:
+4. In a second terminal, start the demo app:
 
    ```bash
    npm run start
    ```
 
-4. After you have made your changes, run the tests:
-   ```bash
-   npm run test-lib
-   ```
-5. If all tests pass, commit your changes.
-6. Push your changes to your fork.
-7. [Open a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
-8. Wait for the maintainers to review your pull request.
-9. If your pull request is approved and merged, it will be included in the next release.
+The demo app is the fastest way to manually validate OTP behavior and UI changes.
 
-If you have any questions or need help, please open an issue. If you find a bug or have a feature request, please open an issue. If you would like to contribute but don't know where to start, please check the issues for any open issues that need help.
+## Quality checks
 
-Thank you for contributing to the project!
+Run these before opening a pull request:
+
+```bash
+npm run lint-lib
+npm run test-lib
+```
+
+For CI-like test execution:
+
+```bash
+npm run test-lib:ci
+```
+
+## Pull request process
+
+1. Create a branch from the current target branch (for example, `v2.0.0`).
+2. Keep your change focused and include tests when behavior changes.
+3. Update documentation for any public API changes.
+4. Update `CHANGELOG.md` when your change affects users.
+5. Commit with a clear message and push to your fork.
+6. Open a pull request with:
+   - what changed
+   - why it changed
+   - how it was tested
+   - screenshots or recordings for UI changes (if applicable)
+
+## Commit guidance
+
+- Use concise, descriptive commit messages.
+- Prefer one logical change per commit.
+- Avoid unrelated formatting-only changes unless they are part of the same scope.
+
+## Reporting issues
+
+When opening an issue, include:
+
+- Angular version
+- `ngx-otp-input` version
+- browser/OS
+- reproduction steps
+- expected vs actual behavior
+
+## Need help?
+
+Open an issue and provide as much context as possible. We are happy to help.
