@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Modernize internal component state handling with Angular signals while preserving CVA behavior and public API.
+- Lower library peer dependency floor to Angular 17.2 and add `@angular/forms` as an explicit peer dependency.
+
 ### Fixed
 
 - Restore arrow key navigation between OTP boxes.

@@ -174,11 +174,13 @@ describe('NgxOtpInputComponent v2', () => {
       '[data-testid="ngx-otp-input-native"]',
     );
 
-    const clipboardData = {
-      getData: () => '1234567890',
-    } as unknown as DataTransfer;
-
-    const pasteEvent = new ClipboardEvent('paste', { clipboardData });
+    const pasteEvent = new Event('paste') as ClipboardEvent;
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: {
+        getData: () => '1234567890',
+      },
+      configurable: true,
+    });
     nativeInput.dispatchEvent(pasteEvent);
     fixture.detectChanges();
 

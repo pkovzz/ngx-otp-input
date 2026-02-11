@@ -10,6 +10,7 @@ import {
   Input,
   OnChanges,
   Output,
+  signal,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -43,10 +44,10 @@ let nextStatusId = 0;
 export class NgxOtpInputComponent
   implements ControlValueAccessor, OnChanges, AfterViewInit
 {
-  private value = '';
-  private caretIndex: number | null = null;
-  isDisabled = false;
-  hasInvalidOtp = false;
+  private readonly valueState = signal('');
+  private readonly caretIndexState = signal<number | null>(null);
+  private readonly isDisabledState = signal(false);
+  private readonly hasInvalidOtpState = signal(false);
   readonly statusMessageId = `ngx-otp-input-status-${nextStatusId++}`;
 
   @ViewChild('otpInput', { static: true })
@@ -67,6 +68,30 @@ export class NgxOtpInputComponent
   @Output() otpInvalid = new EventEmitter<OtpInvalidEvent>();
 
   private readonly cdr = inject(ChangeDetectorRef);
+
+  private get value(): string {
+    return this.valueState();
+  }
+
+  private set value(nextValue: string) {
+    this.valueState.set(nextValue);
+  }
+
+  private get caretIndex(): number | null {
+    return this.caretIndexState();
+  }
+
+  private set caretIndex(nextIndex: number | null) {
+    this.caretIndexState.set(nextIndex);
+  }
+
+  get isDisabled(): boolean {
+    return this.isDisabledState();
+  }
+
+  get hasInvalidOtp(): boolean {
+    return this.hasInvalidOtpState();
+  }
 
   get inputType(): string {
     return this.mask ? 'password' : 'text';
@@ -152,7 +177,7 @@ export class NgxOtpInputComponent
 
   writeValue(value: string | null): void {
     this.value = this.sanitize(value ?? '').accepted;
-    this.hasInvalidOtp = false;
+    this.hasInvalidOtpState.set(false);
     this.cdr.markForCheck();
     this.syncNativeInputValue();
     this.setCaretIndex(this.value.length);
@@ -167,7 +192,7 @@ export class NgxOtpInputComponent
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
+    this.isDisabledState.set(isDisabled);
     this.cdr.markForCheck();
   }
 
@@ -187,6 +212,7 @@ export class NgxOtpInputComponent
     }
     this.otpInput?.nativeElement.focus();
     const nextIndex = Math.min(index, this.value.length);
+    this.setCaretIndex(nextIndex);
     queueMicrotask(() => this.setCaretIndex(nextIndex));
   }
 
@@ -194,7 +220,7 @@ export class NgxOtpInputComponent
     const target = event.target as HTMLInputElement;
     const result = this.sanitize(target.value ?? '');
 
-    this.hasInvalidOtp = !!result.rejectedReason;
+    this.hasInvalidOtpState.set(!!result.rejectedReason);
     if (result.rejectedReason) {
       this.otpInvalid.emit({
         reason: result.rejectedReason,
@@ -224,7 +250,7 @@ export class NgxOtpInputComponent
     ) {
       event.preventDefault();
       if (!this.isCharAllowed(event.key)) {
-        this.hasInvalidOtp = true;
+        this.hasInvalidOtpState.set(true);
         this.otpInvalid.emit({
           reason: 'char-rejected',
           attemptedValue: event.key,
@@ -250,7 +276,7 @@ export class NgxOtpInputComponent
       }
 
       const sanitized = this.sanitize(nextValue);
-      this.hasInvalidOtp = !!sanitized.rejectedReason;
+      this.hasInvalidOtpState.set(!!sanitized.rejectedReason);
       if (sanitized.rejectedReason) {
         this.otpInvalid.emit({
           reason: sanitized.rejectedReason,
@@ -311,7 +337,7 @@ export class NgxOtpInputComponent
     const text = event.clipboardData?.getData('text') ?? '';
     const result = this.sanitize(text);
 
-    this.hasInvalidOtp = !!result.rejectedReason;
+    this.hasInvalidOtpState.set(!!result.rejectedReason);
     if (result.rejectedReason) {
       this.otpInvalid.emit({
         reason: result.rejectedReason,

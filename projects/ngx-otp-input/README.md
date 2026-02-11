@@ -14,7 +14,7 @@ http://ngx-otp-input.vercel.app
 
 ## Requirements
 
-Angular **21** or above.
+Angular **17.2** or above.
 
 ## Installation
 
