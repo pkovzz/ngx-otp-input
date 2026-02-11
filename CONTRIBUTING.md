@@ -60,6 +60,29 @@ npm run test-lib:ci
    - how it was tested
    - screenshots or recordings for UI changes (if applicable)
 
+## Release checklist
+
+Before creating a GitHub Release, make sure the demo and package are both release-ready:
+
+1. Update `CHANGELOG.md` and move release notes out of `Unreleased`.
+2. Ensure `projects/ngx-otp-input/package.json` has the target version.
+3. Run the full release build:
+
+   ```bash
+   npm run build:release
+   ```
+
+4. Run library checks:
+
+   ```bash
+   npm run lint-lib
+   npm run test-lib:ci
+   ```
+
+5. Create a release tag that matches the library version (`vX.Y.Z`).
+
+The publish workflow validates this tag/version match before publishing to npm.
+
 ## Commit guidance
 
 - Use concise, descriptive commit messages.

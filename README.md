@@ -200,6 +200,8 @@ Version `2.x` introduces a new CVA-first API:
 ## Repository docs
 
 - Library package readme: `projects/ngx-otp-input/README.md`
+- Documentation archive: `docs/README.md`
+- Legacy `v1.1.4` docs: `docs/v1.1.4/README.md`
 - Changelog: `CHANGELOG.md`
 - Contributing guide: `CONTRIBUTING.md`
 - Code of conduct: `CODE_OF_CONDUCT.md`

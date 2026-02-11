@@ -10,11 +10,15 @@ and the project follows [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Rewrote project documentation with a full usage manual in both root and package README files.
+- Added a documentation archive under `docs/`, including a preserved `v1.1.4` README snapshot.
 
 ### Changed
 
 - Modernized internal component state handling with Angular signals while preserving CVA behavior and the public API.
 - Lowered library peer dependency floor to Angular `17.2` and added `@angular/forms` as an explicit peer dependency.
+- Expanded GitHub Actions to validate both library and demo release artifacts in CI and before npm publish.
+- Added a release guard that validates GitHub release tags against `projects/ngx-otp-input/package.json` version.
+- Added `build:demo` and `build:release` scripts to standardize release builds.
 
 ### Fixed
 

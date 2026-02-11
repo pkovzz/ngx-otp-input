@@ -3,21 +3,30 @@ on:
   release:
     types: [published]
 jobs:
-  build:
+  publish:
+    name: Publish
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
       - run: npm ci
-      - run: npm run build-lib:prod
+      - run: npm run lint-lib
+      - run: npm run test-lib:ci
+      - name: Build release artifacts
+        run: npm run build:release
+      - name: Validate release tag matches library version
+        run: |
+          node -e "const fs=require('node:fs');const pkg=JSON.parse(fs.readFileSync('projects/ngx-otp-input/package.json','utf8'));const tag=process.env.RELEASE_TAG||'';const expected='v'+pkg.version;if(tag!==expected){console.error('Release tag mismatch. Expected '+expected+' but got '+tag);process.exit(1);}console.log('Release tag matches library version '+pkg.version);"
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
       - name: '🚀 Publish'
-        run: npm publish ./dist/ngx-otp-input --access public
+        run: npm publish ./dist/ngx-otp-input --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
