@@ -23,8 +23,22 @@ import {
   OtpStatus,
   OtpStatusMessages,
 } from './default.config';
+import { OtpSanitizer, SanitizationResult } from './otp-sanitizer';
+import { CaretManager } from './caret-manager';
+import {
+  KeyHandler,
+  KeyHandlerContext,
+  createDefaultKeyHandlers,
+} from './key-handlers';
 
 let nextStatusId = 0;
+
+function isPasteLikeInput(event: InputEvent): boolean {
+  return (
+    event.inputType === 'insertFromPaste' ||
+    event.inputType === 'insertReplacementText'
+  );
+}
 
 @Component({
   standalone: true,
@@ -50,6 +64,10 @@ export class NgxOtpInputComponent
   private readonly hasInvalidOtpState = signal(false);
   readonly statusMessageId = `ngx-otp-input-status-${nextStatusId++}`;
 
+  private readonly sanitizer = new OtpSanitizer();
+  private readonly caretManager = new CaretManager();
+  private readonly keyHandlers: KeyHandler[] = createDefaultKeyHandlers();
+
   @ViewChild('otpInput', { static: true })
   private otpInput?: ElementRef<HTMLInputElement>;
 
@@ -68,6 +86,10 @@ export class NgxOtpInputComponent
   @Output() otpInvalid = new EventEmitter<OtpInvalidEvent>();
 
   private readonly cdr = inject(ChangeDetectorRef);
+
+  // ---------------------------------------------------------------------------
+  // State accessors
+  // ---------------------------------------------------------------------------
 
   private get value(): string {
     return this.valueState();
@@ -93,18 +115,21 @@ export class NgxOtpInputComponent
     return this.hasInvalidOtpState();
   }
 
+  // ---------------------------------------------------------------------------
+  // Template getters
+  // ---------------------------------------------------------------------------
+
   get inputType(): string {
     return this.mask ? 'password' : 'text';
   }
 
   get statusMessage(): string {
-    if (this.status === 'success') {
-      return this.statusMessages?.success ?? defaultV2.statusMessages.success;
-    }
-    if (this.status === 'error') {
-      return this.statusMessages?.error ?? defaultV2.statusMessages.error;
-    }
-    return '';
+    const messages: Record<OtpStatus, string> = {
+      success: this.statusMessages?.success ?? defaultV2.statusMessages.success,
+      error: this.statusMessages?.error ?? defaultV2.statusMessages.error,
+      idle: '',
+    };
+    return messages[this.status] ?? '';
   }
 
   private get isComplete(): boolean {
@@ -156,6 +181,10 @@ export class NgxOtpInputComponent
     return length;
   }
 
+  // ---------------------------------------------------------------------------
+  // Lifecycle hooks
+  // ---------------------------------------------------------------------------
+
   ngAfterViewInit(): void {
     if (this.autoFocus && !this.isDisabled) {
       queueMicrotask(() => this.otpInput?.nativeElement.focus());
@@ -174,6 +203,10 @@ export class NgxOtpInputComponent
       this.cdr.markForCheck();
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // ControlValueAccessor
+  // ---------------------------------------------------------------------------
 
   writeValue(value: string | null): void {
     this.value = this.sanitize(value ?? '').accepted;
@@ -195,6 +228,10 @@ export class NgxOtpInputComponent
     this.isDisabledState.set(isDisabled);
     this.cdr.markForCheck();
   }
+
+  // ---------------------------------------------------------------------------
+  // Event handlers (template-bound)
+  // ---------------------------------------------------------------------------
 
   handleContainerPointerDown(event: PointerEvent): void {
     if (this.isDisabled) {
@@ -230,24 +267,16 @@ export class NgxOtpInputComponent
       return;
     }
 
-    const isPasteLikeInput =
-      event.inputType === 'insertFromPaste' ||
-      event.inputType === 'insertReplacementText';
-    if (!isPasteLikeInput) {
+    if (!isPasteLikeInput(event)) {
       return;
     }
 
-    const input = this.otpInput?.nativeElement;
     const insertedText =
       event.data ?? event.dataTransfer?.getData('text/plain') ?? '';
     if (!insertedText) {
       // iOS can omit payload in beforeinput/paste for security reasons.
       // Select all so native insertion replaces existing value.
-      try {
-        input?.setSelectionRange(0, input.value.length);
-      } catch {
-        // Ignore selection errors for unsupported input types.
-      }
+      this.caretManager.selectAll(this.otpInput?.nativeElement);
       return;
     }
 
@@ -258,113 +287,24 @@ export class NgxOtpInputComponent
   handleInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     const result = this.sanitize(target.value ?? '');
-
-    this.hasInvalidOtpState.set(!!result.rejectedReason);
-    if (result.rejectedReason) {
-      this.otpInvalid.emit({
-        reason: result.rejectedReason,
-        attemptedValue: result.attempted,
-        acceptedValue: result.accepted,
-      });
-    }
-
-    this.setValueFromUser(result.accepted);
-    this.syncNativeInputValue();
-    this.setCaretIndex(target.selectionStart ?? this.value.length);
+    this.applySanitizedResult(
+      result,
+      () => target.selectionStart ?? this.value.length,
+    );
   }
 
   handleKeyDown(event: KeyboardEvent): void {
     if (this.isDisabled) {
       return;
     }
-    const input = this.otpInput?.nativeElement;
-    const selectionStart = input?.selectionStart ?? this.value.length;
-    const selectionEnd = input?.selectionEnd ?? selectionStart;
 
-    if (
-      event.key.length === 1 &&
-      !event.ctrlKey &&
-      !event.metaKey &&
-      !event.altKey
-    ) {
-      event.preventDefault();
-      if (!this.isCharAllowed(event.key)) {
-        this.hasInvalidOtpState.set(true);
-        this.otpInvalid.emit({
-          reason: 'char-rejected',
-          attemptedValue: event.key,
-          acceptedValue: this.value,
-        });
-        this.cdr.markForCheck();
+    const context = this.buildKeyHandlerContext();
+
+    for (const handler of this.keyHandlers) {
+      if (handler.canHandle(event)) {
+        handler.handle(event, context);
         return;
       }
-
-      const start = Math.min(selectionStart, selectionEnd);
-      const end = Math.max(selectionStart, selectionEnd);
-      let nextValue = this.value;
-
-      if (start < this.value.length) {
-        nextValue =
-          this.value.slice(0, start) +
-          event.key +
-          this.value.slice(
-            Math.min(end + (start === end ? 1 : 0), this.value.length),
-          );
-      } else if (this.value.length < this.resolvedLength) {
-        nextValue = this.value + event.key;
-      }
-
-      const sanitized = this.sanitize(nextValue);
-      this.hasInvalidOtpState.set(!!sanitized.rejectedReason);
-      if (sanitized.rejectedReason) {
-        this.otpInvalid.emit({
-          reason: sanitized.rejectedReason,
-          attemptedValue: sanitized.attempted,
-          acceptedValue: sanitized.accepted,
-        });
-      }
-      this.setValueFromUser(sanitized.accepted);
-      this.syncNativeInputValue();
-      this.setCaretIndex(start + 1);
-      return;
-    }
-
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      this.setCaretIndex(selectionStart - 1);
-      return;
-    }
-    if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      this.setCaretIndex(selectionStart + 1);
-      return;
-    }
-    if (event.key === 'Backspace') {
-      event.preventDefault();
-      if (selectionStart > 0) {
-        const nextValue =
-          this.value.slice(0, selectionStart - 1) +
-          this.value.slice(selectionStart);
-        this.setValueFromUser(nextValue);
-        this.syncNativeInputValue();
-        this.setCaretIndex(selectionStart - 1);
-      }
-      return;
-    }
-    if (event.key === 'Delete') {
-      event.preventDefault();
-      if (selectionStart < this.value.length) {
-        const nextValue =
-          this.value.slice(0, selectionStart) +
-          this.value.slice(selectionStart + 1);
-        this.setValueFromUser(nextValue);
-        this.syncNativeInputValue();
-        this.setCaretIndex(selectionStart);
-      }
-      return;
-    }
-    if (event.key === 'Enter') {
-      event.preventDefault();
     }
   }
 
@@ -377,12 +317,7 @@ export class NgxOtpInputComponent
       // Some mobile browsers (notably iOS Safari paste callout) can dispatch
       // paste without exposing clipboardData; select all so native insertion
       // replaces current value.
-      const input = this.otpInput?.nativeElement;
-      try {
-        input?.setSelectionRange(0, input.value.length);
-      } catch {
-        // Ignore selection errors for unsupported input types.
-      }
+      this.caretManager.selectAll(this.otpInput?.nativeElement);
       return;
     }
     event.preventDefault();
@@ -399,8 +334,20 @@ export class NgxOtpInputComponent
     this.setCaretIndex(0);
   }
 
+  // ---------------------------------------------------------------------------
+  // Private helpers
+  // ---------------------------------------------------------------------------
+
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
+
+  private sanitize(value: string): SanitizationResult {
+    return this.sanitizer.sanitize(
+      value,
+      this.resolvedLength,
+      this.charPattern,
+    );
+  }
 
   private setValueFromUser(nextValue: string): void {
     this.value = nextValue;
@@ -417,42 +364,7 @@ export class NgxOtpInputComponent
     this.cdr.markForCheck();
   }
 
-  private sanitize(value: string): {
-    attempted: string;
-    accepted: string;
-    rejectedReason?: OtpInvalidEvent['reason'];
-  } {
-    const attempted = value ?? '';
-    const chars = attempted.split('');
-    let rejectedReason: OtpInvalidEvent['reason'] | undefined;
-
-    const acceptedChars: string[] = [];
-    for (const ch of chars) {
-      if (acceptedChars.length >= this.resolvedLength) {
-        rejectedReason = rejectedReason ?? 'too-long';
-        continue;
-      }
-      if (!this.isCharAllowed(ch)) {
-        rejectedReason = rejectedReason ?? 'char-rejected';
-        continue;
-      }
-      acceptedChars.push(ch);
-    }
-
-    return { attempted, accepted: acceptedChars.join(''), rejectedReason };
-  }
-
-  private isCharAllowed(ch: string): boolean {
-    const isValid = this.charPattern.test(ch);
-    if (this.charPattern.global) {
-      this.charPattern.lastIndex = 0;
-    }
-    return isValid;
-  }
-
-  private applyPastedValue(rawValue: string): void {
-    const result = this.sanitize(rawValue);
-
+  private applyInvalidState(result: SanitizationResult): void {
     this.hasInvalidOtpState.set(!!result.rejectedReason);
     if (result.rejectedReason) {
       this.otpInvalid.emit({
@@ -461,32 +373,64 @@ export class NgxOtpInputComponent
         acceptedValue: result.accepted,
       });
     }
+  }
 
+  private applySanitizedResult(
+    result: SanitizationResult,
+    resolveCaretIndex: () => number,
+  ): void {
+    this.applyInvalidState(result);
     this.setValueFromUser(result.accepted);
     this.syncNativeInputValue();
-    this.setCaretIndex(this.value.length);
+    this.setCaretIndex(resolveCaretIndex());
+  }
+
+  private applyPastedValue(rawValue: string): void {
+    const result = this.sanitize(rawValue);
+    this.applySanitizedResult(result, () => this.value.length);
   }
 
   private syncNativeInputValue(): void {
-    const input = this.otpInput?.nativeElement;
-    if (input && input.value !== this.value) {
-      input.value = this.value;
-    }
+    this.caretManager.syncNativeValue(this.otpInput?.nativeElement, this.value);
   }
 
   private setCaretIndex(nextIndex: number): void {
-    const input = this.otpInput?.nativeElement;
-    const maxIndex = this.value.length;
-    const clamped = Math.min(Math.max(0, nextIndex), maxIndex);
+    const clamped = this.caretManager.setCaretPosition(
+      this.otpInput?.nativeElement,
+      nextIndex,
+      this.value.length,
+    );
     this.caretIndex = clamped;
-
-    if (input) {
-      try {
-        input.setSelectionRange(clamped, clamped);
-      } catch {
-        // Ignore selection errors for unsupported input types.
-      }
-    }
     this.cdr.markForCheck();
+  }
+
+  private buildKeyHandlerContext(): KeyHandlerContext {
+    const input = this.otpInput?.nativeElement;
+    const selectionStart = input?.selectionStart ?? this.value.length;
+    const selectionEnd = input?.selectionEnd ?? selectionStart;
+
+    return {
+      value: this.value,
+      resolvedLength: this.resolvedLength,
+      selectionStart,
+      selectionEnd,
+      isCharAllowed: (ch: string) =>
+        this.sanitizer.isCharAllowed(ch, this.charPattern),
+      sanitize: (value: string) => this.sanitize(value),
+      applySanitizedResult: (result, caretResolver) =>
+        this.applySanitizedResult(result, caretResolver),
+      setValueFromUser: (value: string) => this.setValueFromUser(value),
+      syncNativeInputValue: () => this.syncNativeInputValue(),
+      setCaretIndex: (index: number) => this.setCaretIndex(index),
+      setInvalidState: (reason, attemptedValue) => {
+        this.hasInvalidOtpState.set(true);
+        this.otpInvalid.emit({
+          reason,
+          attemptedValue,
+          acceptedValue: this.value,
+        });
+        this.cdr.markForCheck();
+      },
+    };
   }
 }
