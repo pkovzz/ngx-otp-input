@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   standalone: true,
@@ -24,30 +24,67 @@ import { Component } from '@angular/core';
           </span>
         </a>
 
-        <nav class="flex items-center gap-6">
+        <nav class="flex items-center gap-3 sm:gap-6">
           <a
             href="#examples"
-            class="hidden sm:inline text-sm font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-900)] transition-colors no-underline"
+            class="hidden sm:inline text-sm font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-900)] transition-colors no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-1)] rounded-sm"
           >
             Examples
           </a>
           <a
             href="#playground"
-            class="hidden sm:inline text-sm font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-900)] transition-colors no-underline"
+            class="hidden sm:inline text-sm font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-900)] transition-colors no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-1)] rounded-sm"
           >
             Playground
           </a>
           <a
             href="#api"
-            class="hidden sm:inline text-sm font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-900)] transition-colors no-underline"
+            class="hidden sm:inline text-sm font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-900)] transition-colors no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-1)] rounded-sm"
           >
             API
           </a>
+          <button
+            type="button"
+            class="theme-toggle"
+            (click)="themeToggle.emit()"
+            [attr.aria-label]="
+              isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'
+            "
+            [attr.aria-pressed]="isDarkTheme"
+            title="Toggle theme"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              @if (isDarkTheme) {
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                  d="M21.75 15.002A9 9 0 119.002 2.25 7.5 7.5 0 0021.75 15.002z"
+                />
+              } @else {
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                  d="M12 3v2.25m0 13.5V21m-6.364-2.636l1.591-1.591m10.546 0l1.591 1.591M3 12h2.25m13.5 0H21M5.636 5.636l1.591 1.591m10.546-1.591l-1.591 1.591M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              }
+            </svg>
+            <span class="hidden sm:inline">{{
+              isDarkTheme ? 'Dark' : 'Light'
+            }}</span>
+          </button>
           <a
             href="https://github.com/pkovzz/ngx-otp-input"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center gap-1.5 text-sm font-medium text-[var(--color-stone-600)] hover:text-[var(--color-stone-900)] transition-colors no-underline"
+            class="flex items-center gap-1.5 text-sm font-medium text-[var(--color-stone-600)] hover:text-[var(--color-stone-900)] transition-colors no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-1)] rounded-sm"
             aria-label="View on GitHub"
           >
             <svg
@@ -68,5 +105,50 @@ import { Component } from '@angular/core';
       </div>
     </header>
   `,
+  styles: [
+    `
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        background: var(--color-theme-toggle-bg);
+        color: var(--color-stone-700);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        line-height: 1;
+        padding: 0.45rem 0.75rem;
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .theme-toggle:hover {
+        background: var(--color-theme-toggle-hover);
+        border-color: var(--color-stone-300);
+        color: var(--color-stone-900);
+      }
+
+      .theme-toggle:focus-visible {
+        outline: none;
+        box-shadow:
+          0 0 0 2px rgb(0 0 0 / 0),
+          0 0 0 4px color-mix(in srgb, var(--color-accent) 45%, transparent);
+      }
+
+      .theme-toggle:active {
+        transform: translateY(1px);
+      }
+    `,
+  ],
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  @Input() isDarkTheme = false;
+  @Output() themeToggle = new EventEmitter<void>();
+}

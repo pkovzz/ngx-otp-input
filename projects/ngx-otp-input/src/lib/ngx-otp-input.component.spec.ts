@@ -136,7 +136,9 @@ describe('NgxOtpInputComponent v2', () => {
       fixture.nativeElement.querySelectorAll(
         '[data-testid="ngx-otp-input-box"]',
       );
-    boxes[1].dispatchEvent(new MouseEvent('mousedown'));
+    boxes[1].dispatchEvent(
+      new PointerEvent('pointerdown', { pointerType: 'mouse' }),
+    );
     fixture.detectChanges();
 
     expect(boxes[1].classList.contains('ngx-otp-input-active')).toBeTrue();

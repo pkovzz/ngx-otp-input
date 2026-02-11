@@ -12,7 +12,9 @@ interface Feature {
   selector: 'app-features',
   imports: [CommonModule],
   template: `
-    <section class="py-20 bg-white border-y border-[var(--color-stone-100)]">
+    <section
+      class="py-20 bg-[var(--color-surface-0)] border-y border-[var(--color-stone-100)]"
+    >
       <div class="section-container">
         <div class="text-center mb-14">
           <h2
@@ -31,7 +33,7 @@ interface Feature {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           @for (feature of features; track feature.title) {
             <div
-              class="group p-6 rounded-xl border border-[var(--color-stone-100)] bg-[var(--color-stone-50)] hover:bg-white hover:shadow-[var(--shadow-card)] hover:border-[var(--color-stone-200)] transition-all duration-300"
+              class="group p-6 rounded-xl border border-[var(--color-stone-100)] bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-0)] hover:shadow-[var(--shadow-card)] hover:border-[var(--color-stone-200)] transition-all duration-300"
             >
               <div
                 class="w-10 h-10 rounded-lg flex items-center justify-center text-xl mb-4 bg-[var(--color-accent-subtle)] border border-[var(--color-accent-muted)]"

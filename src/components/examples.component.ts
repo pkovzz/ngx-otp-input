@@ -21,7 +21,7 @@ interface EventLogEntry {
   template: `
     <section
       id="examples"
-      class="py-20"
+      class="py-20 scroll-mt-24"
     >
       <div class="section-container">
         <div class="text-center mb-14">
@@ -133,8 +133,8 @@ interface EventLogEntry {
                     class="px-3 py-1.5 text-xs font-semibold rounded-md border cursor-pointer transition-all"
                     [class]="
                       currentStatus === s
-                        ? 'bg-[var(--color-stone-900)] text-white border-[var(--color-stone-900)]'
-                        : 'bg-white text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-stone-50)]'
+                        ? 'bg-[var(--color-accent)] text-white border-[var(--color-accent)]'
+                        : 'bg-[var(--color-surface-0)] text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-surface-1)]'
                     "
                   >
                     {{ s }}
@@ -166,7 +166,7 @@ interface EventLogEntry {
               <button
                 type="button"
                 (click)="toggleDisabled()"
-                class="mt-4 px-4 py-1.5 text-xs font-semibold rounded-md border cursor-pointer transition-all bg-white text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-stone-50)]"
+                class="mt-4 px-4 py-1.5 text-xs font-semibold rounded-md border cursor-pointer transition-all bg-[var(--color-surface-0)] text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-surface-1)]"
               >
                 {{ disabledOtp.disabled ? 'Enable' : 'Disable' }}
               </button>
@@ -198,18 +198,14 @@ interface EventLogEntry {
                 (otpInvalid)="onEventInvalid($event)"
               ></ngx-otp-input>
               <div
-                class="mt-4 w-full max-h-32 overflow-y-auto rounded-lg bg-[var(--color-stone-900)] p-3 font-mono text-xs leading-relaxed"
+                class="console-panel mt-4 w-full max-h-32 overflow-y-auto rounded-lg p-3 font-mono text-xs leading-relaxed"
               >
                 @if (eventLog.length === 0) {
-                  <div class="text-[var(--color-stone-500)]">
-                    Waiting for events...
-                  </div>
+                  <div class="console-muted">Waiting for events...</div>
                 }
                 @for (entry of eventLog; track $index) {
                   <div class="flex gap-2 mb-0.5">
-                    <span class="text-[var(--color-stone-500)] shrink-0">{{
-                      entry.time
-                    }}</span>
+                    <span class="console-muted shrink-0">{{ entry.time }}</span>
                     <span
                       class="shrink-0"
                       [class]="
@@ -221,7 +217,7 @@ interface EventLogEntry {
                       "
                       >{{ entry.type }}</span
                     >
-                    <span class="text-[var(--color-stone-300)] truncate">{{
+                    <span class="console-text truncate">{{
                       entry.payload
                     }}</span>
                   </div>
@@ -230,7 +226,7 @@ interface EventLogEntry {
               <button
                 type="button"
                 (click)="clearEventLog()"
-                class="mt-2 px-3 py-1 text-xs font-medium rounded-md border cursor-pointer transition-all bg-white text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-stone-50)]"
+                class="mt-2 px-3 py-1 text-xs font-medium rounded-md border cursor-pointer transition-all bg-[var(--color-surface-0)] text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-surface-1)]"
               >
                 Clear log
               </button>
@@ -247,7 +243,7 @@ interface EventLogEntry {
         flex-direction: column;
         border-radius: var(--radius-xl);
         border: 1px solid var(--color-stone-200);
-        background: white;
+        background: var(--color-surface-0);
         overflow: hidden;
         transition: box-shadow 0.3s ease;
       }
@@ -285,7 +281,7 @@ interface EventLogEntry {
 
       .example-card-code {
         padding: 0.75rem 1.5rem;
-        background: var(--color-stone-50);
+        background: var(--color-surface-1);
         border-top: 1px solid var(--color-stone-100);
         font-family: var(--font-mono);
         font-size: 0.75rem;

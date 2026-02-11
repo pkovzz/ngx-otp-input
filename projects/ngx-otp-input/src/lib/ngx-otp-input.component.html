@@ -2,7 +2,7 @@
   class="ngx-otp-input-root"
   role="group"
   [attr.aria-label]="ariaLabel"
-  (mousedown)="handleContainerMouseDown($event)"
+  (pointerdown)="handleContainerPointerDown($event)"
   data-testid="ngx-otp-input-root"
 >
   <input
@@ -39,7 +39,7 @@
         [class.ngx-otp-input-success]="status === 'success'"
         [class.ngx-otp-input-failed]="status === 'error'"
         [class.ngx-otp-input-active]="i === activeIndex && !isDisabled"
-        (mousedown)="handleBoxMouseDown($event, i)"
+        (pointerdown)="handleBoxPointerDown($event, i)"
         data-testid="ngx-otp-input-box"
       >
         {{ displayCharacters[i] }}

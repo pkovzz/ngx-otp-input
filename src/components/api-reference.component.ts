@@ -15,7 +15,7 @@ interface ApiRow {
   template: `
     <section
       id="api"
-      class="py-20"
+      class="py-20 scroll-mt-24"
     >
       <div class="section-container">
         <div class="text-center mb-14">
@@ -117,7 +117,7 @@ interface ApiRow {
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             @for (cls of cssClasses; track cls.name) {
               <div
-                class="flex flex-col gap-1 p-4 rounded-lg border border-[var(--color-stone-100)] bg-white"
+                class="flex flex-col gap-1 p-4 rounded-lg border border-[var(--color-stone-100)] bg-[var(--color-surface-0)]"
               >
                 <code
                   class="text-sm font-semibold text-[var(--color-accent)] font-mono"
@@ -160,15 +160,15 @@ interface ApiRow {
       }
 
       .api-section-badge.output {
-        background: #eff6ff;
-        color: #1d4ed8;
-        border-color: #bfdbfe;
+        background: color-mix(in srgb, #3b82f6 16%, transparent);
+        color: color-mix(in srgb, #3b82f6 84%, var(--color-stone-700));
+        border-color: color-mix(in srgb, #3b82f6 36%, transparent);
       }
 
       .api-section-badge.css {
-        background: #f5f3ff;
-        color: #6d28d9;
-        border-color: #ddd6fe;
+        background: color-mix(in srgb, #8b5cf6 16%, transparent);
+        color: color-mix(in srgb, #8b5cf6 84%, var(--color-stone-700));
+        border-color: color-mix(in srgb, #8b5cf6 34%, transparent);
       }
 
       .api-table-wrapper {
@@ -181,7 +181,7 @@ interface ApiRow {
         width: 100%;
         border-collapse: collapse;
         font-size: 0.875rem;
-        background: white;
+        background: var(--color-surface-0);
       }
 
       .api-table thead {

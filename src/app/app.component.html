@@ -1,4 +1,7 @@
-<app-header></app-header>
+<app-header
+  [isDarkTheme]="isDarkTheme"
+  (themeToggle)="toggleTheme()"
+></app-header>
 <main>
   <app-hero></app-hero>
   <app-features></app-features>

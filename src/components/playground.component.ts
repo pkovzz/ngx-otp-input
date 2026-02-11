@@ -20,7 +20,7 @@ import {
   template: `
     <section
       id="playground"
-      class="py-20 bg-white border-y border-[var(--color-stone-100)]"
+      class="py-20 scroll-mt-24 bg-[var(--color-surface-0)] border-y border-[var(--color-stone-100)]"
     >
       <div class="section-container">
         <div class="text-center mb-14">
@@ -89,7 +89,7 @@ import {
                 id="otp-charPattern"
                 [(ngModel)]="selectedPattern"
                 (change)="onPatternChange()"
-                class="w-full px-3 py-2 text-sm border border-[var(--color-stone-200)] rounded-lg bg-white text-[var(--color-stone-800)] outline-none focus:border-[var(--color-accent)] transition-colors"
+                class="w-full px-3 py-2 text-sm border border-[var(--color-stone-200)] rounded-lg bg-[var(--color-surface-0)] text-[var(--color-stone-800)] outline-none focus:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-1)] transition-colors"
               >
                 <option value="numeric">Numeric (/^\\d$/)</option>
                 <option value="alpha">Alpha (/^[a-zA-Z]$/)</option>
@@ -110,7 +110,7 @@ import {
               <select
                 id="otp-inputMode"
                 [(ngModel)]="config.inputMode"
-                class="w-full px-3 py-2 text-sm border border-[var(--color-stone-200)] rounded-lg bg-white text-[var(--color-stone-800)] outline-none focus:border-[var(--color-accent)] transition-colors"
+                class="w-full px-3 py-2 text-sm border border-[var(--color-stone-200)] rounded-lg bg-[var(--color-surface-0)] text-[var(--color-stone-800)] outline-none focus:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-1)] transition-colors"
               >
                 <option value="numeric">numeric</option>
                 <option value="text">text</option>
@@ -133,8 +133,8 @@ import {
                     class="flex-1 px-2 py-1.5 text-xs font-semibold rounded-md border cursor-pointer transition-all"
                     [class]="
                       config.status === s
-                        ? 'bg-[var(--color-stone-900)] text-white border-[var(--color-stone-900)]'
-                        : 'bg-white text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-stone-50)]'
+                        ? 'bg-[var(--color-accent)] text-white border-[var(--color-accent)]'
+                        : 'bg-[var(--color-surface-0)] text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-surface-1)]'
                     "
                   >
                     {{ s }}
@@ -155,7 +155,7 @@ import {
                 id="otp-ariaLabel"
                 type="text"
                 [(ngModel)]="config.ariaLabel"
-                class="w-full px-3 py-2 text-sm border border-[var(--color-stone-200)] rounded-lg bg-white text-[var(--color-stone-800)] outline-none focus:border-[var(--color-accent)] transition-colors"
+                class="w-full px-3 py-2 text-sm border border-[var(--color-stone-200)] rounded-lg bg-[var(--color-surface-0)] text-[var(--color-stone-800)] outline-none focus:border-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-1)] transition-colors"
               />
             </div>
 
@@ -215,7 +215,7 @@ import {
               <button
                 type="button"
                 (click)="resetPlayground()"
-                class="flex-1 px-3 py-2 text-sm font-medium rounded-lg border border-[var(--color-stone-200)] text-[var(--color-stone-600)] bg-white hover:bg-[var(--color-stone-50)] cursor-pointer transition-colors"
+                class="flex-1 px-3 py-2 text-sm font-medium rounded-lg border border-[var(--color-stone-200)] text-[var(--color-stone-600)] bg-[var(--color-surface-0)] hover:bg-[var(--color-surface-1)] cursor-pointer transition-colors"
               >
                 Reset
               </button>
@@ -316,18 +316,16 @@ import {
                 </button>
               </div>
               <div
-                class="h-36 overflow-y-auto rounded-xl bg-[var(--color-stone-900)] p-4 font-mono text-xs leading-relaxed"
+                class="console-panel h-36 overflow-y-auto rounded-xl p-4 font-mono text-xs leading-relaxed"
               >
                 @if (consoleLog.length === 0) {
-                  <div class="text-[var(--color-stone-500)]">
+                  <div class="console-muted">
                     Events will appear here as you interact...
                   </div>
                 }
                 @for (line of consoleLog; track $index) {
                   <div class="flex gap-2 mb-0.5">
-                    <span class="text-[var(--color-stone-500)] shrink-0">{{
-                      line.time
-                    }}</span>
+                    <span class="console-muted shrink-0">{{ line.time }}</span>
                     <span
                       class="shrink-0"
                       [class]="
@@ -339,7 +337,7 @@ import {
                       "
                       >{{ line.type }}</span
                     >
-                    <span class="text-[var(--color-stone-300)] truncate">{{
+                    <span class="console-text truncate">{{
                       line.payload
                     }}</span>
                   </div>

@@ -196,20 +196,28 @@ export class NgxOtpInputComponent
     this.cdr.markForCheck();
   }
 
-  handleContainerMouseDown(event: MouseEvent): void {
-    event.preventDefault();
-    if (!this.isDisabled) {
+  handleContainerPointerDown(event: PointerEvent): void {
+    if (this.isDisabled) {
+      return;
+    }
+
+    if (event.pointerType === 'mouse') {
+      event.preventDefault();
       this.otpInput?.nativeElement.focus();
       queueMicrotask(() => this.setCaretIndex(this.value.length));
     }
   }
 
-  handleBoxMouseDown(event: MouseEvent, index: number): void {
-    event.preventDefault();
-    event.stopPropagation();
+  handleBoxPointerDown(event: PointerEvent, index: number): void {
     if (this.isDisabled) {
       return;
     }
+    if (event.pointerType !== 'mouse') {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
     this.otpInput?.nativeElement.focus();
     const nextIndex = Math.min(index, this.value.length);
     this.setCaretIndex(nextIndex);
