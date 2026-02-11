@@ -190,6 +190,59 @@ describe('NgxOtpInputComponent v2', () => {
     expect(fixture.componentInstance.form.controls.otp.value).toEqual('123456');
   });
 
+  it('NgxOtpInputComponent › should replace existing full value on beforeinput paste', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123456';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    nativeInput.dispatchEvent(
+      new InputEvent('beforeinput', {
+        data: '654321',
+        inputType: 'insertFromPaste',
+      }),
+    );
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('654321');
+  });
+
+  it('NgxOtpInputComponent › should reject invalid chars from beforeinput paste and keep accepted digits', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+
+    nativeInput.dispatchEvent(
+      new InputEvent('beforeinput', {
+        data: '12a3',
+        inputType: 'insertFromPaste',
+      }),
+    );
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.invalidReason).toEqual('char-rejected');
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('123');
+  });
+
+  it('NgxOtpInputComponent › should support iOS native paste fallback without clipboardData', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123456';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    nativeInput.dispatchEvent(new Event('paste'));
+
+    nativeInput.value = '654321';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('654321');
+  });
+
   it('NgxOtpInputComponent › should set aria-invalid when status is error', () => {
     fixture.componentInstance.status = 'error';
     fixture.detectChanges();

@@ -201,9 +201,10 @@ export class NgxOtpInputComponent
       return;
     }
 
+    this.otpInput?.nativeElement.focus();
+
     if (event.pointerType === 'mouse') {
       event.preventDefault();
-      this.otpInput?.nativeElement.focus();
       queueMicrotask(() => this.setCaretIndex(this.value.length));
     }
   }
@@ -222,6 +223,36 @@ export class NgxOtpInputComponent
     const nextIndex = Math.min(index, this.value.length);
     this.setCaretIndex(nextIndex);
     queueMicrotask(() => this.setCaretIndex(nextIndex));
+  }
+
+  handleBeforeInput(event: InputEvent): void {
+    if (this.isDisabled) {
+      return;
+    }
+
+    const isPasteLikeInput =
+      event.inputType === 'insertFromPaste' ||
+      event.inputType === 'insertReplacementText';
+    if (!isPasteLikeInput) {
+      return;
+    }
+
+    const input = this.otpInput?.nativeElement;
+    const insertedText =
+      event.data ?? event.dataTransfer?.getData('text/plain') ?? '';
+    if (!insertedText) {
+      // iOS can omit payload in beforeinput/paste for security reasons.
+      // Select all so native insertion replaces existing value.
+      try {
+        input?.setSelectionRange(0, input.value.length);
+      } catch {
+        // Ignore selection errors for unsupported input types.
+      }
+      return;
+    }
+
+    event.preventDefault();
+    this.applyPastedValue(insertedText);
   }
 
   handleInput(event: Event): void {
@@ -341,22 +372,21 @@ export class NgxOtpInputComponent
     if (this.isDisabled) {
       return;
     }
-    event.preventDefault();
     const text = event.clipboardData?.getData('text') ?? '';
-    const result = this.sanitize(text);
-
-    this.hasInvalidOtpState.set(!!result.rejectedReason);
-    if (result.rejectedReason) {
-      this.otpInvalid.emit({
-        reason: result.rejectedReason,
-        attemptedValue: result.attempted,
-        acceptedValue: result.accepted,
-      });
+    if (!text) {
+      // Some mobile browsers (notably iOS Safari paste callout) can dispatch
+      // paste without exposing clipboardData; select all so native insertion
+      // replaces current value.
+      const input = this.otpInput?.nativeElement;
+      try {
+        input?.setSelectionRange(0, input.value.length);
+      } catch {
+        // Ignore selection errors for unsupported input types.
+      }
+      return;
     }
-
-    this.setValueFromUser(result.accepted);
-    this.syncNativeInputValue();
-    this.setCaretIndex(this.value.length);
+    event.preventDefault();
+    this.applyPastedValue(text);
   }
 
   handleBlur(): void {
@@ -418,6 +448,23 @@ export class NgxOtpInputComponent
       this.charPattern.lastIndex = 0;
     }
     return isValid;
+  }
+
+  private applyPastedValue(rawValue: string): void {
+    const result = this.sanitize(rawValue);
+
+    this.hasInvalidOtpState.set(!!result.rejectedReason);
+    if (result.rejectedReason) {
+      this.otpInvalid.emit({
+        reason: result.rejectedReason,
+        attemptedValue: result.attempted,
+        acceptedValue: result.accepted,
+      });
+    }
+
+    this.setValueFromUser(result.accepted);
+    this.syncNativeInputValue();
+    this.setCaretIndex(this.value.length);
   }
 
   private syncNativeInputValue(): void {
