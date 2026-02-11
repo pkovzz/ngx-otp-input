@@ -302,19 +302,19 @@ export class ApiReferenceComponent {
 
   outputs: ApiRow[] = [
     {
-      name: 'change',
+      name: 'otpChange',
       type: '{ value: string; isComplete: boolean }',
       default: '',
       description: 'Emitted whenever the OTP value changes.',
     },
     {
-      name: 'complete',
+      name: 'otpComplete',
       type: 'string',
       default: '',
       description: 'Emitted when the OTP reaches full length.',
     },
     {
-      name: 'invalid',
+      name: 'otpInvalid',
       type: "{ reason: 'too-long' | 'char-rejected'; attemptedValue: string; acceptedValue: string }",
       default: '',
       description: 'Emitted when input is rejected during sanitization.',

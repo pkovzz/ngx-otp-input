@@ -200,7 +200,7 @@ Version `2.x` is a breaking release:
 
 ## Links
 
-- Demo: http://ngx-otp-input.vercel.app
+- Demo: https://ngx-otp-input.vercel.app
 - Changelog: https://github.com/pkovzz/ngx-otp-input/blob/master/CHANGELOG.md
 - Contributing: https://github.com/pkovzz/ngx-otp-input/blob/master/CONTRIBUTING.md
 - Code of conduct: https://github.com/pkovzz/ngx-otp-input/blob/master/CODE_OF_CONDUCT.md

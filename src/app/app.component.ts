@@ -31,7 +31,9 @@ export class AppComponent implements OnInit {
   isDarkTheme = false;
 
   ngOnInit(): void {
-    injectAnalytics();
+    if (typeof window !== 'undefined') {
+      injectAnalytics();
+    }
     this.initializeTheme();
   }
 

@@ -67,6 +67,8 @@ export class NgxOtpInputComponent
   private readonly sanitizer = new OtpSanitizer();
   private readonly caretManager = new CaretManager();
   private readonly keyHandlers: KeyHandler[] = createDefaultKeyHandlers();
+  private readonly pasteDedupeWindowMs = 120;
+  private pasteHandledAt = 0;
 
   @ViewChild('otpInput', { static: true })
   private otpInput?: ElementRef<HTMLInputElement>;
@@ -271,6 +273,11 @@ export class NgxOtpInputComponent
       return;
     }
 
+    if (this.wasPasteHandledRecently()) {
+      event.preventDefault();
+      return;
+    }
+
     const insertedText =
       event.data ?? event.dataTransfer?.getData('text/plain') ?? '';
     if (!insertedText) {
@@ -281,6 +288,7 @@ export class NgxOtpInputComponent
     }
 
     event.preventDefault();
+    this.markPasteHandled();
     this.applyPastedValue(insertedText);
   }
 
@@ -312,6 +320,12 @@ export class NgxOtpInputComponent
     if (this.isDisabled) {
       return;
     }
+
+    if (this.wasPasteHandledRecently()) {
+      event.preventDefault();
+      return;
+    }
+
     const text = event.clipboardData?.getData('text') ?? '';
     if (!text) {
       // Some mobile browsers (notably iOS Safari paste callout) can dispatch
@@ -321,6 +335,7 @@ export class NgxOtpInputComponent
       return;
     }
     event.preventDefault();
+    this.markPasteHandled();
     this.applyPastedValue(text);
   }
 
@@ -388,6 +403,23 @@ export class NgxOtpInputComponent
   private applyPastedValue(rawValue: string): void {
     const result = this.sanitize(rawValue);
     this.applySanitizedResult(result, () => this.value.length);
+  }
+
+  private markPasteHandled(): void {
+    this.pasteHandledAt = performance.now();
+  }
+
+  private wasPasteHandledRecently(): boolean {
+    if (this.pasteHandledAt === 0) {
+      return false;
+    }
+
+    if (performance.now() - this.pasteHandledAt < this.pasteDedupeWindowMs) {
+      return true;
+    }
+
+    this.pasteHandledAt = 0;
+    return false;
   }
 
   private syncNativeInputValue(): void {

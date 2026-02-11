@@ -1,11 +1,12 @@
-import { KeyHandler } from './key-handler';
+import { KeyHandler, KeyHandlerContext } from './key-handler';
 
 export class EnterKeyHandler implements KeyHandler {
   canHandle(event: KeyboardEvent): boolean {
     return event.key === 'Enter';
   }
 
-  handle(event: KeyboardEvent): void {
+  handle(event: KeyboardEvent, context: KeyHandlerContext): void {
+    void context;
     event.preventDefault();
   }
 }

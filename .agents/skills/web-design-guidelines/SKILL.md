@@ -22,7 +22,7 @@ Review files for compliance with Web Interface Guidelines.
 
 Fetch fresh guidelines before each review:
 
-```
+```text
 https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md
 ```
 

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -244,7 +244,7 @@ import {
                 #playgroundOtp
                 [formControl]="otpControl"
                 [length]="config.length"
-                [autoFocus]="false"
+                [autoFocus]="config.autoFocus"
                 [autoBlur]="config.autoBlur"
                 [mask]="config.mask"
                 [charPattern]="currentPattern"
@@ -294,7 +294,9 @@ import {
                   (click)="copyCode()"
                   class="text-xs font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-700)] transition-colors cursor-pointer bg-transparent border-0"
                 >
-                  {{ codeCopied ? 'Copied!' : 'Copy' }}
+                  {{
+                    codeCopied ? 'Copied!' : copyError ? 'Copy failed' : 'Copy'
+                  }}
                 </button>
               </div>
               <div class="code-block whitespace-pre">{{ generatedCode }}</div>
@@ -350,12 +352,14 @@ import {
     </section>
   `,
 })
-export class PlaygroundComponent {
+export class PlaygroundComponent implements OnDestroy {
   @ViewChild('playgroundOtp') playgroundOtp?: NgxOtpInputComponent;
 
   otpControl = new FormControl('', { nonNullable: true });
   isComplete = false;
   codeCopied = false;
+  copyError = false;
+  private copyFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
   statuses: OtpStatus[] = ['idle', 'success', 'error'];
 
@@ -456,10 +460,26 @@ export class PlaygroundComponent {
   }
 
   copyCode(): void {
-    navigator.clipboard.writeText(this.generatedCode).then(() => {
-      this.codeCopied = true;
-      setTimeout(() => (this.codeCopied = false), 2000);
-    });
+    const text = this.generatedCode;
+
+    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      this.setCopyFeedback(this.fallbackCopy(text));
+      return;
+    }
+
+    navigator.clipboard
+      .writeText(text)
+      .then(() => this.setCopyFeedback(true))
+      .catch(() => {
+        this.setCopyFeedback(this.fallbackCopy(text));
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.copyFeedbackTimer) {
+      clearTimeout(this.copyFeedbackTimer);
+      this.copyFeedbackTimer = null;
+    }
   }
 
   onOtpChange(event: OtpChangeEvent): void {
@@ -487,5 +507,45 @@ export class PlaygroundComponent {
       0,
       30,
     );
+  }
+
+  private setCopyFeedback(success: boolean): void {
+    if (this.copyFeedbackTimer) {
+      clearTimeout(this.copyFeedbackTimer);
+      this.copyFeedbackTimer = null;
+    }
+
+    this.codeCopied = success;
+    this.copyError = !success;
+
+    this.copyFeedbackTimer = setTimeout(() => {
+      this.codeCopied = false;
+      this.copyError = false;
+      this.copyFeedbackTimer = null;
+    }, 2000);
+  }
+
+  private fallbackCopy(text: string): boolean {
+    if (typeof document === 'undefined') {
+      return false;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    textarea.style.pointerEvents = 'none';
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+
+    try {
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
   }
 }

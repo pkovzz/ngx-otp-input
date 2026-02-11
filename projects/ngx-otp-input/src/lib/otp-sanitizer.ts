@@ -34,7 +34,7 @@ export class OtpSanitizer {
 
   isCharAllowed(ch: string, charPattern: RegExp): boolean {
     const isValid = charPattern.test(ch);
-    if (charPattern.global) {
+    if (charPattern.global || charPattern.sticky) {
       charPattern.lastIndex = 0;
     }
     return isValid;

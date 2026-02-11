@@ -15,7 +15,7 @@ and the project follows [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Modernized internal component state handling with Angular signals while preserving CVA behavior and the public API.
-- Lowered library peer dependency floor to Angular `17.2` and added `@angular/forms` as an explicit peer dependency.
+- Raised library peer dependency floor to Angular `17.2` and added `@angular/forms` as an explicit peer dependency.
 - Expanded GitHub Actions to validate both library and demo release artifacts in CI and before npm publish.
 - Added a release guard that validates GitHub release tags against `projects/ngx-otp-input/package.json` version.
 - Added `build:demo` and `build:release` scripts to standardize release builds.
@@ -51,7 +51,7 @@ and the project follows [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
-- [(#32)](https://github.com/pkovzz/ngx-otp-input/issues/35) Fixed iOS quick bar paste behavior.
+- [(#35)](https://github.com/pkovzz/ngx-otp-input/issues/35) Fixed iOS quick bar paste behavior.
 
 ## 1.1.3
 
@@ -63,7 +63,7 @@ and the project follows [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
-- [(#28)](https://github.com/pkovzz/ngx-otp-input/issues/29) Paste now fires only one `otpChange` and one `otpComplete` event.
+- [(#29)](https://github.com/pkovzz/ngx-otp-input/issues/29) Paste now fires only one `otpChange` and one `otpComplete` event.
 
 ## 1.1.1
 

@@ -8,13 +8,25 @@ export class BackspaceKeyHandler implements KeyHandler {
   handle(event: KeyboardEvent, context: KeyHandlerContext): void {
     event.preventDefault();
 
-    if (context.selectionStart > 0) {
+    const { selectionStart, selectionEnd } = context;
+
+    if (selectionEnd > selectionStart) {
+      const newValue =
+        context.value.slice(0, selectionStart) +
+        context.value.slice(selectionEnd);
+      context.setValueFromUser(newValue);
+      context.syncNativeInputValue();
+      context.setCaretIndex(selectionStart);
+      return;
+    }
+
+    if (selectionStart > 0) {
       const nextValue =
-        context.value.slice(0, context.selectionStart - 1) +
-        context.value.slice(context.selectionStart);
+        context.value.slice(0, selectionStart - 1) +
+        context.value.slice(selectionStart);
       context.setValueFromUser(nextValue);
       context.syncNativeInputValue();
-      context.setCaretIndex(context.selectionStart - 1);
+      context.setCaretIndex(selectionStart - 1);
     }
   }
 }

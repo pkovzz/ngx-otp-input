@@ -158,7 +158,7 @@ The component renders a native input plus a visual boxed UI. These classes are a
 | `ngx-otp-input-failed`   | Error status style (`status === 'error'`).  |
 | `ngx-otp-input-status`   | Screen reader status message container.     |
 
-Override styles from a global stylesheet (for example, `src/styles.scss`):
+Override styles from a global stylesheet (for example, `src/styles.css`):
 
 ```scss
 ngx-otp-input {

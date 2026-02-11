@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgxOtpInputComponent } from 'ngx-otp-input';
@@ -65,7 +65,13 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
                 type="button"
                 (click)="copyInstall()"
                 class="ml-1 p-1 rounded-md hover:bg-[var(--color-stone-700)] transition-colors cursor-pointer border-0 bg-transparent"
-                [attr.aria-label]="copied ? 'Copied!' : 'Copy to clipboard'"
+                [attr.aria-label]="
+                  copied
+                    ? 'Copied!'
+                    : copyError
+                      ? 'Copy failed'
+                      : 'Copy to clipboard'
+                "
               >
                 @if (copied) {
                   <svg
@@ -79,6 +85,20 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
                       stroke-linejoin="round"
                       stroke-width="2"
                       d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                } @else if (copyError) {
+                  <svg
+                    class="w-4 h-4 text-red-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v4m0 4h.01M6.938 4h10.124c1.54 0 2.502 1.667 1.732 3L13.732 18c-.77 1.333-2.694 1.333-3.464 0L5.206 7c-.77-1.333.192-3 1.732-3z"
                     />
                   </svg>
                 } @else {
@@ -152,14 +172,72 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
     </section>
   `,
 })
-export class HeroComponent {
+export class HeroComponent implements OnDestroy {
   heroOtp = new FormControl('', { nonNullable: true });
   copied = false;
+  copyError = false;
+  private copyFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
   copyInstall(): void {
-    navigator.clipboard.writeText('npm install ngx-otp-input').then(() => {
-      this.copied = true;
-      setTimeout(() => (this.copied = false), 2000);
-    });
+    const text = 'npm install ngx-otp-input';
+
+    if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+      this.setCopyFeedback(this.fallbackCopy(text));
+      return;
+    }
+
+    navigator.clipboard
+      .writeText(text)
+      .then(() => this.setCopyFeedback(true))
+      .catch(() => {
+        this.setCopyFeedback(this.fallbackCopy(text));
+      });
+  }
+
+  private setCopyFeedback(success: boolean): void {
+    if (this.copyFeedbackTimer) {
+      clearTimeout(this.copyFeedbackTimer);
+      this.copyFeedbackTimer = null;
+    }
+
+    this.copied = success;
+    this.copyError = !success;
+
+    this.copyFeedbackTimer = setTimeout(() => {
+      this.copied = false;
+      this.copyError = false;
+      this.copyFeedbackTimer = null;
+    }, 2000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.copyFeedbackTimer) {
+      clearTimeout(this.copyFeedbackTimer);
+      this.copyFeedbackTimer = null;
+    }
+  }
+
+  private fallbackCopy(text: string): boolean {
+    if (typeof document === 'undefined') {
+      return false;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    textarea.style.pointerEvents = 'none';
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+
+    try {
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
   }
 }

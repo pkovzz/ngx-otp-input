@@ -115,7 +115,7 @@ Testing guidelines:
 
 Test naming convention:
 
-```
+```text
 ComponentName › should <expected behavior> when <condition>
 ```
 
