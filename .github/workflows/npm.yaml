@@ -28,5 +28,3 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
       - name: '🚀 Publish'
         run: npm publish ./dist/ngx-otp-input --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
