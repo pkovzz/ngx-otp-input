@@ -48,3 +48,9 @@
   white-space: nowrap;
   border: 0;
 }
+
+@media (hover: none) and (pointer: coarse) {
+  .ngx-otp-input-form {
+    pointer-events: none;
+  }
+}

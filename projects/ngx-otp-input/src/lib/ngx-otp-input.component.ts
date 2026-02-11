@@ -204,7 +204,7 @@ export class NgxOtpInputComponent
     }
   }
 
-  handleBoxMouseDown(event: MouseEvent | TouchEvent, index: number): void {
+  handleBoxMouseDown(event: MouseEvent, index: number): void {
     event.preventDefault();
     event.stopPropagation();
     if (this.isDisabled) {

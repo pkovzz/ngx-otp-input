@@ -13,6 +13,7 @@
     [inputMode]="inputMode"
     [attr.pattern]="patternAttribute"
     [attr.maxlength]="resolvedLength"
+    name="one-time-code"
     autocomplete="one-time-code"
     autocapitalize="off"
     autocorrect="off"
@@ -39,7 +40,6 @@
         [class.ngx-otp-input-failed]="status === 'error'"
         [class.ngx-otp-input-active]="i === activeIndex && !isDisabled"
         (mousedown)="handleBoxMouseDown($event, i)"
-        (touchstart)="handleBoxMouseDown($event, i)"
         data-testid="ngx-otp-input-box"
       >
         {{ displayCharacters[i] }}
