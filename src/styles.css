@@ -40,6 +40,7 @@
   --color-console-border: #252c3c;
   --color-console-text: #d9dfeb;
   --color-console-muted: #93a0b8;
+  --color-otp-focus-ring: rgb(194 65 12 / 0.12);
 
   --font-heading: 'Outfit', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
@@ -97,6 +98,7 @@
   --color-console-border: #263146;
   --color-console-text: #dde5f5;
   --color-console-muted: #8d9bb5;
+  --color-otp-focus-ring: rgb(251 146 60 / 0.42);
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
   --shadow-md:
@@ -269,7 +271,7 @@ ngx-otp-input .ngx-otp-input-box {
 
 ngx-otp-input .ngx-otp-input-box.ngx-otp-input-active {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgb(194 65 12 / 0.12);
+  box-shadow: 0 0 0 3px var(--color-otp-focus-ring);
 }
 
 ngx-otp-input .ngx-otp-input-box.ngx-otp-input-filled {
