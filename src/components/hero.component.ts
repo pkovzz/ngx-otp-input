@@ -138,7 +138,7 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
             <div class="hero-otp flex justify-center">
               <ngx-otp-input
                 [formControl]="heroOtp"
-                [length]="6"
+                [length]="4"
                 [autoFocus]="false"
                 [autoBlur]="true"
               ></ngx-otp-input>
