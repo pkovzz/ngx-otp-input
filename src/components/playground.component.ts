@@ -374,7 +374,7 @@ export class PlaygroundComponent implements OnDestroy {
 
   config = {
     length: 6,
-    autoFocus: true,
+    autoFocus: false,
     autoBlur: true,
     mask: false,
     inputMode: 'numeric',
@@ -426,7 +426,7 @@ export class PlaygroundComponent implements OnDestroy {
   resetPlayground(): void {
     this.config = {
       length: 6,
-      autoFocus: true,
+      autoFocus: false,
       autoBlur: true,
       mask: false,
       inputMode: 'numeric',
