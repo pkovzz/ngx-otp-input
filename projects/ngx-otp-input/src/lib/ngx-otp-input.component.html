@@ -1,38 +1,59 @@
-<form
-  ngxOtpPaste
-  ngxInputNavigations
-  [regexp]="ngxOtpOptions.regexp!"
-  [isFormValid]="ngxOtpInputArray.valid"
-  [ngxAutoFocus]="ngxOtpOptions.autoFocus!"
-  [ngxAutoBlur]="ngxOtpOptions.autoBlur!"
-  [ngxOtpAriaLabels]="ngxOtpOptions.ariaLabels!"
-  [ngClass]="{
-    'ngx-blinking-cursor': ngxOtpOptions.showBlinkingCursor
-  }"
-  (valueChange)="handleInputChanges($event)"
-  (handlePaste)="handlePasteChange($event)"
-  class="ngx-otp-input-form"
-  data-testid="ngx-otp-input-form"
+<div
+  class="ngx-otp-input-root"
+  role="group"
+  [attr.aria-label]="ariaLabel"
+  (pointerdown)="handleContainerPointerDown($event)"
+  data-testid="ngx-otp-input-root"
 >
   <input
-    *ngFor="let control of ngxOtpInputArray.controls; let i = index"
-    #otpInputElement
-    [value]="control.value"
+    #otpInput
+    class="ngx-otp-input-native"
     [type]="inputType"
-    [inputMode]="ngxOtpOptions.inputMode"
-    [disabled]="disabled"
-    [ngClass]="{
-      'ngx-otp-input-disabled': disabled,
-      'ngx-otp-input-filled': isInputFilled(i),
-      'ngx-otp-input-success': isOTPSuccess,
-      'ngx-otp-input-failed': isOTPFailed
-    }"
-    class="ngx-otp-input-box"
-    maxlength="1"
-    spellcheck="false"
-    autocomplete="off"
+    [disabled]="isDisabled"
+    [inputMode]="inputMode"
+    [attr.pattern]="patternAttribute"
+    name="one-time-code"
+    autocomplete="one-time-code"
     autocapitalize="off"
     autocorrect="off"
-    data-testid="ngx-otp-input-box"
+    spellcheck="false"
+    [attr.aria-invalid]="status === 'error' || hasInvalidOtp ? 'true' : null"
+    [attr.aria-describedby]="statusMessage ? statusMessageId : null"
+    (beforeinput)="handleBeforeInput($event)"
+    (input)="handleInput($event)"
+    (keydown)="handleKeyDown($event)"
+    (paste)="handlePaste($event)"
+    (blur)="handleBlur()"
+    data-testid="ngx-otp-input-native"
   />
-</form>
+
+  <div
+    class="ngx-otp-input-form"
+    aria-hidden="true"
+  >
+    @for (i of boxes; track i) {
+      <div
+        class="ngx-otp-input-box"
+        [class.ngx-otp-input-disabled]="isDisabled"
+        [class.ngx-otp-input-filled]="characters[i]"
+        [class.ngx-otp-input-success]="status === 'success'"
+        [class.ngx-otp-input-failed]="status === 'error'"
+        [class.ngx-otp-input-active]="i === activeIndex && !isDisabled"
+        (pointerdown)="handleBoxPointerDown($event, i)"
+        data-testid="ngx-otp-input-box"
+      >
+        {{ displayCharacters[i] }}
+      </div>
+    }
+  </div>
+
+  <span
+    [id]="statusMessageId"
+    class="ngx-otp-input-status"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    {{ statusMessage }}
+  </span>
+</div>

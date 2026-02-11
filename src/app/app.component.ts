@@ -1,94 +1,77 @@
-import { inject } from '@vercel/analytics';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
-import {
-  NgxOtpInputComponent,
-  NgxOtpStatus,
-  NgxOtpInputComponentOptions,
-} from 'ngx-otp-input';
-import { BasicInformationComponent } from '../components/BasicInformation.component';
+import { inject as injectAnalytics } from '@vercel/analytics';
+import { DOCUMENT } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { HeaderComponent } from '../components/Header.component';
+import { HeroComponent } from '../components/hero.component';
+import { FeaturesComponent } from '../components/features.component';
+import { ExamplesComponent } from '../components/examples.component';
+import { PlaygroundComponent } from '../components/playground.component';
+import { ApiReferenceComponent } from '../components/api-reference.component';
+import { FooterComponent } from '../components/footer.component';
+
+type DemoTheme = 'light' | 'dark';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterOutlet,
-    FormsModule,
-    NgxOtpInputComponent,
     HeaderComponent,
-    BasicInformationComponent,
+    HeroComponent,
+    FeaturesComponent,
+    ExamplesComponent,
+    PlaygroundComponent,
+    ApiReferenceComponent,
+    FooterComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  @ViewChild('ngxOtpInput') ngxOtpInput!: NgxOtpInputComponent;
-  otpStatusEnum = NgxOtpStatus;
-  showNgxOtpInput = true;
-  otpOptions: NgxOtpInputComponentOptions = {
-    otpLength: 5,
-    autoFocus: true,
-    autoBlur: true,
-    hideInputValues: false,
-    showBlinkingCursor: true,
-    regexp: /^[0-9]+$/,
-    ariaLabels: ['a', 'b', 'c', 'd', 'e', 'f'],
-    inputMode: 'numeric',
-  };
-  regexp = '^[0-9]+$';
-  ariaLabels = '';
-  disabled = false;
-  otpChangeValue = '-';
-  otpCompleteValue = '-';
+  private readonly document = inject(DOCUMENT);
+  isDarkTheme = false;
 
   ngOnInit(): void {
-    inject();
-    this.formatAriaLabelsForDisplay();
-  }
-
-  onOtpChange(otp: string[]) {
-    const hasValue = otp.some((value) => value !== '');
-    if (hasValue) {
-      this.otpChangeValue = otp.join(', ');
-    } else {
-      this.otpChangeValue = '-';
-      this.otpCompleteValue = '-';
+    if (typeof window !== 'undefined') {
+      injectAnalytics();
     }
+    this.initializeTheme();
   }
 
-  onOtpComplete(otp: string) {
-    this.otpCompleteValue = otp;
+  toggleTheme(): void {
+    this.applyTheme(this.isDarkTheme ? 'light' : 'dark', true);
   }
 
-  formatAriaLabelsForDisplay() {
-    this.ariaLabels = this.otpOptions.ariaLabels!.join(', ');
+  private initializeTheme(): void {
+    const prefersDark =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const storedTheme =
+      typeof window !== 'undefined'
+        ? window.localStorage.getItem('ngx-demo-theme')
+        : null;
+    const initialTheme: DemoTheme =
+      storedTheme === 'light' || storedTheme === 'dark'
+        ? storedTheme
+        : prefersDark
+          ? 'dark'
+          : 'light';
+
+    this.applyTheme(initialTheme, false);
   }
 
-  formatAriaLabelsForSave() {
-    const ariaLabelsInputValue = this.ariaLabels.split(',');
-    this.otpOptions.ariaLabels = ariaLabelsInputValue.map((entry) =>
-      entry.replace(/\s/g, ''),
-    );
-  }
+  private applyTheme(theme: DemoTheme, persist: boolean): void {
+    this.isDarkTheme = theme === 'dark';
+    const root = this.document.documentElement;
+    root.setAttribute('data-theme', theme);
 
-  convertStringToRegexp() {
-    this.otpOptions.regexp = new RegExp(this.regexp);
-  }
+    const themeMeta = this.document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) {
+      const color = theme === 'dark' ? '#090b10' : '#fafaf9';
+      themeMeta.setAttribute('content', color);
+    }
 
-  handleComponentReload() {
-    this.showNgxOtpInput = false;
-    setTimeout(() => {
-      this.showNgxOtpInput = true;
-    });
-  }
-
-  handleReset() {
-    this.ngxOtpInput.reset();
-    this.otpChangeValue = '-';
-    this.otpCompleteValue = '-';
+    if (persist && typeof window !== 'undefined') {
+      window.localStorage.setItem('ngx-demo-theme', theme);
+    }
   }
 }

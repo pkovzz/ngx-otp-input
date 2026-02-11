@@ -1,11 +1,34 @@
+.ngx-otp-input-root {
+  position: relative;
+  display: inline-block;
+}
+
+.ngx-otp-input-native {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  color: transparent;
+  background: transparent;
+  -webkit-text-fill-color: transparent;
+  caret-color: transparent;
+  -webkit-touch-callout: default;
+  user-select: text;
+  font-size: 16px;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .ngx-otp-input-form {
   display: inline-flex;
   gap: 0.5rem;
-  caret-color: transparent;
-}
-
-.ngx-blinking-cursor {
-  caret-color: initial;
+  user-select: none;
 }
 
 .ngx-otp-input-box {
@@ -16,8 +39,29 @@
   text-align: center;
   border: 1px solid #c4c4c4;
   border-radius: 0.5rem;
-  outline: none;
-  &:focus {
-    border-color: #007bff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ngx-otp-input-active {
+  border-color: #007bff;
+}
+
+.ngx-otp-input-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .ngx-otp-input-form {
+    pointer-events: none;
   }
 }

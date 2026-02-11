@@ -1,183 +1,276 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgxOtpInputComponent } from './ngx-otp-input.component';
-import { NgxOtpInputComponentOptions } from './default.config';
-import { NgxOtpStatus } from 'ngx-otp-input';
 
-/**
- * TODO: add many-many more test cases!
- */
+@Component({
+  standalone: true,
+  imports: [ReactiveFormsModule, NgxOtpInputComponent],
+  template: `
+    <form [formGroup]="form">
+      <ngx-otp-input
+        formControlName="otp"
+        [length]="length"
+        [autoFocus]="false"
+        [autoBlur]="autoBlur"
+        [status]="status"
+        [mask]="mask"
+        [ariaLabel]="ariaLabel"
+        (otpComplete)="completeValue = $event"
+        (otpInvalid)="invalidReason = $event.reason"
+      ></ngx-otp-input>
+    </form>
+  `,
+})
+class TestHostComponent {
+  length = 6;
+  autoBlur = false;
+  status: 'idle' | 'success' | 'error' = 'idle';
+  mask = false;
+  ariaLabel = 'Test OTP';
+  completeValue: string | null = null;
+  invalidReason: string | null = null;
 
-describe('NgxOtpInputComponent with default options', () => {
-  let component: NgxOtpInputComponent;
-  let fixture: ComponentFixture<NgxOtpInputComponent>;
+  form = new FormGroup({
+    otp: new FormControl<string>('', { nonNullable: true }),
+  });
+}
+
+describe('NgxOtpInputComponent v2', () => {
+  let fixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgxOtpInputComponent],
+      imports: [TestHostComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NgxOtpInputComponent);
-    component = fixture.componentInstance;
+    fixture = TestBed.createComponent(TestHostComponent);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('NgxOtpInputComponent › should create when used in a reactive form', () => {
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should have the default options', () => {
-    expect(component.ngxOtpOptionsInUse).toBeDefined();
-  });
-
-  it('should have as many inputs as the length of the otp', () => {
-    const inputElements = fixture.nativeElement.querySelectorAll('input');
-    expect(inputElements.length).toEqual(
-      component.ngxOtpOptionsInUse.otpLength,
+  it('NgxOtpInputComponent › should set aria-label on the group container', () => {
+    const root = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-root"]',
     );
+    expect(root.getAttribute('aria-label')).toEqual('Test OTP');
   });
 
-  it('should have been focused on the first input', () => {
-    const inputElements = fixture.nativeElement.querySelectorAll('input');
-    expect(document.activeElement).toEqual(inputElements[0]);
+  it('NgxOtpInputComponent › should render visual boxes based on length', () => {
+    const boxes = fixture.nativeElement.querySelectorAll(
+      '[data-testid="ngx-otp-input-box"]',
+    );
+    expect(boxes.length).toEqual(6);
   });
 
-  // TODO: Fix the test case
-  // it('should have been blurred after the otp is completed', () => {
-  //   const inputElements = fixture.nativeElement.querySelectorAll('input');
-  //   inputElements.forEach((inputElement: HTMLInputElement) => {
-  //     inputElement.value = '1';
-  //     inputElement.dispatchEvent(new Event('input'));
-  //   });
-  //   expect(document.activeElement).not.toEqual(inputElements[0]);
-  // });
+  it('NgxOtpInputComponent › should write to form control when typing', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
 
-  it('should have the input type as text', () => {
-    expect(component.inputType).toEqual('text');
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('123');
   });
 
-  it('should have default aria labels', () => {
-    const inputElements = fixture.nativeElement.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement, index: number) => {
-      expect(inputElement.getAttribute('aria-label')).toEqual(
-        `One Time Password Input Number ${index + 1}`,
+  it('NgxOtpInputComponent › should emit complete when reaching full length', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123456';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.completeValue).toEqual('123456');
+  });
+
+  it('NgxOtpInputComponent › should move active box with arrow keys', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '1234';
+    nativeInput.setSelectionRange(4, 4);
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    let boxes: NodeListOf<HTMLDivElement> =
+      fixture.nativeElement.querySelectorAll(
+        '[data-testid="ngx-otp-input-box"]',
       );
-    });
-  });
+    expect(boxes[4].classList.contains('ngx-otp-input-active')).toBeTrue();
 
-  it('should have the css class ngx-otp-input-success if the status is success', () => {
-    component.status = NgxOtpStatus.SUCCESS;
-    fixture.detectChanges();
-    const inputElements = fixture.nativeElement.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement) => {
-      expect(
-        inputElement.classList.contains('ngx-otp-input-success'),
-      ).toBeTrue();
-    });
-  });
-
-  it('should have the css class ngx-otp-input-failed if the status is failed', () => {
-    component.status = NgxOtpStatus.FAILED;
-    fixture.detectChanges();
-    const inputElements = fixture.nativeElement.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement) => {
-      expect(
-        inputElement.classList.contains('ngx-otp-input-failed'),
-      ).toBeTrue();
-    });
-  });
-
-  it('should have the css class ngx-otp-input-disabled if the input is disabled', () => {
-    component.disabled = true;
-    fixture.detectChanges();
-    const inputElements = fixture.nativeElement.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement) => {
-      expect(
-        inputElement.classList.contains('ngx-otp-input-disabled'),
-      ).toBeTrue();
-    });
-  });
-
-  it('should have numeric inputmode by default', () => {
-    const inputElements = fixture.nativeElement.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement) => {
-      expect(inputElement.getAttribute('inputmode')).toEqual('numeric');
-    });
-  });
-});
-
-describe('NgxOtpInputComponent with custom options', () => {
-  const options: NgxOtpInputComponentOptions = {
-    otpLength: 5,
-    autoFocus: false,
-    autoBlur: false,
-    regexp: /^[0-9]+$/,
-    hideInputValues: true,
-    showBlinkingCursor: true,
-    ariaLabels: ['First', 'Second', 'Third', 'Fourth', 'Fifth'],
-    inputMode: 'text',
-  };
-
-  let component: NgxOtpInputComponent;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [NgxOtpInputComponent],
-    }).compileComponents();
-
-    const fixture = TestBed.createComponent(NgxOtpInputComponent);
-    component = fixture.componentInstance;
-    component.options = options;
-    fixture.detectChanges();
-  });
-
-  it('should have custom options', () => {
-    expect(component.ngxOtpOptionsInUse).toEqual(options);
-  });
-
-  it('should have as many inputs as the length of the otp', () => {
-    const inputElements = document.querySelectorAll('input');
-    expect(inputElements.length).toEqual(
-      component.ngxOtpOptionsInUse.otpLength!,
+    nativeInput.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowLeft' }),
     );
+    fixture.detectChanges();
+
+    boxes = fixture.nativeElement.querySelectorAll(
+      '[data-testid="ngx-otp-input-box"]',
+    );
+    expect(boxes[3].classList.contains('ngx-otp-input-active')).toBeTrue();
+
+    nativeInput.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowRight' }),
+    );
+    fixture.detectChanges();
+
+    boxes = fixture.nativeElement.querySelectorAll(
+      '[data-testid="ngx-otp-input-box"]',
+    );
+    expect(boxes[4].classList.contains('ngx-otp-input-active')).toBeTrue();
   });
 
-  it('should not have been focused on the first input', () => {
-    const inputElements = document.querySelectorAll('input');
-    expect(document.activeElement).not.toEqual(inputElements[0]);
+  it('NgxOtpInputComponent › should focus the clicked box index', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '1234';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const boxes: NodeListOf<HTMLDivElement> =
+      fixture.nativeElement.querySelectorAll(
+        '[data-testid="ngx-otp-input-box"]',
+      );
+    boxes[1].dispatchEvent(
+      new PointerEvent('pointerdown', { pointerType: 'mouse' }),
+    );
+    fixture.detectChanges();
+
+    expect(boxes[1].classList.contains('ngx-otp-input-active')).toBeTrue();
   });
 
-  it('should have input type as password', () => {
-    const inputElements = document.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement) => {
-      expect(inputElement.type).toEqual('password');
+  it('NgxOtpInputComponent › should replace value when typing on a filled input', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123';
+    nativeInput.setSelectionRange(1, 1);
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    nativeInput.dispatchEvent(new KeyboardEvent('keydown', { key: '4' }));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('143');
+  });
+
+  it('NgxOtpInputComponent › should reject non-matching characters and emit invalid', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '12a';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.invalidReason).toEqual('char-rejected');
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('12');
+  });
+
+  it('NgxOtpInputComponent › should trim pasted values beyond length and emit invalid', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+
+    const pasteEvent = new Event('paste') as ClipboardEvent;
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: {
+        getData: () => '1234567890',
+      },
+      configurable: true,
     });
+    nativeInput.dispatchEvent(pasteEvent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.invalidReason).toEqual('too-long');
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('123456');
   });
 
-  it('should have custom aria labels', () => {
-    const inputElements = document.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement, index: number) => {
-      if (options.ariaLabels) {
-        expect(inputElement.getAttribute('aria-label')).toEqual(
-          options.ariaLabels[index],
-        );
-      }
-    });
+  it('NgxOtpInputComponent › should replace existing full value on beforeinput paste', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123456';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    nativeInput.dispatchEvent(
+      new InputEvent('beforeinput', {
+        data: '654321',
+        inputType: 'insertFromPaste',
+      }),
+    );
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('654321');
   });
 
-  it('should have text inputmode', () => {
-    const inputElements = document.querySelectorAll('input');
-    inputElements.forEach((inputElement: HTMLInputElement) => {
-      expect(inputElement.getAttribute('inputmode')).toEqual('text');
-    });
+  it('NgxOtpInputComponent › should reject invalid chars from beforeinput paste and keep accepted digits', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+
+    nativeInput.dispatchEvent(
+      new InputEvent('beforeinput', {
+        data: '12a3',
+        inputType: 'insertFromPaste',
+      }),
+    );
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.invalidReason).toEqual('char-rejected');
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('123');
   });
 
-  // TODO: Fix the test case
-  // it('should have the css class ngx-blinking-cursor if the showBlinkingCursor option is true', () => {
-  //   const inputElements = document.querySelectorAll('input');
-  //   inputElements.forEach((inputElement: HTMLInputElement) => {
-  //     expect(
-  //       inputElement.classList.contains('ngx-blinking-cursor'),
-  //     ).toBeTrue();
-  //   });
-  // });
+  it('NgxOtpInputComponent › should support iOS native paste fallback without clipboardData', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '123456';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    nativeInput.dispatchEvent(new Event('paste'));
+
+    nativeInput.value = '654321';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('654321');
+  });
+
+  it('NgxOtpInputComponent › should set aria-invalid when status is error', () => {
+    fixture.componentInstance.status = 'error';
+    fixture.detectChanges();
+
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    expect(nativeInput.getAttribute('aria-invalid')).toEqual('true');
+  });
+
+  it('NgxOtpInputComponent › should render masked dots when mask is true', () => {
+    fixture.componentInstance.mask = true;
+    fixture.detectChanges();
+
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '12';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const boxes: HTMLElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll(
+        '[data-testid="ngx-otp-input-box"]',
+      ),
+    );
+
+    expect(boxes[0].textContent?.trim()).toEqual('•');
+    expect(boxes[1].textContent?.trim()).toEqual('•');
+  });
 });

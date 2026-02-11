@@ -1,108 +1,152 @@
-# Change Log
+# Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/)
-and this project adheres to [Semantic Versioning](http://semver.org/).
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and the project follows [Semantic Versioning](https://semver.org/).
+
+## Unreleased
+
+### Added
+
+- Rewrote project documentation with a full usage manual in both root and package README files.
+- Added a documentation archive under `docs/`, including a preserved `v1.1.4` README snapshot.
+
+### Changed
+
+- Modernized internal component state handling with Angular signals while preserving CVA behavior and the public API.
+- Raised library peer dependency floor to Angular `17.2` and added `@angular/forms` as an explicit peer dependency.
+- Expanded GitHub Actions to validate both library and demo release artifacts in CI and before npm publish.
+- Added a release guard that validates GitHub release tags against `projects/ngx-otp-input/package.json` version.
+- Added `build:demo` and `build:release` scripts to standardize release builds.
+
+### Fixed
+
+- Restored arrow key navigation between OTP boxes.
+- Improved grammar, wording, and consistency in project documentation.
+
+## 2.0.0
+
+### Breaking
+
+- Redesigned the component around ControlValueAccessor (CVA). The old `otp` / `otpChange` model and the `options` object were removed.
+- Switched to a single native input with visual boxes for better mobile SMS autofill and paste reliability.
+- Replaced status handling with `status: 'idle' | 'success' | 'error'` and `statusMessages` (`error` replaces `failed`).
+
+### Added
+
+- Added `(otpChange)`, `(otpComplete)`, and `(otpInvalid)` outputs for value lifecycle events.
+- Added `charPattern` input to control per-character allowlist behavior.
+- Preserved boxed UI while improving accessibility and keyboard support.
+
+### Changed
+
+- Added `autocomplete="one-time-code"` for improved OTP autofill behavior.
+
+### Removed
+
+- Removed per-box directives and the internal multi-input `FormArray` implementation.
 
 ## 1.1.4
 
-- [(#32)](https://github.com/pkovzz/ngx-otp-input/issues/35) Fix iOS paste from quickbar
+### Fixed
+
+- [(#35)](https://github.com/pkovzz/ngx-otp-input/issues/35) Fixed iOS quick bar paste behavior.
 
 ## 1.1.3
 
-- [(#31)](https://github.com/pkovzz/ngx-otp-input/issues/31) Prevent error when pasting more characters than input boxes
+### Fixed
+
+- [(#31)](https://github.com/pkovzz/ngx-otp-input/issues/31) Prevented errors when pasting more characters than available input boxes.
 
 ## 1.1.2
 
 ### Fixed
 
-- [(#28)](https://github.com/pkovzz/ngx-otp-input/issues/29) Paste will fire only one _otpChange_ and one _otpComplete_ event
+- [(#29)](https://github.com/pkovzz/ngx-otp-input/issues/29) Paste now fires only one `otpChange` and one `otpComplete` event.
 
 ## 1.1.1
 
 ### Fixed
 
-- [(#27)](https://github.com/pkovzz/ngx-otp-input/issues/27) Android input events
+- [(#27)](https://github.com/pkovzz/ngx-otp-input/issues/27) Fixed Android input events.
 
 ## 1.1.0
 
 ### Added
 
-- Add `inputMode` configuration option.
+- Added the `inputMode` configuration option.
 
 ## 1.0.0
 
-- Library is now a standalone component and introduced a new API with several breaking changes. Please check the [Documentation](../README.md) for more information.
+### Changed
+
+- Migrated the library to a standalone component API with multiple breaking changes. See the [documentation](README.md) for details.
 
 ## 0.11.4
 
 ### Fixed
 
-- Bugfix of [module import issue](https://github.com/pkovzz/ngx-otp-input/issues/16) and other improvements
+- Fixed [module import issue](https://github.com/pkovzz/ngx-otp-input/issues/16) and applied additional minor improvements.
 
 ## 0.11.1
 
 ### Fixed
 
-- Bugfix of [Windows copy paste issue](https://github.com/k2peter/ngx-otp-input/issues/11)
+- Fixed [Windows copy/paste issue](https://github.com/k2peter/ngx-otp-input/issues/11).
 
 ## 0.11.0
 
 ### Added
 
-- Core refactor
-- behavior options
+- Core refactor.
+- Behavior options.
 
 ## 0.9.1
 
 ### Fixed
 
-- `[disabled]` input property
+- Fixed `[disabled]` input property behavior.
 
 ## 0.9.0
 
 ### Added
 
-- `autoblur` configuration option.  
-  For more information, please see the documentation.
+- Added `autoblur` configuration option.
 
 ## 0.8.0
 
 ### Added
 
-- `clear` method.  
-  For more information, please see the documentation.
+- Added `clear` method.
 
 ## 0.7.0
 
 ### Added
 
-- `numericInputMode` config property.  
-  For more information, please see the documentation.
+- Added `numericInputMode` configuration property.
 
 ## 0.6.6
 
 ### Fixed
 
-- missed inputs
+- Fixed missing inputs issue.
 
 ## 0.6.3
 
 ### Fixed
 
-- ngClass error when no custom class is set
+- Fixed `ngClass` error when no custom class was set.
 
 ## 0.6.2
 
 ### Fixed
 
-- Applying workaround regard to this: https://github.com/angular/angular/issues/38391
+- Applied a workaround for: https://github.com/angular/angular/issues/38391
 
 ## 0.6.1
 
 ### Fixed
 
-- Preventing too fast typing, which could cause unregistered inputs
-- The custom ["filled"](https://github.com/pkovzz/ngx-otp-input#inputfilled)
-  style is now applied on every input after _paste_ event
+- Prevented lost input when typing very quickly.
+- Ensured custom ["filled"](https://github.com/pkovzz/ngx-otp-input#inputfilled) style is applied to every input after paste.

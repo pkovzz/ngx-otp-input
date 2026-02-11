@@ -3,4 +3,9 @@
  */
 
 export * from './lib/ngx-otp-input.component';
-export { NgxOtpInputComponentOptions } from './lib/default.config';
+export type {
+  OtpChangeEvent,
+  OtpInvalidEvent,
+  OtpStatus,
+  OtpStatusMessages,
+} from './lib/default.config';
