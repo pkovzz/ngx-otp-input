@@ -5,26 +5,6 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/).
 
-## Unreleased
-
-### Added
-
-- Rewrote project documentation with a full usage manual in both root and package README files.
-- Added a documentation archive under `docs/`, including a preserved `v1.1.4` README snapshot.
-
-### Changed
-
-- Modernized internal component state handling with Angular signals while preserving CVA behavior and the public API.
-- Raised library peer dependency floor to Angular `17.2` and added `@angular/forms` as an explicit peer dependency.
-- Expanded GitHub Actions to validate both library and demo release artifacts in CI and before npm publish.
-- Added a release guard that validates GitHub release tags against `projects/ngx-otp-input/package.json` version.
-- Added `build:demo` and `build:release` scripts to standardize release builds.
-
-### Fixed
-
-- Restored arrow key navigation between OTP boxes.
-- Improved grammar, wording, and consistency in project documentation.
-
 ## 2.0.0
 
 ### Breaking
@@ -38,10 +18,22 @@ and the project follows [Semantic Versioning](https://semver.org/).
 - Added `(otpChange)`, `(otpComplete)`, and `(otpInvalid)` outputs for value lifecycle events.
 - Added `charPattern` input to control per-character allowlist behavior.
 - Preserved boxed UI while improving accessibility and keyboard support.
+- Rewrote project documentation with a full usage manual in both root and package README files.
+- Added a documentation archive under `docs/`, including a preserved `v1.1.4` README snapshot.
 
 ### Changed
 
 - Added `autocomplete="one-time-code"` for improved OTP autofill behavior.
+- Modernized internal component state handling with Angular signals while preserving CVA behavior and the public API.
+- Raised library peer dependency floor to Angular `17.2` and added `@angular/forms` as an explicit peer dependency.
+- Expanded GitHub Actions to validate both library and demo release artifacts in CI and before npm publish.
+- Added a release guard that validates GitHub release tags against `projects/ngx-otp-input/package.json` version.
+- Added `build:demo` and `build:release` scripts to standardize release builds.
+
+### Fixed
+
+- Restored arrow key navigation between OTP boxes.
+- Improved grammar, wording, and consistency in project documentation.
 
 ### Removed
 
