@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   standalone: true,
@@ -48,9 +48,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
             class="theme-toggle"
             (click)="themeToggle.emit()"
             [attr.aria-label]="
-              isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'
+              isDarkTheme() ? 'Switch to light mode' : 'Switch to dark mode'
             "
-            [attr.aria-pressed]="isDarkTheme"
+            [attr.aria-pressed]="isDarkTheme()"
             title="Toggle theme"
           >
             <svg
@@ -60,7 +60,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              @if (isDarkTheme) {
+              @if (isDarkTheme()) {
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -77,7 +77,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
               }
             </svg>
             <span class="hidden sm:inline">{{
-              isDarkTheme ? 'Dark' : 'Light'
+              isDarkTheme() ? 'Dark' : 'Light'
             }}</span>
           </button>
           <a
@@ -149,6 +149,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   ],
 })
 export class HeaderComponent {
-  @Input() isDarkTheme = false;
-  @Output() themeToggle = new EventEmitter<void>();
+  readonly isDarkTheme = input(false);
+  readonly themeToggle = output<void>();
 }

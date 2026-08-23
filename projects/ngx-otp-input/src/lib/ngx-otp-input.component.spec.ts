@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgxOtpInputComponent } from './ngx-otp-input.component';
@@ -10,12 +10,12 @@ import { NgxOtpInputComponent } from './ngx-otp-input.component';
     <form [formGroup]="form">
       <ngx-otp-input
         formControlName="otp"
-        [length]="length"
+        [length]="length()"
         [autoFocus]="false"
-        [autoBlur]="autoBlur"
-        [status]="status"
-        [mask]="mask"
-        [ariaLabel]="ariaLabel"
+        [autoBlur]="autoBlur()"
+        [status]="status()"
+        [mask]="mask()"
+        [ariaLabel]="ariaLabel()"
         (otpComplete)="completeValue = $event"
         (otpInvalid)="invalidReason = $event.reason"
       ></ngx-otp-input>
@@ -23,11 +23,11 @@ import { NgxOtpInputComponent } from './ngx-otp-input.component';
   `,
 })
 class TestHostComponent {
-  length = 6;
-  autoBlur = false;
-  status: 'idle' | 'success' | 'error' = 'idle';
-  mask = false;
-  ariaLabel = 'Test OTP';
+  readonly length = signal(6);
+  readonly autoBlur = signal(false);
+  readonly status = signal<'idle' | 'success' | 'error'>('idle');
+  readonly mask = signal(false);
+  readonly ariaLabel = signal('Test OTP');
   completeValue: string | null = null;
   invalidReason: string | null = null;
 
@@ -244,7 +244,7 @@ describe('NgxOtpInputComponent v2', () => {
   });
 
   it('NgxOtpInputComponent › should set aria-invalid when status is error', () => {
-    fixture.componentInstance.status = 'error';
+    fixture.componentInstance.status.set('error');
     fixture.detectChanges();
 
     const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
@@ -254,7 +254,7 @@ describe('NgxOtpInputComponent v2', () => {
   });
 
   it('NgxOtpInputComponent › should render masked dots when mask is true', () => {
-    fixture.componentInstance.mask = true;
+    fixture.componentInstance.mask.set(true);
     fixture.detectChanges();
 
     const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(

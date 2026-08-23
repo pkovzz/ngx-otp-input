@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -122,17 +122,17 @@ interface EventLogEntry {
               <ngx-otp-input
                 [formControl]="statusOtp"
                 [length]="6"
-                [status]="currentStatus"
+                [status]="currentStatus()"
                 [autoFocus]="false"
               ></ngx-otp-input>
               <div class="flex gap-2 mt-4">
                 @for (s of statuses; track s) {
                   <button
                     type="button"
-                    (click)="currentStatus = s"
+                    (click)="currentStatus.set(s)"
                     class="px-3 py-1.5 text-xs font-semibold rounded-md border cursor-pointer transition-all"
                     [class]="
-                      currentStatus === s
+                      currentStatus() === s
                         ? 'bg-[var(--color-accent)] text-white border-[var(--color-accent)]'
                         : 'bg-[var(--color-surface-0)] text-[var(--color-stone-600)] border-[var(--color-stone-200)] hover:bg-[var(--color-surface-1)]'
                     "
@@ -144,7 +144,7 @@ interface EventLogEntry {
             </div>
             <div class="example-card-code">
               <code
-                >&lt;ngx-otp-input [status]="'{{ currentStatus }}'"&gt;</code
+                >&lt;ngx-otp-input [status]="'{{ currentStatus() }}'"&gt;</code
               >
             </div>
           </div>
@@ -200,10 +200,10 @@ interface EventLogEntry {
               <div
                 class="console-panel mt-4 w-full max-h-32 overflow-y-auto rounded-lg p-3 font-mono text-xs leading-relaxed"
               >
-                @if (eventLog.length === 0) {
+                @if (eventLog().length === 0) {
                   <div class="console-muted">Waiting for events...</div>
                 }
-                @for (entry of eventLog; track $index) {
+                @for (entry of eventLog(); track $index) {
                   <div class="flex gap-2 mb-0.5">
                     <span class="console-muted shrink-0">{{ entry.time }}</span>
                     <span
@@ -292,8 +292,6 @@ interface EventLogEntry {
   ],
 })
 export class ExamplesComponent {
-  @ViewChild('eventOtpInput') eventOtpInput?: NgxOtpInputComponent;
-
   defaultOtp = new FormControl('', { nonNullable: true });
   maskedOtp = new FormControl('', { nonNullable: true });
   alphaOtp = new FormControl('', { nonNullable: true });
@@ -303,8 +301,8 @@ export class ExamplesComponent {
 
   alphaPattern = /^[a-zA-Z0-9]$/;
   statuses: OtpStatus[] = ['idle', 'success', 'error'];
-  currentStatus: OtpStatus = 'idle';
-  eventLog: EventLogEntry[] = [];
+  readonly currentStatus = signal<OtpStatus>('idle');
+  readonly eventLog = signal<EventLogEntry[]>([]);
 
   toggleDisabled(): void {
     if (this.disabledOtp.disabled) {
@@ -327,7 +325,7 @@ export class ExamplesComponent {
   }
 
   clearEventLog(): void {
-    this.eventLog = [];
+    this.eventLog.set([]);
     this.eventOtp.reset();
   }
 
@@ -339,6 +337,8 @@ export class ExamplesComponent {
       minute: '2-digit',
       second: '2-digit',
     });
-    this.eventLog = [{ time, type, payload }, ...this.eventLog].slice(0, 20);
+    this.eventLog.update((log) =>
+      [{ time, type, payload }, ...log].slice(0, 20),
+    );
   }
 }
