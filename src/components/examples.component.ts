@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormField, form, minLength, required } from '@angular/forms/signals';
 import {
   NgxOtpInputComponent,
   OtpChangeEvent,
@@ -17,7 +18,7 @@ interface EventLogEntry {
 @Component({
   standalone: true,
   selector: 'app-examples',
-  imports: [CommonModule, ReactiveFormsModule, NgxOtpInputComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormField, NgxOtpInputComponent],
   template: `
     <section
       id="examples"
@@ -232,6 +233,41 @@ interface EventLogEntry {
               </button>
             </div>
           </div>
+
+          <!-- 7. Signal forms -->
+          <div class="example-card">
+            <div class="example-card-header">
+              <h3 class="example-card-title">Signal Forms</h3>
+              <p class="example-card-desc">
+                Bind a signal form field with
+                <span class="code-inline">[formField]</span>. Validity, touched
+                state, and the value stay in sync automatically.
+              </p>
+            </div>
+            <div class="example-card-demo">
+              <ngx-otp-input
+                [formField]="signalForm.otp"
+                [length]="6"
+                [autoFocus]="false"
+              ></ngx-otp-input>
+              <div
+                class="console-panel mt-4 w-full rounded-lg p-3 font-mono text-xs leading-relaxed"
+              >
+                <div class="console-text">
+                  value: "{{ signalForm.otp().value() }}"
+                </div>
+                <div class="console-text">
+                  valid: {{ signalForm.otp().valid() }}
+                </div>
+                <div class="console-text">
+                  touched: {{ signalForm.otp().touched() }}
+                </div>
+              </div>
+            </div>
+            <div class="example-card-code">
+              <code>&lt;ngx-otp-input [formField]="loginForm.otp" /&gt;</code>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -301,6 +337,12 @@ export class ExamplesComponent {
 
   alphaPattern = /^[a-zA-Z0-9]$/;
   statuses: OtpStatus[] = ['idle', 'success', 'error'];
+  readonly signalFormModel = signal({ otp: '' });
+  readonly signalForm = form(this.signalFormModel, (path) => {
+    required(path.otp);
+    minLength(path.otp, 6);
+  });
+
   readonly currentStatus = signal<OtpStatus>('idle');
   readonly eventLog = signal<EventLogEntry[]>([]);
 
