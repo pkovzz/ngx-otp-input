@@ -1,20 +1,20 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
+  booleanAttribute,
+  computed,
+  effect,
   forwardRef,
-  inject,
-  Input,
-  OnChanges,
-  Output,
+  input,
+  model,
+  numberAttribute,
+  output,
   signal,
-  SimpleChanges,
-  ViewChild,
+  untracked,
+  viewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
   defaultV2,
@@ -40,9 +40,15 @@ function isPasteLikeInput(event: InputEvent): boolean {
   );
 }
 
+/**
+ * OTP input control.
+ *
+ * Works with reactive and template-driven forms through `ControlValueAccessor`,
+ * with signal forms through the `FormValueControl` contract (`value` model plus
+ * the optional state inputs below), and standalone through `[(value)]`.
+ */
 @Component({
   standalone: true,
-  imports: [CommonModule],
   selector: 'ngx-otp-input',
   templateUrl: 'ngx-otp-input.component.html',
   styleUrls: ['ngx-otp-input.component.scss'],
@@ -56,11 +62,13 @@ function isPasteLikeInput(event: InputEvent): boolean {
   ],
 })
 export class NgxOtpInputComponent
-  implements ControlValueAccessor, OnChanges, AfterViewInit
+  implements ControlValueAccessor, AfterViewInit
 {
-  private readonly valueState = signal('');
+  private readonly otpInput =
+    viewChild<ElementRef<HTMLInputElement>>('otpInput');
+
   private readonly caretIndexState = signal<number | null>(null);
-  private readonly isDisabledState = signal(false);
+  private readonly cvaDisabled = signal(false);
   private readonly hasInvalidOtpState = signal(false);
   readonly statusMessageId = `ngx-otp-input-status-${nextStatusId++}`;
 
@@ -70,117 +78,157 @@ export class NgxOtpInputComponent
   private readonly pasteDedupeWindowMs = 120;
   private pasteHandledAt = 0;
 
-  @ViewChild('otpInput', { static: true })
-  private otpInput?: ElementRef<HTMLInputElement>;
-
-  @Input() length = defaultV2.length;
-  @Input() autoFocus = defaultV2.autoFocus;
-  @Input() autoBlur = defaultV2.autoBlur;
-  @Input() mask = defaultV2.mask;
-  @Input() charPattern: RegExp = defaultV2.charPattern;
-  @Input() inputMode = defaultV2.inputMode;
-  @Input() ariaLabel = defaultV2.ariaLabel;
-  @Input() status: OtpStatus = 'idle';
-  @Input() statusMessages: OtpStatusMessages = defaultV2.statusMessages;
-
-  @Output() otpChange = new EventEmitter<OtpChangeEvent>();
-  @Output() otpComplete = new EventEmitter<string>();
-  @Output() otpInvalid = new EventEmitter<OtpInvalidEvent>();
-
-  private readonly cdr = inject(ChangeDetectorRef);
-
   // ---------------------------------------------------------------------------
-  // State accessors
+  // Inputs
   // ---------------------------------------------------------------------------
 
-  private get value(): string {
-    return this.valueState();
-  }
+  /**
+   * The current code. Two-way bindable via `[(value)]`, and the field value a
+   * bound signal form reads and writes.
+   */
+  readonly value = model('');
 
-  private set value(nextValue: string) {
-    this.valueState.set(nextValue);
-  }
+  readonly length = input(defaultV2.length, { transform: numberAttribute });
+  readonly autoFocus = input(defaultV2.autoFocus, {
+    transform: booleanAttribute,
+  });
+  readonly autoBlur = input(defaultV2.autoBlur, {
+    transform: booleanAttribute,
+  });
+  readonly mask = input(defaultV2.mask, { transform: booleanAttribute });
+  readonly charPattern = input(defaultV2.charPattern);
+  readonly inputMode = input(defaultV2.inputMode);
+  readonly ariaLabel = input(defaultV2.ariaLabel);
+  readonly status = input<OtpStatus>('idle');
+  readonly statusMessages = input<OtpStatusMessages>(defaultV2.statusMessages);
 
-  private get caretIndex(): number | null {
-    return this.caretIndexState();
-  }
+  // --- Optional parts of the signal forms `FormUiControl` contract. Signal
+  // --- forms keeps these in sync with the bound field; they can also be set by
+  // --- hand when the component is used outside of a form.
 
-  private set caretIndex(nextIndex: number | null) {
-    this.caretIndexState.set(nextIndex);
-  }
-
-  get isDisabled(): boolean {
-    return this.isDisabledState();
-  }
-
-  get hasInvalidOtp(): boolean {
-    return this.hasInvalidOtpState();
-  }
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
+  readonly required = input(false, { transform: booleanAttribute });
+  readonly invalid = input(false, { transform: booleanAttribute });
+  readonly touched = input(false, { transform: booleanAttribute });
+  readonly name = input<string>('one-time-code');
 
   // ---------------------------------------------------------------------------
-  // Template getters
+  // Outputs
   // ---------------------------------------------------------------------------
 
-  get inputType(): string {
-    return this.mask ? 'password' : 'text';
-  }
+  readonly otpChange = output<OtpChangeEvent>();
+  readonly otpComplete = output<string>();
+  readonly otpInvalid = output<OtpInvalidEvent>();
+  /** Emitted on blur. Signal forms listens to this to mark the field touched. */
+  readonly touch = output<void>();
 
-  get statusMessage(): string {
-    const messages: Record<OtpStatus, string> = {
-      success: this.statusMessages?.success ?? defaultV2.statusMessages.success,
-      error: this.statusMessages?.error ?? defaultV2.statusMessages.error,
+  // ---------------------------------------------------------------------------
+  // Derived state
+  // ---------------------------------------------------------------------------
+
+  readonly isDisabled = computed(() => this.disabled() || this.cvaDisabled());
+
+  readonly hasInvalidOtp = this.hasInvalidOtpState.asReadonly();
+
+  /** Editing is blocked while disabled or readonly. */
+  private readonly isLocked = computed(
+    () => this.isDisabled() || this.readonly(),
+  );
+
+  readonly resolvedLength = computed(() => {
+    const length = this.length();
+    return Number.isFinite(length)
+      ? Math.max(1, Math.floor(length))
+      : defaultV2.length;
+  });
+
+  /**
+   * An explicit `status` always wins; otherwise a bound signal form field that
+   * is invalid and already touched renders as an error.
+   */
+  readonly resolvedStatus = computed<OtpStatus>(() => {
+    const explicit = this.status();
+    if (explicit !== 'idle') {
+      return explicit;
+    }
+    return this.invalid() && this.touched() ? 'error' : 'idle';
+  });
+
+  readonly inputType = computed(() => (this.mask() ? 'password' : 'text'));
+
+  readonly statusMessage = computed(() => {
+    const messages = this.statusMessages();
+    const byStatus: Record<OtpStatus, string> = {
+      success: messages?.success ?? defaultV2.statusMessages.success,
+      error: messages?.error ?? defaultV2.statusMessages.error,
       idle: '',
     };
-    return messages[this.status] ?? '';
-  }
+    return byStatus[this.resolvedStatus()] ?? '';
+  });
 
-  private get isComplete(): boolean {
-    return this.value.length === this.resolvedLength;
-  }
+  readonly isComplete = computed(
+    () => this.value().length === this.resolvedLength(),
+  );
 
-  get characters(): string[] {
-    const chars = this.value.split('');
-    return Array.from({ length: this.resolvedLength }, (_, index) => {
-      return chars[index] ?? '';
-    });
-  }
+  readonly characters = computed(() => {
+    const chars = this.value().split('');
+    return Array.from(
+      { length: this.resolvedLength() },
+      (_, index) => chars[index] ?? '',
+    );
+  });
 
-  get displayCharacters(): string[] {
-    return this.characters.map((char) => {
-      if (this.mask && char) {
-        return '•';
-      }
-      return char;
-    });
-  }
+  readonly displayCharacters = computed(() =>
+    this.characters().map((char) => (this.mask() && char ? '•' : char)),
+  );
 
-  get activeIndex(): number {
-    const fallbackIndex = this.value.length;
-    const caretIndex = this.caretIndex ?? fallbackIndex;
+  readonly activeIndex = computed(() => {
+    const caretIndex = this.caretIndexState() ?? this.value().length;
     return Math.min(
       Math.max(0, caretIndex),
-      Math.max(0, this.resolvedLength - 1),
+      Math.max(0, this.resolvedLength() - 1),
     );
-  }
+  });
 
-  get boxes(): number[] {
-    return Array.from({ length: this.resolvedLength }, (_, index) => index);
-  }
+  readonly boxes = computed(() =>
+    Array.from({ length: this.resolvedLength() }, (_, index) => index),
+  );
 
-  get patternAttribute(): string | null {
-    const source = this.charPattern?.source ?? '';
+  readonly patternAttribute = computed(() => {
+    const source = this.charPattern()?.source ?? '';
     if (!source) {
       return null;
     }
     const unanchored = source.replace(/^\^/, '').replace(/\$$/, '');
-    return `(?:${unanchored}){0,${this.resolvedLength}}`;
-  }
+    return `(?:${unanchored}){0,${this.resolvedLength()}}`;
+  });
 
-  get resolvedLength(): number {
-    const length = Number.isFinite(this.length)
-      ? Math.max(1, Math.floor(this.length))
-      : defaultV2.length;
-    return length;
+  constructor() {
+    // Reconciles the value with the current length/charPattern and mirrors it
+    // onto the native input. This covers every write the component does not
+    // originate itself: `writeValue`, `[(value)]`, a signal form field, and a
+    // change to `length` or `charPattern` that shortens the accepted value.
+    effect(() => {
+      const raw = this.value();
+      const accepted = this.sanitize(raw).accepted;
+
+      if (accepted !== raw) {
+        this.value.set(accepted);
+        this.onChange(accepted);
+        return;
+      }
+
+      // The view query is read tracked, so the effect runs again if the native
+      // input is ever swapped out. Only the imperative DOM work is untracked.
+      const input = this.otpInput()?.nativeElement;
+      untracked(() => {
+        if (input && input.value !== accepted) {
+          this.caretManager.syncNativeValue(input, accepted);
+          this.setCaretIndex(accepted.length);
+        }
+      });
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -188,21 +236,8 @@ export class NgxOtpInputComponent
   // ---------------------------------------------------------------------------
 
   ngAfterViewInit(): void {
-    if (this.autoFocus && !this.isDisabled) {
-      queueMicrotask(() => this.otpInput?.nativeElement.focus());
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['length'] || changes['charPattern']) {
-      const result = this.sanitize(this.value);
-      if (result.accepted !== this.value) {
-        this.value = result.accepted;
-        this.onChange(this.value);
-      }
-      this.syncNativeInputValue();
-      this.setCaretIndex(this.value.length);
-      this.cdr.markForCheck();
+    if (this.autoFocus() && !this.isDisabled()) {
+      queueMicrotask(() => this.focus());
     }
   }
 
@@ -211,11 +246,10 @@ export class NgxOtpInputComponent
   // ---------------------------------------------------------------------------
 
   writeValue(value: string | null): void {
-    this.value = this.sanitize(value ?? '').accepted;
     this.hasInvalidOtpState.set(false);
-    this.cdr.markForCheck();
-    this.syncNativeInputValue();
-    this.setCaretIndex(this.value.length);
+    // Sanitizing and mirroring onto the native input is left to the reconcile
+    // effect so that every external write goes through one code path.
+    this.value.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -227,8 +261,24 @@ export class NgxOtpInputComponent
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isDisabledState.set(isDisabled);
-    this.cdr.markForCheck();
+    this.cvaDisabled.set(isDisabled);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Public API
+  // ---------------------------------------------------------------------------
+
+  /** Focuses the control. Also used by signal forms to focus the field. */
+  focus(options?: FocusOptions): void {
+    this.otpInput()?.nativeElement.focus(options);
+  }
+
+  /** Clears the code and moves the caret back to the first box. */
+  reset(): void {
+    this.hasInvalidOtpState.set(false);
+    this.setValueFromUser('');
+    this.syncNativeInputValue();
+    this.setCaretIndex(0);
   }
 
   // ---------------------------------------------------------------------------
@@ -236,20 +286,20 @@ export class NgxOtpInputComponent
   // ---------------------------------------------------------------------------
 
   handleContainerPointerDown(event: PointerEvent): void {
-    if (this.isDisabled) {
+    if (this.isDisabled()) {
       return;
     }
 
-    this.otpInput?.nativeElement.focus();
+    this.focus();
 
     if (event.pointerType === 'mouse') {
       event.preventDefault();
-      queueMicrotask(() => this.setCaretIndex(this.value.length));
+      queueMicrotask(() => this.setCaretIndex(this.value().length));
     }
   }
 
   handleBoxPointerDown(event: PointerEvent, index: number): void {
-    if (this.isDisabled) {
+    if (this.isDisabled()) {
       return;
     }
     if (event.pointerType !== 'mouse') {
@@ -258,14 +308,14 @@ export class NgxOtpInputComponent
 
     event.preventDefault();
     event.stopPropagation();
-    this.otpInput?.nativeElement.focus();
-    const nextIndex = Math.min(index, this.value.length);
+    this.focus();
+    const nextIndex = Math.min(index, this.value().length);
     this.setCaretIndex(nextIndex);
     queueMicrotask(() => this.setCaretIndex(nextIndex));
   }
 
   handleBeforeInput(event: InputEvent): void {
-    if (this.isDisabled) {
+    if (this.isLocked()) {
       return;
     }
 
@@ -283,7 +333,7 @@ export class NgxOtpInputComponent
     if (!insertedText) {
       // iOS can omit payload in beforeinput/paste for security reasons.
       // Select all so native insertion replaces existing value.
-      this.caretManager.selectAll(this.otpInput?.nativeElement);
+      this.caretManager.selectAll(this.otpInput()?.nativeElement);
       return;
     }
 
@@ -294,15 +344,21 @@ export class NgxOtpInputComponent
 
   handleInput(event: Event): void {
     const target = event.target as HTMLInputElement;
+
+    if (this.isLocked()) {
+      this.syncNativeInputValue();
+      return;
+    }
+
     const result = this.sanitize(target.value ?? '');
     this.applySanitizedResult(
       result,
-      () => target.selectionStart ?? this.value.length,
+      () => target.selectionStart ?? this.value().length,
     );
   }
 
   handleKeyDown(event: KeyboardEvent): void {
-    if (this.isDisabled) {
+    if (this.isLocked()) {
       return;
     }
 
@@ -317,7 +373,7 @@ export class NgxOtpInputComponent
   }
 
   handlePaste(event: ClipboardEvent): void {
-    if (this.isDisabled) {
+    if (this.isLocked()) {
       return;
     }
 
@@ -331,7 +387,7 @@ export class NgxOtpInputComponent
       // Some mobile browsers (notably iOS Safari paste callout) can dispatch
       // paste without exposing clipboardData; select all so native insertion
       // replaces current value.
-      this.caretManager.selectAll(this.otpInput?.nativeElement);
+      this.caretManager.selectAll(this.otpInput()?.nativeElement);
       return;
     }
     event.preventDefault();
@@ -341,12 +397,7 @@ export class NgxOtpInputComponent
 
   handleBlur(): void {
     this.onTouched();
-  }
-
-  reset(): void {
-    this.setValueFromUser('');
-    this.syncNativeInputValue();
-    this.setCaretIndex(0);
+    this.touch.emit();
   }
 
   // ---------------------------------------------------------------------------
@@ -359,24 +410,25 @@ export class NgxOtpInputComponent
   private sanitize(value: string): SanitizationResult {
     return this.sanitizer.sanitize(
       value,
-      this.resolvedLength,
-      this.charPattern,
+      this.resolvedLength(),
+      this.charPattern(),
     );
   }
 
   private setValueFromUser(nextValue: string): void {
-    this.value = nextValue;
-    this.onChange(this.value);
-    this.otpChange.emit({ value: this.value, isComplete: this.isComplete });
+    this.value.set(nextValue);
+    this.onChange(nextValue);
+    this.otpChange.emit({
+      value: nextValue,
+      isComplete: this.isComplete(),
+    });
 
-    if (this.isComplete) {
-      this.otpComplete.emit(this.value);
-      if (this.autoBlur) {
-        this.otpInput?.nativeElement.blur();
+    if (this.isComplete()) {
+      this.otpComplete.emit(nextValue);
+      if (this.autoBlur()) {
+        this.otpInput()?.nativeElement.blur();
       }
     }
-
-    this.cdr.markForCheck();
   }
 
   private applyInvalidState(result: SanitizationResult): void {
@@ -402,7 +454,7 @@ export class NgxOtpInputComponent
 
   private applyPastedValue(rawValue: string): void {
     const result = this.sanitize(rawValue);
-    this.applySanitizedResult(result, () => this.value.length);
+    this.applySanitizedResult(result, () => this.value().length);
   }
 
   private markPasteHandled(): void {
@@ -423,35 +475,38 @@ export class NgxOtpInputComponent
   }
 
   private syncNativeInputValue(): void {
-    this.caretManager.syncNativeValue(this.otpInput?.nativeElement, this.value);
+    this.caretManager.syncNativeValue(
+      this.otpInput()?.nativeElement,
+      this.value(),
+    );
   }
 
   private setCaretIndex(nextIndex: number): void {
     const clamped = this.caretManager.setCaretPosition(
-      this.otpInput?.nativeElement,
+      this.otpInput()?.nativeElement,
       nextIndex,
-      this.value.length,
+      this.value().length,
     );
-    this.caretIndex = clamped;
-    this.cdr.markForCheck();
+    this.caretIndexState.set(clamped);
   }
 
   private buildKeyHandlerContext(): KeyHandlerContext {
-    const input = this.otpInput?.nativeElement;
-    const selectionStart = input?.selectionStart ?? this.value.length;
+    const input = this.otpInput()?.nativeElement;
+    const value = this.value();
+    const selectionStart = input?.selectionStart ?? value.length;
     const selectionEnd = input?.selectionEnd ?? selectionStart;
 
     return {
-      value: this.value,
-      resolvedLength: this.resolvedLength,
+      value,
+      resolvedLength: this.resolvedLength(),
       selectionStart,
       selectionEnd,
       isCharAllowed: (ch: string) =>
-        this.sanitizer.isCharAllowed(ch, this.charPattern),
-      sanitize: (value: string) => this.sanitize(value),
+        this.sanitizer.isCharAllowed(ch, this.charPattern()),
+      sanitize: (nextValue: string) => this.sanitize(nextValue),
       applySanitizedResult: (result, caretResolver) =>
         this.applySanitizedResult(result, caretResolver),
-      setValueFromUser: (value: string) => this.setValueFromUser(value),
+      setValueFromUser: (nextValue: string) => this.setValueFromUser(nextValue),
       syncNativeInputValue: () => this.syncNativeInputValue(),
       setCaretIndex: (index: number) => this.setCaretIndex(index),
       setInvalidState: (reason, attemptedValue) => {
@@ -459,9 +514,8 @@ export class NgxOtpInputComponent
         this.otpInvalid.emit({
           reason,
           attemptedValue,
-          acceptedValue: this.value,
+          acceptedValue: this.value(),
         });
-        this.cdr.markForCheck();
       },
     };
   }

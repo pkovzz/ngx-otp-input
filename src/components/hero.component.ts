@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgxOtpInputComponent } from 'ngx-otp-input';
@@ -66,14 +66,14 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
                 (click)="copyInstall()"
                 class="ml-1 p-1 rounded-md hover:bg-[var(--color-stone-700)] transition-colors cursor-pointer border-0 bg-transparent"
                 [attr.aria-label]="
-                  copied
+                  copied()
                     ? 'Copied!'
-                    : copyError
+                    : copyError()
                       ? 'Copy failed'
                       : 'Copy to clipboard'
                 "
               >
-                @if (copied) {
+                @if (copied()) {
                   <svg
                     class="w-4 h-4 text-green-400"
                     fill="none"
@@ -87,7 +87,7 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                } @else if (copyError) {
+                } @else if (copyError()) {
                   <svg
                     class="w-4 h-4 text-red-400"
                     fill="none"
@@ -174,8 +174,8 @@ import { NgxOtpInputComponent } from 'ngx-otp-input';
 })
 export class HeroComponent implements OnDestroy {
   heroOtp = new FormControl('', { nonNullable: true });
-  copied = false;
-  copyError = false;
+  readonly copied = signal(false);
+  readonly copyError = signal(false);
   private copyFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
   copyInstall(): void {
@@ -200,12 +200,12 @@ export class HeroComponent implements OnDestroy {
       this.copyFeedbackTimer = null;
     }
 
-    this.copied = success;
-    this.copyError = !success;
+    this.copied.set(success);
+    this.copyError.set(!success);
 
     this.copyFeedbackTimer = setTimeout(() => {
-      this.copied = false;
-      this.copyError = false;
+      this.copied.set(false);
+      this.copyError.set(false);
       this.copyFeedbackTimer = null;
     }, 2000);
   }

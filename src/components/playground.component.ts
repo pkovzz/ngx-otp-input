@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -272,11 +272,11 @@ import {
                   <span
                     class="font-mono"
                     [class]="
-                      isComplete
+                      isComplete()
                         ? 'text-[var(--color-success)]'
                         : 'text-[var(--color-stone-700)]'
                     "
-                    >{{ isComplete }}</span
+                    >{{ isComplete() }}</span
                   >
                 </div>
               </div>
@@ -295,7 +295,11 @@ import {
                   class="text-xs font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-700)] transition-colors cursor-pointer bg-transparent border-0"
                 >
                   {{
-                    codeCopied ? 'Copied!' : copyError ? 'Copy failed' : 'Copy'
+                    codeCopied()
+                      ? 'Copied!'
+                      : copyError()
+                        ? 'Copy failed'
+                        : 'Copy'
                   }}
                 </button>
               </div>
@@ -311,7 +315,7 @@ import {
                 >
                 <button
                   type="button"
-                  (click)="consoleLog = []"
+                  (click)="consoleLog.set([])"
                   class="text-xs font-medium text-[var(--color-stone-500)] hover:text-[var(--color-stone-700)] transition-colors cursor-pointer bg-transparent border-0"
                 >
                   Clear
@@ -320,12 +324,12 @@ import {
               <div
                 class="console-panel h-36 overflow-y-auto rounded-xl p-4 font-mono text-xs leading-relaxed"
               >
-                @if (consoleLog.length === 0) {
+                @if (consoleLog().length === 0) {
                   <div class="console-muted">
                     Events will appear here as you interact...
                   </div>
                 }
-                @for (line of consoleLog; track $index) {
+                @for (line of consoleLog(); track $index) {
                   <div class="flex gap-2 mb-0.5">
                     <span class="console-muted shrink-0">{{ line.time }}</span>
                     <span
@@ -353,12 +357,10 @@ import {
   `,
 })
 export class PlaygroundComponent implements OnDestroy {
-  @ViewChild('playgroundOtp') playgroundOtp?: NgxOtpInputComponent;
-
   otpControl = new FormControl('', { nonNullable: true });
-  isComplete = false;
-  codeCopied = false;
-  copyError = false;
+  readonly isComplete = signal(false);
+  readonly codeCopied = signal(false);
+  readonly copyError = signal(false);
   private copyFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
   statuses: OtpStatus[] = ['idle', 'success', 'error'];
@@ -383,7 +385,9 @@ export class PlaygroundComponent implements OnDestroy {
     disabled: false,
   };
 
-  consoleLog: { time: string; type: string; payload: string }[] = [];
+  readonly consoleLog = signal<
+    { time: string; type: string; payload: string }[]
+  >([]);
 
   get generatedCode(): string {
     const attrs: string[] = [];
@@ -438,8 +442,8 @@ export class PlaygroundComponent implements OnDestroy {
     this.currentPattern = this.patterns['numeric'];
     this.otpControl.enable();
     this.otpControl.reset();
-    this.consoleLog = [];
-    this.isComplete = false;
+    this.consoleLog.set([]);
+    this.isComplete.set(false);
     this.rebuildComponent();
   }
 
@@ -451,12 +455,12 @@ export class PlaygroundComponent implements OnDestroy {
       this.config.length = 6;
     }
     this.otpControl.reset();
-    this.isComplete = false;
+    this.isComplete.set(false);
   }
 
   rebuildComponent(): void {
     this.otpControl.reset();
-    this.isComplete = false;
+    this.isComplete.set(false);
   }
 
   copyCode(): void {
@@ -483,7 +487,7 @@ export class PlaygroundComponent implements OnDestroy {
   }
 
   onOtpChange(event: OtpChangeEvent): void {
-    this.isComplete = event.isComplete;
+    this.isComplete.set(event.isComplete);
     this.addLog('otpChange', JSON.stringify(event));
   }
 
@@ -503,9 +507,8 @@ export class PlaygroundComponent implements OnDestroy {
       minute: '2-digit',
       second: '2-digit',
     });
-    this.consoleLog = [{ time, type, payload }, ...this.consoleLog].slice(
-      0,
-      30,
+    this.consoleLog.update((log) =>
+      [{ time, type, payload }, ...log].slice(0, 30),
     );
   }
 
@@ -515,12 +518,12 @@ export class PlaygroundComponent implements OnDestroy {
       this.copyFeedbackTimer = null;
     }
 
-    this.codeCopied = success;
-    this.copyError = !success;
+    this.codeCopied.set(success);
+    this.copyError.set(!success);
 
     this.copyFeedbackTimer = setTimeout(() => {
-      this.codeCopied = false;
-      this.copyError = false;
+      this.codeCopied.set(false);
+      this.copyError.set(false);
       this.copyFeedbackTimer = null;
     }, 2000);
   }

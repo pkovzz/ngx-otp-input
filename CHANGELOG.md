@@ -5,6 +5,32 @@ All notable changes to this project are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/).
 
+## 3.0.0
+
+### Breaking
+
+- Raised the peer dependency floor to Angular `19`. All component inputs are now signal inputs and all outputs are `output()` refs, so inputs can no longer be assigned imperatively on a component instance.
+- A value written by a form that does not survive sanitization is now written back to the form, so the form model never holds a value the control rejects.
+
+### Added
+
+- [(#44)](https://github.com/pkovzz/ngx-otp-input/issues/44) Added signal forms support. `NgxOtpInputComponent` implements the `FormValueControl<string>` contract and can be bound with `[formField]` on Angular 22+.
+- Added a `value` model input, so the component can be used without any forms through `[(value)]`.
+- Added `disabled`, `readonly`, `required`, `invalid`, `touched`, and `name` inputs, and a `touch` output, which are kept in sync automatically by a bound signal form field.
+- Added a public `focus(options?)` method.
+
+### Changed
+
+- Upgraded the workspace (library, demo and CI) to Angular 22 and TypeScript 6.
+- Rewrote the component on signals: signal inputs/outputs, computed view state, and a single reconcile effect in place of `ngOnChanges` and `ChangeDetectorRef`.
+- Replaced the legacy `.eslintrc.json` setup with a flat `eslint.config.js`, as angular-eslint 22 no longer ships eslintrc presets.
+- Converted the demo application to signals so it renders correctly under Angular 22's OnPush-by-default change detection.
+- Dropped the `CommonModule` import from the component; the template uses built-in control flow only.
+
+### Fixed
+
+- `reset()` now clears the invalid state, so an emptied control no longer keeps `aria-invalid="true"` after a rejected character or paste.
+
 ## 2.0.0
 
 ### Breaking

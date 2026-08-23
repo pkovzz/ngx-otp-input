@@ -2,18 +2,19 @@
 
 [![License](https://img.shields.io/github/license/pkovzz/ngx-otp-input?style=flat)](../../LICENSE)
 
-`ngx-otp-input` is a standalone, CVA-first Angular component for One-Time Password (OTP) entry.
+`ngx-otp-input` is a standalone, signal-based Angular component for One-Time Password (OTP) entry.
 It combines:
 
 - robust mobile input behavior (`autocomplete="one-time-code"`, paste handling)
 - polished boxed UI
-- Angular Forms integration
+- Angular Forms integration: reactive, template-driven, and signal forms
 - accessibility defaults (labels, invalid state, live status announcements)
 
 ## Compatibility
 
-- Angular `>=17.2.0`
+- Angular `>=19.0.0`
 - `@angular/forms` is required
+- Angular `>=22.0.0` for the signal forms integration
 
 ## Installation
 
@@ -56,6 +57,66 @@ export class AppComponent {
 }
 ```
 
+## Signal Forms usage (Angular 22+)
+
+The component implements the signal forms `FormValueControl<string>` contract,
+so binding a field with the `FormField` directive is all that is required.
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { FormField, form, minLength, required } from '@angular/forms/signals';
+import { NgxOtpInputComponent } from 'ngx-otp-input';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [FormField, NgxOtpInputComponent],
+  template: `
+    <ngx-otp-input
+      [formField]="loginForm.otp"
+      [length]="6"
+      (otpComplete)="onOtpComplete($event)"
+    ></ngx-otp-input>
+  `,
+})
+export class AppComponent {
+  readonly model = signal({ otp: '' });
+
+  readonly loginForm = form(this.model, (path) => {
+    required(path.otp);
+    minLength(path.otp, 6);
+  });
+
+  onOtpComplete(code: string): void {
+    // verify code
+  }
+}
+```
+
+`value`, `disabled`, `readonly`, `required`, `invalid`, `touched`, and `name`
+are kept in sync with the bound field. Blur marks the field touched, and a
+field that is both `invalid` and `touched` renders the error state unless an
+explicit `status` overrides it.
+
+## Usage without forms
+
+The `value` model input works on its own, with no forms module involved.
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { NgxOtpInputComponent } from 'ngx-otp-input';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [NgxOtpInputComponent],
+  template: `<ngx-otp-input [(value)]="code" />`,
+})
+export class AppComponent {
+  readonly code = signal('');
+}
+```
+
 ## Advanced usage example
 
 ```html
@@ -93,14 +154,23 @@ export class AppComponent {
 | `ariaLabel`      | `string`            | `'One Time Password'`                                   | Accessible label for the input group.                                          |
 | `status`         | `OtpStatus`         | `'idle'`                                                | Status state: `'idle' \| 'success' \| 'error'`.                                |
 | `statusMessages` | `OtpStatusMessages` | `{ success: 'Code verified.', error: 'Invalid code.' }` | Custom text announced in the live region for success/error states.             |
+| `value`          | `string`            | `''`                                                    | The current code. Two-way bindable via `[(value)]`.                            |
+| `disabled`       | `boolean`           | `false`                                                 | Disables the control. Also set by forms.                                       |
+| `readonly`       | `boolean`           | `false`                                                 | Renders the value but rejects edits.                                           |
+| `required`       | `boolean`           | `false`                                                 | Sets `aria-required` on the native input.                                      |
+| `invalid`        | `boolean`           | `false`                                                 | Marks the value invalid; shows the error state once touched.                   |
+| `touched`        | `boolean`           | `false`                                                 | Whether the control has been blurred at least once.                            |
+| `name`           | `string`            | `'one-time-code'`                                       | `name` attribute of the native input.                                          |
 
 ### Outputs
 
-| Output        | Type                            | Description                                                                       |
-| ------------- | ------------------------------- | --------------------------------------------------------------------------------- |
-| `otpChange`   | `EventEmitter<OtpChangeEvent>`  | Emitted on every valid change with `{ value, isComplete }`.                       |
-| `otpComplete` | `EventEmitter<string>`          | Emitted once the value reaches `length`.                                          |
-| `otpInvalid`  | `EventEmitter<OtpInvalidEvent>` | Emitted when characters are rejected (`char-rejected`) or truncated (`too-long`). |
+| Output        | Type                         | Description                                                                       |
+| ------------- | ---------------------------- | --------------------------------------------------------------------------------- |
+| `otpChange`   | `OutputRef<OtpChangeEvent>`  | Emitted on every valid change with `{ value, isComplete }`.                       |
+| `otpComplete` | `OutputRef<string>`          | Emitted once the value reaches `length`.                                          |
+| `otpInvalid`  | `OutputRef<OtpInvalidEvent>` | Emitted when characters are rejected (`char-rejected`) or truncated (`too-long`). |
+| `valueChange` | `OutputRef<string>`          | Emitted on every value change (the `[(value)]` half).                             |
+| `touch`       | `OutputRef<void>`            | Emitted on blur. Signal forms uses it to mark the field touched.                  |
 
 ### Exported types
 
@@ -124,11 +194,12 @@ interface OtpInvalidEvent {
 }
 ```
 
-### Public method
+### Public methods
 
 `NgxOtpInputComponent` exposes:
 
 - `reset(): void`
+- `focus(options?: FocusOptions): void`
 
 ```typescript
 import { Component, ViewChild } from '@angular/core';
@@ -188,6 +259,19 @@ ngx-otp-input {
 - Values longer than `length` are truncated.
 - Characters not matching `charPattern` are ignored.
 - Arrow keys, backspace, and delete are supported for keyboard editing.
+
+## Migration (v2 to v3)
+
+Version `3.x` moves the component to Angular signal APIs:
+
+- The peer dependency floor is now Angular `19`.
+- All inputs are signal inputs and all outputs are `output()` refs. Template
+  usage is unchanged, but code that assigned inputs imperatively on a component
+  instance (for example `otpInput.length = 8`) must bind them in a template or
+  use `componentRef.setInput` instead.
+- Added the signal forms `FormValueControl<string>` contract (Angular 22+).
+- A value written by a form that does not survive sanitization is now written
+  back to the form.
 
 ## Migration (v1 to v2)
 

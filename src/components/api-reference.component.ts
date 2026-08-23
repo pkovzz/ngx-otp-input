@@ -244,6 +244,13 @@ interface ApiRow {
 export class ApiReferenceComponent {
   inputs: ApiRow[] = [
     {
+      name: 'value',
+      type: 'string',
+      default: "''",
+      description:
+        'The current code. Two-way bindable, and the field value a bound signal form reads and writes.',
+    },
+    {
       name: 'length',
       type: 'number',
       default: '6',
@@ -298,6 +305,43 @@ export class ApiReferenceComponent {
       default: 'See defaults',
       description: 'Custom screen-reader messages for status states.',
     },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      default: 'false',
+      description: 'Disables the control. Also set by forms.',
+    },
+    {
+      name: 'readonly',
+      type: 'boolean',
+      default: 'false',
+      description: 'Renders the value but rejects edits.',
+    },
+    {
+      name: 'required',
+      type: 'boolean',
+      default: 'false',
+      description: 'Sets aria-required on the native input.',
+    },
+    {
+      name: 'invalid',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Marks the value invalid; shows the error state once touched.',
+    },
+    {
+      name: 'touched',
+      type: 'boolean',
+      default: 'false',
+      description: 'Whether the control has been blurred at least once.',
+    },
+    {
+      name: 'name',
+      type: 'string',
+      default: "'one-time-code'",
+      description: 'name attribute of the native input.',
+    },
   ];
 
   outputs: ApiRow[] = [
@@ -318,6 +362,19 @@ export class ApiReferenceComponent {
       type: "{ reason: 'too-long' | 'char-rejected'; attemptedValue: string; acceptedValue: string }",
       default: '',
       description: 'Emitted when input is rejected during sanitization.',
+    },
+    {
+      name: 'valueChange',
+      type: 'string',
+      default: '',
+      description: 'Emitted on every value change (the [(value)] half).',
+    },
+    {
+      name: 'touch',
+      type: 'void',
+      default: '',
+      description:
+        'Emitted on blur. A bound signal form field uses it to become touched.',
     },
   ];
 

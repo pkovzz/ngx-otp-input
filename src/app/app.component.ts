@@ -1,6 +1,6 @@
 import { inject as injectAnalytics } from '@vercel/analytics';
 import { DOCUMENT } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { HeaderComponent } from '../components/Header.component';
 import { HeroComponent } from '../components/hero.component';
 import { FeaturesComponent } from '../components/features.component';
@@ -28,7 +28,7 @@ type DemoTheme = 'light' | 'dark';
 })
 export class AppComponent implements OnInit {
   private readonly document = inject(DOCUMENT);
-  isDarkTheme = false;
+  readonly isDarkTheme = signal(false);
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
   }
 
   toggleTheme(): void {
-    this.applyTheme(this.isDarkTheme ? 'light' : 'dark', true);
+    this.applyTheme(this.isDarkTheme() ? 'light' : 'dark', true);
   }
 
   private initializeTheme(): void {
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
   }
 
   private applyTheme(theme: DemoTheme, persist: boolean): void {
-    this.isDarkTheme = theme === 'dark';
+    this.isDarkTheme.set(theme === 'dark');
     const root = this.document.documentElement;
     root.setAttribute('data-theme', theme);
 
