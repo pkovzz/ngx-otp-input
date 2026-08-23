@@ -292,6 +292,25 @@ describe('NgxOtpInputComponent v2', () => {
     expect(nativeInput.disabled).toBeTrue();
   });
 
+  it('NgxOtpInputComponent › should clear the invalid state on reset', () => {
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    nativeInput.value = '12a';
+    nativeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(nativeInput.getAttribute('aria-invalid')).toEqual('true');
+
+    const otpInput: NgxOtpInputComponent =
+      fixture.debugElement.children[0].children[0].componentInstance;
+    otpInput.reset();
+    fixture.detectChanges();
+
+    expect(nativeInput.getAttribute('aria-invalid')).toBeNull();
+    expect(fixture.componentInstance.form.controls.otp.value).toEqual('');
+  });
+
   it('NgxOtpInputComponent › should render masked dots when mask is true', () => {
     fixture.componentInstance.mask.set(true);
     fixture.detectChanges();
@@ -355,5 +374,32 @@ describe('NgxOtpInputComponent standalone two-way binding', () => {
     fixture.detectChanges();
 
     expect(nativeInput.value).toEqual('4321');
+  });
+});
+
+@Component({
+  standalone: true,
+  imports: [ReactiveFormsModule, NgxOtpInputComponent],
+  template: `
+    <ngx-otp-input
+      [formControl]="control"
+      [autoFocus]="false"
+    ></ngx-otp-input>
+  `,
+})
+class PrefilledHostComponent {
+  readonly control = new FormControl('123456', { nonNullable: true });
+}
+
+describe('NgxOtpInputComponent with an initially populated control', () => {
+  it('should mirror the initial value onto the native input', () => {
+    TestBed.configureTestingModule({ imports: [PrefilledHostComponent] });
+    const fixture = TestBed.createComponent(PrefilledHostComponent);
+    fixture.detectChanges();
+
+    const nativeInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      '[data-testid="ngx-otp-input-native"]',
+    );
+    expect(nativeInput.value).toEqual('123456');
   });
 });

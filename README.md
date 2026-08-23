@@ -110,8 +110,21 @@ renders the error state unless an explicit `status` overrides it.
 
 ## Quick start (no forms)
 
-```html
-<ngx-otp-input [(value)]="code" />
+The `value` model input works on its own, with no forms module involved.
+
+```typescript
+import { Component, signal } from '@angular/core';
+import { NgxOtpInputComponent } from 'ngx-otp-input';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [NgxOtpInputComponent],
+  template: `<ngx-otp-input [(value)]="code" />`,
+})
+export class AppComponent {
+  readonly code = signal('');
+}
 ```
 
 ## API reference

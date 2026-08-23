@@ -83,8 +83,8 @@ export class NgxOtpInputComponent
   // ---------------------------------------------------------------------------
 
   /**
-   * The current code. Two-way bindable, and the `FormValueControl` contract
-   * signal forms binds to.
+   * The current code. Two-way bindable via `[(value)]`, and the field value a
+   * bound signal form reads and writes.
    */
   readonly value = model('');
 
@@ -219,8 +219,10 @@ export class NgxOtpInputComponent
         return;
       }
 
+      // The view query is read tracked, so the effect runs again if the native
+      // input is ever swapped out. Only the imperative DOM work is untracked.
+      const input = this.otpInput()?.nativeElement;
       untracked(() => {
-        const input = this.otpInput()?.nativeElement;
         if (input && input.value !== accepted) {
           this.caretManager.syncNativeValue(input, accepted);
           this.setCaretIndex(accepted.length);
@@ -273,6 +275,7 @@ export class NgxOtpInputComponent
 
   /** Clears the code and moves the caret back to the first box. */
   reset(): void {
+    this.hasInvalidOtpState.set(false);
     this.setValueFromUser('');
     this.syncNativeInputValue();
     this.setCaretIndex(0);

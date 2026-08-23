@@ -248,7 +248,7 @@ export class ApiReferenceComponent {
       type: 'string',
       default: "''",
       description:
-        'The current code. Two-way bindable, and the value signal forms binds to.',
+        'The current code. Two-way bindable, and the field value a bound signal form reads and writes.',
     },
     {
       name: 'length',
@@ -374,7 +374,7 @@ export class ApiReferenceComponent {
       type: 'void',
       default: '',
       description:
-        'Emitted on blur. Signal forms uses it to mark the field touched.',
+        'Emitted on blur. A bound signal form field uses it to become touched.',
     },
   ];
 

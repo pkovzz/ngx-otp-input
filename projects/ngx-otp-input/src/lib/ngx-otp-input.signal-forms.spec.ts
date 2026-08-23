@@ -100,6 +100,26 @@ describe('NgxOtpInputComponent signal forms integration', () => {
     expect(fixture.componentInstance.loginForm.otp().touched()).toBeTrue();
   });
 
+  // The component provides NG_VALUE_ACCESSOR, so FormField binds it through the
+  // CVA path. That path installs its own reset binding (writeValue with the
+  // current field value) and never calls the component's public reset(), so a
+  // field reset must not clear the model.
+  it('should keep the field value when the field is reset', () => {
+    fixture.componentInstance.loginForm.otp().value.set('987654');
+    fixture.detectChanges();
+
+    nativeInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.loginForm.otp().touched()).toBeTrue();
+
+    fixture.componentInstance.loginForm.otp().reset();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.model().otp).toEqual('987654');
+    expect(nativeInput.value).toEqual('987654');
+    expect(fixture.componentInstance.loginForm.otp().touched()).toBeFalse();
+  });
+
   it('should render the error status once an invalid field is touched', () => {
     const otpInput = fixture.debugElement.children[0].componentInstance;
     expect(otpInput.resolvedStatus()).toEqual('idle');

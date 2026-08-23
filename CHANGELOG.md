@@ -27,6 +27,10 @@ and the project follows [Semantic Versioning](https://semver.org/).
 - Converted the demo application to signals so it renders correctly under Angular 22's OnPush-by-default change detection.
 - Dropped the `CommonModule` import from the component; the template uses built-in control flow only.
 
+### Fixed
+
+- `reset()` now clears the invalid state, so an emptied control no longer keeps `aria-invalid="true"` after a rejected character or paste.
+
 ## 2.0.0
 
 ### Breaking
